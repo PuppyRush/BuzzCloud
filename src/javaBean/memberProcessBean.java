@@ -143,20 +143,66 @@ public class memberProcessBean {
 		
 	}
 	
-	private String getEncodedVal(String val){
+	/**
+	 * 
+	 * @param tableName 조회할 테이블 이름 
+	 * @param val			조회할 테이블의 속성명 
+	 * @param attr			조회할 테이블의 속성의 값.
+	 * @return				일치여부가 파라매터 갯수만큼 각 결과가 배열로  리턴된다. 
+	 */
+	private boolean[] isEqual(String tableName, String [] val, String [] attr){
 		
-		String hashPass = BCrypt.hashpw(val,  BCrypt.gensalt(12));
-		return hashPass;
+		ResultSet rs = null;
+		PreparedStatement pstmt = null;
+		boolean []res = new boolean[val.length]; 
+		try {
+
+			if(val.length != attr.length)
+				throw new Exception("매개변수의 수가 일치하지 않습니다");
+			
+			for(int i=0 ; i < val.length ; i++){
+				
+
+				pstmt = conn.prepareStatement(
+						"select count(*) as size from tableName where ? = ?");
+				pstmt.setString(1, attr[i]);
+				pstmt.setString(2, val[i]);
+				rs = pstmt.executeQuery();
+				
+				if(rs.getInt("size") > 0)
+					res[i] = true;
+				else
+					res[i] = false;
+				
+				
+			}
+			
+		}
+
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			return null;
+		}
+		finally {
+			if (pstmt != null)
+				try {
+					pstmt.close();
+				} catch (SQLException ex) {
+				}
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException ex) {
+				}
+		}
+		
+	
+		return res;
+		
+		
 	}
 	
-	private boolean isEqualVal(String val, String hashedVal){
-		
-		if( BCrypt.checkpw(val, hashedVal))
-			return true;
-		else
-			return false;		
-		
-	}
 
 	/**
 	 * @param member  가입할 유저의 정보의 객체 
@@ -196,7 +242,7 @@ public class memberProcessBean {
 					"insert into User values (?,?,?,?,?)");
 			pstmt.setInt(1, member.getId());
 			pstmt.setString(2, member.getNickname());
-			pstmt.setString(3, getEncodedVal( member.getPassword()));
+			pstmt.setString(3, BCrypt.hashpw( member.getPassword(), BCrypt.gensalt(12)));
 			pstmt.setString(4, member.getIdType());
 			pstmt.setTimestamp(5, member.getReg_date());
 
@@ -253,6 +299,22 @@ public class memberProcessBean {
 			pstmt.setInt(1, member.getId());
 			pstmt.setString(2, member.getEmail());
 			pstmt.executeUpdate();
+			
+		}catch(SQLException ex){
+			ex.printStackTrace();
+			
+		}
+		finally{
+			if (pstmt != null)
+				try {
+					pstmt.close();
+				} catch (SQLException ex) {
+				}
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException ex) {
+				}
 			
 		}
 	

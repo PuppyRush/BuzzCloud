@@ -1,4 +1,4 @@
-package logon;
+package manageMamber;
 
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import property.commandAction;
 
-	public class entryPage implements commandAction{
+	public class innerJoin implements commandAction{
 
 		@Override
 		public HashMap<String, String> requestPro(HttpServletRequest request,
@@ -14,7 +14,7 @@ import property.commandAction;
 		
 			
 			HashMap<String, String> r = new HashMap<String, String>();
-			r.put("view", "logonPage/entryPage.jsp");
+			r.put("view", "logonPage/innerJoin.jsp");
 			
 			return r;
 		}

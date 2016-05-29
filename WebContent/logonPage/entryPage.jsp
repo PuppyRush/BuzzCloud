@@ -15,16 +15,14 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>The Big Picture - Start Bootstrap Template</title>
-
-
+    <title>Start BuzzCloud</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
     <!-- Custom CSS -->
     <link href="/css/logonPage/mainpage.css?<?=filemtime(\'./css/readizgen.css\')?" rel="stylesheet" type="text/css">
-			<link href="/css/logonPage/form.css?<?=filemtime(\'./css/readizgen.css\')?" rel="stylesheet" type="text/css">
+			<link href="/css/logonPage/form.css?<?=filemtime(\'./css/readizgen.css\')?" rel="stylesheet" type="text/css"><!--  -->
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -37,8 +35,49 @@
 
 <body>
 
+			<div id="mask">
+			</div> 
 
-    <!-- Navigation -->
+			<div class="window"> 
+
+					
+				<div id="LogonModal" class="text-vertical-center" tabindex="-1" role="dialog" aria-hidden="true">
+				  <div class="modal-dialog">
+				  <div class="modal-content">
+				      <div class="modal-header">
+				          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				          <h1 class="text-center">로그인하기</h1>
+				      </div>
+				      <div class="modal-body">
+				      
+				          <form class="form col-md-12 center-block"  id="innerLogonForm" method="GET" ACTION="innerLogon.do" >
+				            <div class="form-group">
+				              <input type="text" name="inner_email" class="form-control input-lg" placeholder="Email">
+				            </div>
+				            <div class="form-group"> 
+				              <input type="password" name="inner_password" class="form-control input-lg" placeholder="Password">
+				            </div>
+				            <div class="form-group">
+				              <button class="btn btn-primary btn-lg btn-block" onClick="innerLogon()" >로그인하기</button>
+				              <span class="pull-right"><a href="#">가입하기</a></span><span><a href="#">가입하면 무엇이 좋나요?</a></span>
+				            </div>
+				            
+				            	<input type="hidden" name="kind" value="inner">
+				          </form>
+				         		
+				      </div>
+				      <div class="modal-footer">
+				          <div class="col-md-12">
+				          <button class="close" data-dismiss="modal" aria-hidden="true">Cancel</button>
+						  </div>	
+				      </div>
+				  </div>
+				  </div>
+				</div>
+			
+		</div>
+					    <!-- Navigation -->
+
     <nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -74,63 +113,28 @@
     </nav>
 
     <!-- Page Content -->
-    		<header id="top" class="header">
-		    <div class="text-vertical-center">
+					    
+					<header id="top" class="header">
+				    <div class="text-vertical-center">
+
 									<h1>버즈클라우드</h1>									
 		        		<h3>생산적인 팀 프로젝트를 위해<br> 
 		        					사용해보세요</h3>
     							<br><br>
-    							<div id="naver_id_Logon"></div>
+    							<div id="naver_id_login"></div>
     							<br>
-      						<input type="BUTTON" class="button" id="toJoin" name="innerJoin" value="가입하기 " onClick="innerJoin()"><br>
-									<input type="BUTTON" class="button" id="toLogon"  name="innerLogon" value="로그인하기 " onClick="innerLogon()">  
-
-
-						
-					
-
-		    </div>
-		    
-		    
-    </header>
+    							
+     						<input type="BUTTON" id="toJoin" class="btn btn-dark btn-lg" value="가입하기 " ><br><br>
+									<input type="BUTTON" id="toLogon" class="btn btn-dark btn-lg"  value="로그인하기 "  >  
+							
+			    </div> 
+	    </header>
     <!-- /.container -->
 
 
-<div id="LogonModal" class="modal show" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-  <div class="modal-content">
-      <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          <h1 class="text-center">Logon</h1>
-      </div>
-      <div class="modal-body">
-          <form class="form col-md-12 center-block">
-            <div class="form-group">
-              <input type="text" class="form-control input-lg" placeholder="Email">
-            </div>
-            <div class="form-group">
-              <input type="password" class="form-control input-lg" placeholder="Password">
-            </div>
-            <div class="form-group">
-              <button class="btn btn-primary btn-lg btn-block">Sign In</button>
-              <span class="pull-right"><a href="#">Register</a></span><span><a href="#">Need help?</a></span>
-            </div>
-          </form>
-      </div>
-      <div class="modal-footer">
-          <div class="col-md-12">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-		  </div>	
-      </div>
-  </div>
-  </div>
-</div>
-
-
-<script type="text/javascript" charset="utf-8" src="http://code.jquery.com/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="http://code.jquery.com/jquery-latest.js"></script>
 <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
-<script type="text/javascript" charset="utf-8" src="https://static.nid.naver.com/js/naverLogon_implicit-1.0.2.js"></script>
-<script type="text/javascript" charset="utf-8" src="js/clientSideLibrary.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.2.js"></script>
 
 <!-- Bootstrap Core JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -139,18 +143,17 @@
 		
 <script type="text/javascript">
 
-		
+	
 		var mail;
 		var nick;
 		
-		var naver = new naver_id_Logon("Vf8cYbYQv2N0c_cSv_XA", "http://114.129.211.33:8181/");
+		var naver = new naver_id_login("Vf8cYbYQv2N0c_cSv_XA", "http://114.129.211.33:8181/");
 		var state = naver.getUniqState();
 		naver.setState(state);
 		naver.setButton(BUTTON_COLOR_GREEN, BANNER_BIG_TYPE, 40);
 		naver.setStateStore();
-		naver.init_naver_id_Logon();	 
-
-
+		naver.init_naver_id_login();	 
+ 
 		getParameter = function(param){
 		    full_url=location.href;
 		    
@@ -247,56 +250,52 @@
 				e.printStackTrace();}
 					
 			%>
-			
 		}
 		
-		
-		
-		 jQuery(function($){  
-			 function layer_open(el){  		
-				 $('.layer').fadeIn(); 
-				 
-				 var temp = $('#' + el);  
-				 if (temp.outerHeight() < $(document).height() ) temp.css('margin-top', '-'+temp.outerHeight()/2+'px');  
-				 else temp.css('top', '0px');  
-				 if (temp.outerWidth() < $(document).width() ) temp.css('margin-left', '-'+temp.outerWidth()/2+'px');  
-				 else temp.css('left', '0px');  
-			 }  
+		 function wrapWindowByMask(){
+			        //화면의 높이와 너비를 구한다.
+        var maskHeight = $(document).height();  
+        var maskWidth = $(window).width();  
 
-			 $('#toLogon').click(function(){  
-				layer_open('LogonModal');  
-				return false;  
-			 });  
+        //마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채운다.
+        $('#mask').css({'width':maskWidth,'height':maskHeight});  
+					$('#mask').fadeTo("slow",0.8);      
+						$('.window').show();
+			}
+		
+		 $(document).ready(function(){ 
+							$(	'#toLogon').click(function(e){
+								e.preventDefault();
+								wrapWindowByMask();
+							});
+							
+							//닫기 버튼을 눌렀을 때
+							$('.window .close').click(function (e) {  
+							    //링크 기본동작은 작동하지 않도록 한다.
+							    e.preventDefault();  
+							    $('#mask, .window').hide();  
+							});   
+				
+							//검은 막을 눌렀을 때
+							$('#mask').click(function () {  
+								    $(this).hide();  
+								    $('.window').hide();  
+								});
+		 })
 			
-			 $('#layer_close').click(function(){  
-				 $('.layer').fadeOut();  
-				 return false;  
-			 });  
-			 $(document).ready(function(){  
-			 });  
-		 });  
-		
-		
 	function innerJoin(){
 			
-			location.href = "/innerJoin.do";
-		
+				
 	}
 	
 	function innerLogon(){
-		
-		document.forms["hiddenForm_Logon"].submit();
+		alert(	document.getElementsByName("inner_email")[0].value);
+		document.forms["innerLogonForm"].submit();
 	}
 	
 </script>
 
-		<div>
-			<form method="GET" ACTION="/logon.do" id="hiddenForm_Logon">
-						<input type = "hidden" name = "kind" value = "inner_logon" >
-						<input type="TEXT" name="input_text" value="아이디">
-						<input type="TEXT" name="input_pw">
-				</form>
-		</div>
+
 
 		<div>
 		
@@ -308,10 +307,6 @@
 				<input type = "hidden" name = "reg_date" value = "" >
 			</form>
 		</div> 
-		
-		
-	
-
 
 </body>
 

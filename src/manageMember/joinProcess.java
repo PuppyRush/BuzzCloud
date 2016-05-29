@@ -1,4 +1,4 @@
-package manageMamber;
+package manageMember;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

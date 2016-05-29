@@ -1,4 +1,4 @@
-package manageMamber;
+package manageMember;
 
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;

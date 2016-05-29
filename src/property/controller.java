@@ -96,8 +96,6 @@ public class controller extends HttpServlet {
 			}
 		}
 	}
-
-	
 	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -122,6 +120,7 @@ public class controller extends HttpServlet {
 			HashMap<String, String>preSplit = null;
 			String view = null;
 			commandAction com=null;
+			
 			try {
 				String command = request.getRequestURI();
 		        if(command.indexOf(request.getContextPath()) == 0) 

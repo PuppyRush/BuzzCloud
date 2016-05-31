@@ -12,14 +12,20 @@
 }
 
 
-	.window{
+	.logonModal{
 	  display: none;
 	  position:absolute;  
 	  left:100px;
 	  top:100px;
 	  z-index:10000;
 	}
-	
+	.joinModal{
+	  display: none;
+	  position:absolute;  
+	  left:100px;
+	  top:100px;
+	  z-index:10000;
+	}
 
 
 /* Button Common */

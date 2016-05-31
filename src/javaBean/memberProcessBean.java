@@ -8,12 +8,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Random;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import org.mindrot.jbcrypt.BCrypt;
+import property.constString;
 
 public class memberProcessBean {
 	
@@ -33,39 +35,121 @@ public class memberProcessBean {
 		DataSource ds = (DataSource) envCtx.lookup("jdbc/basicjsp");
 		return ds.getConnection();
 	}
+	
 
 	/**
-	   *   각 속성에 원하는 이름이 중복되는지 여부를 검사함.
+	   *   해당 테이블의 속성에 원하는 값이 존재하는지 여부만 조사 
+    * select count(*) as size from user where name="hk*" 같은용도의 사용 
+	 * @param  1 : 테이블 
+	 *	@param  2 : 속성 이름(들)
+	 * @param  3 : 값 이름(들)
+	 * @return 각 속성에 대하여 중복이 발생시 중복결과에 맞게 배열로 그 결과들을 반환함.
+	 */	
+	public boolean isExist(String tableName, Object val, String attr)
+			throws Exception {
+
+		
+		boolean isDuplicated=false;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		ps = conn.prepareStatement("select count(*) as size from ? where ? = ?");
+		ps.setString(1, tableName);
+		
+		try {
+			switch(attr){
+				
+			
+				case "Id" :
+	
+					ps.setString(2, attr);
+					ps.setInt(3, (int)val  );
+					break;
+				
+				case "Nickname" :
+				case "Email" :
+						
+					ps.setString(2, attr);
+					ps.setString(3, (String)val);
+					break;
+					
+				default :
+					
+					ps.setString(2, attr);
+					ps.setString(3, (String)val);
+					
+					break;
+			
+			}
+				
+				
+				rs = ps.executeQuery();
+				rs.next();
+				// 중복아이디가 있는지 결과를 저장
+				if (rs.getInt("size")>=1)
+					isDuplicated = true;
+				else
+					isDuplicated = false;
+				
+			
+		
+
+		}catch ( SQLException e){
+			System.out.println(e.getMessage());
+			e.printStackTrace();			
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		} finally {
+			if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException ex) {
+				}
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException ex) {
+				}
+		}
+
+		return isDuplicated;
+	}
+	
+	/**
+	   *   해당 테이블의 속성에 원하는 값이 존재하는지 여부만 조사 
+    *   select count(*) as size from user where name="hk*" 같은용도의 사용 
 	 * @param  1 : 테이블 
 	 *	@param  2 : 속성 이름(들)
 	 * @param  3 : 값 이름(들)
 	 * @return 각 속성에 대하여 중복이 발생시 중복결과에 맞게 배열로 그 결과들을 반환함.
 	 */
-	public boolean[] confirmAttribute(String tableName, String [] attr, String [] val)
+	public boolean[] isExist(String tableName, String [] val, String [] attr)
 			throws Exception {
 
-		if(attr.length != val.length)
+		if(val.length != attr.length)
 			throw new Exception("속성파라매터와 값 파라매터의 갯수가 일치하지 않습니다.");
 
-		boolean []isDuplicated = new boolean[attr.length];
+		boolean []isDuplicated = new boolean[val.length];
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			for(int i=0; i < attr.length ; i++){
-				switch (attr[i]) {
+			for(int i=0; i < val.length ; i++){
+				switch (val[i]) {
 	
 					case "Id" :
 						ps = conn.prepareStatement(
-								"select count(*) as size from UserMapping where Id = ?");
-						ps.setInt(1, Integer.parseInt(val[i]));
+								"select count(*) as size from " + tableName + " where Id = ?");
+						ps.setInt(1, Integer.parseInt(attr[i]));
 						break;
 	
 					case "Email" :
 					case "Nickname" :
-						ps = conn.prepareStatement("select count(*) as size from UserMapping where "
-								+ attr[i] + " = ?");
+						ps = conn.prepareStatement("select count(*) as size from " + tableName + " where "
+								+ val[i] + " = ?");
 	
-						ps.setString(1, val[i]);
+						ps.setString(1, attr[i]);
 						break;
 	
 					default :
@@ -102,7 +186,7 @@ public class memberProcessBean {
 	}
 
 	/**
-	 * UserMapping테이블의 Id가 중복되는지 여부를 검사한다.
+	 *    기존에 존재하는 UserMapping의 속성 ID의 유일한 값을 반환한다. 
 	 * @return 기본키에 중복되지 않는 값을 반환한다.
 	 */
 	private String getUniqueId(){
@@ -125,10 +209,10 @@ public class memberProcessBean {
 			String tempID = String.valueOf( (new Random()).nextInt(90000000)
 					+ 10000000);
 			
-			boolean []isDuplicated = 
-					confirmAttribute("UserMapping", new String[]{"Id"}, new String[]{tempID});
+			boolean isDuplicatedAry = 
+					isExist("UserMapping", "Id", tempID);
 		
-			if(isDuplicated[0] == false)
+			if(isDuplicatedAry == false)
 				return tempID;
 			
 			} catch (SQLException e) {
@@ -142,38 +226,59 @@ public class memberProcessBean {
 		}
 		
 	}
+		
+	private boolean isSamePassword(int id, String pw){
+
+		Object postpw = getUniqVal("User", "ID", "Passwd", id); 
+
+		if(postpw == null)
+			return false;
+		
+		if( !BCrypt.checkpw(pw, (String)postpw))
+			return false;
+					
+		
+		return true;
+		
+	}
+	
 	
 	/**
 	 * 
 	 * @param tableName 조회할 테이블 이름 
-	 * @param val			조회할 테이블의 속성명 
-	 * @param attr			조회할 테이블의 속성의 값.
+	 * @param attr			조회할 테이블의 속성명 
+	 * @param val			조회할 테이블의 속성의 값.
 	 * @return				일치여부가 파라매터 갯수만큼 각 결과가 배열로  리턴된다. 
 	 */
-	private boolean[] isEqual(String tableName, String [] val, String [] attr){
+	private String[][] isEqual(String tableName, String [] attr, String [] val){
 		
 		ResultSet rs = null;
 		PreparedStatement pstmt = null;
-		boolean []res = new boolean[val.length]; 
+		String [][]res = new String[attr.length][]; 
 		try {
 
-			if(val.length != attr.length)
+			if(attr.length != val.length)
 				throw new Exception("매개변수의 수가 일치하지 않습니다");
 			
-			for(int i=0 ; i < val.length ; i++){
+			for(int i=0 ; i < attr.length ; i++){
 				
 
 				pstmt = conn.prepareStatement(
-						"select count(*) as size from tableName where ? = ?");
+						"select ? from ? where ? = ?");
 				pstmt.setString(1, attr[i]);
-				pstmt.setString(2, val[i]);
+				pstmt.setString(2, tableName);
+				pstmt.setString(3, val[i]);
+				pstmt.setString(4, attr[i]);
 				rs = pstmt.executeQuery();
+				rs.last();
+				res[i] = new String[rs.getRow()];	
 				
-				if(rs.getInt("size") > 0)
-					res[i] = true;
-				else
-					res[i] = false;
-				
+				rs.first();
+				while(rs.isLast() == false){
+					res[i][rs.getRow()-1] = rs.getString(1);
+					rs.next();
+					
+				}
 				
 			}
 			
@@ -203,6 +308,62 @@ public class memberProcessBean {
 		
 	}
 	
+	private Object getUniqVal(String tableName, String OriginAttr,String destAttr, Object originVal){
+		
+		
+		ResultSet rs = null;
+		PreparedStatement pstmt = null;
+		Object res;
+		try {
+
+
+			pstmt = conn.prepareStatement("select ? from ? where ? = ? ");
+			pstmt.setString(1, destAttr);
+			pstmt.setString(2, tableName);			
+			pstmt.setString(3, OriginAttr);
+			
+			if(OriginAttr.equals("ID"))
+				pstmt.setInt(4,(int)originVal);
+			else
+				pstmt.setString(4, (String)originVal);
+			
+			rs = pstmt.executeQuery();
+			
+			rs.last();
+			if(rs.getRow()>1)
+				throw new SQLException("값이 두개이상 존재합니다");
+			else if(rs.getRow()<=0)
+				throw new SQLException("찾으려는 값이 존재하지 않습니다.");
+				
+			rs.first();
+
+			res = rs.getObject(1);
+		
+			
+		}
+
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			return null;
+		}
+		finally {
+			if (pstmt != null)
+				try {
+					pstmt.close();
+				} catch (SQLException ex) {
+				}
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException ex) {
+				}
+		}
+		
+	
+		return res;
+		
+	}
 
 	/**
 	 * @param member  가입할 유저의 정보의 객체 
@@ -212,7 +373,7 @@ public class memberProcessBean {
 	 * 홈페이지 내부가입자가 아닌 외부인증을 통하여 가입한 유저는 비밀번호가 공백이다.
 	 */
 	@SuppressWarnings("resource")
-	public boolean joinMember(memberDataBean member, HttpServletRequest request) throws SQLException {
+	public boolean joinMember(memberDataBean member) throws SQLException {
 
 		ResultSet rs = null;
 		PreparedStatement pstmt = null;
@@ -224,11 +385,10 @@ public class memberProcessBean {
 			String uniqId = getUniqueId();
 			member.setId(Integer.parseInt( uniqId));
 			
-			boolean []isDuplicated = 
-					confirmAttribute("userMapping"
-											,new String[]{"Email"}
-											,new String[]{member.getEmail()});
-			if(isDuplicated[0]){
+			boolean isDuplicated = 
+					isExist("userMapping", "Email" ,member.getEmail() );
+			
+			if(isDuplicated){
 				throw new Exception(member.getEmail() + " 메일이 중복됩니다");
 			}
 
@@ -240,9 +400,17 @@ public class memberProcessBean {
 			
 			pstmt = conn.prepareStatement(
 					"insert into User values (?,?,?,?,?)");
+			
+			if(member.getIdType().equals("inner")==false){
+				constString s = constString.salt;
+				int salt = Integer.valueOf(s.getString());
+				pstmt.setString(3, BCrypt.hashpw( member.getPassword(), BCrypt.gensalt(salt)));
+			}
+			else
+				pstmt.setString(3, "");
+		
 			pstmt.setInt(1, member.getId());
-			pstmt.setString(2, member.getNickname());
-			pstmt.setString(3, BCrypt.hashpw( member.getPassword(), BCrypt.gensalt(12)));
+			pstmt.setString(2, member.getNickname());	
 			pstmt.setString(4, member.getIdType());
 			pstmt.setTimestamp(5, member.getReg_date());
 
@@ -283,40 +451,36 @@ public class memberProcessBean {
 	 * @param member  가입할 유저의 정보의 객체 
 	 * @param request jsp페이지로부터  넘어온 attribute값을 이용하기 위함 
 	 * @return 로그인 무사히 성사됐는지 여부를 반환
-	 * @throws 
-	 *  
+	 * @throws  
 	 */
-	public boolean logonMember(memberDataBean member, HttpServletRequest request) throws SQLException {
+	public boolean logonMember(memberDataBean member) throws SQLException {
 		
-		ResultSet rs = null;
-		PreparedStatement pstmt = null;
 
+		
 		try {
-			conn.setAutoCommit(false);
+			boolean res = isExist("UserMapping", "Email", member.getEmail());
 			
-			pstmt = conn.prepareStatement(
-					"select count(*) as size  (?,?)");
-			pstmt.setInt(1, member.getId());
-			pstmt.setString(2, member.getEmail());
-			pstmt.executeUpdate();
+			if(res == false){
+				throw new SQLException("값이 존재하지 않습니다");
+				
+			}
 			
-		}catch(SQLException ex){
-			ex.printStackTrace();
+			int uniqID = (int)getUniqVal("UserMapping", "ID", "Email", member.getEmail());
+		
+			res = isSamePassword(uniqID, member.getPassword());
 			
+		}catch (SQLException e){
+			e.printStackTrace();
+			return false;
 		}
-		finally{
-			if (pstmt != null)
-				try {
-					pstmt.close();
-				} catch (SQLException ex) {
-				}
-			if (rs != null)
-				try {
-					rs.close();
-				} catch (SQLException ex) {
-				}
-			
+		
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
 		}
+		
+		
 	
 		return true;
 	}

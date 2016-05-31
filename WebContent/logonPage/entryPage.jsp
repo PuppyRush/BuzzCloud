@@ -38,15 +38,57 @@
 			<div id="mask">
 			</div> 
 
-			<div class="window"> 
-
-					
-				<div id="LogonModal" class="text-vertical-center" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="joinModal">
+			
+				<div class="text-vertical-center" tabindex="-1" role="dialog" aria-hidden="true">
 				  <div class="modal-dialog">
 				  <div class="modal-content">
 				      <div class="modal-header">
 				          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				          <h1 class="text-center">로그인하기</h1>
+				          <h1 class="text-center">버즈클라우드에 가입하기 </h1>
+				      </div>
+				      <div class="modal-body">
+				      
+				          <form class="form col-md-12 center-block">
+				            <div class="form-group">
+         							 <input type="text" id="inner_email" class="form-control input-lg" placeholder="Email">
+				            </div>
+				            <div class="form-group">
+         							 <input type="text" id="inner_nickname" class="form-control input-lg" placeholder="Nickname">
+				            </div>
+				            <div class="form-group"> 
+				             <input type="password" id="inner_password" class="form-control input-lg" placeholder="Password">
+				            </div>
+				             <div class="form-group"> 
+				              <input type="password" id="inner_password2" class="form-control input-lg" placeholder="Rewrite Password">
+				            </div>
+				            <div class="form-group">
+				              <button class="btn btn-primary btn-lg btn-block" onClick="innerJoin()" >가입하기</button>
+				              <span class="pull-right"><a href="#">로그인하기</a></span><span><a href="#">가입하면 무엇이 좋나요?</a></span>
+				            </div>
+				            
+				            	<input type="hidden" id="kind" value="inner">
+				          </form>
+				         		
+				      </div>
+				      <div class="modal-footer">
+				          <div class="col-md-12">
+				          <button class="close" data-dismiss="modal" aria-hidden="true">Cancel</button>
+						  </div>	
+				      </div>
+				  </div>
+				  </div>
+				</div>
+			
+			</div>
+
+			<div class="logonModal"> 
+				<div class="text-vertical-center" tabindex="-1" role="dialog" aria-hidden="true">
+				  <div class="modal-dialog">
+				  <div class="modal-content">
+				      <div class="modal-header">
+				          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				          <h1 class="text-center">버즈클라우드에 로그인</h1>
 				      </div>
 				      <div class="modal-body">
 				      
@@ -74,9 +116,8 @@
 				  </div>
 				  </div>
 				</div>
-			
 		</div>
-					    <!-- Navigation -->
+   <!-- Navigation -->
 
     <nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
         <div class="container">
@@ -95,15 +136,18 @@
                 <ul class="nav navbar-nav">
                     <li>
                         <a href="#">버즈클라우드?</a>
-                    </li>
+                    </li>                 
                     <li>
                         <a href="#">어떻게 사용하죠?</a>
                     </li>
                     <li>
-                        <a href="#">문제점과 건의사항</a>
+                        <a href="#">문제점보고와 건의사항</a>
                     </li>
                     <li>
                         <a href="#">개발자와 연락하기</a>
+                    </li>		
+                     <li>
+                        <a href="#" id="toJoin" >버즈클라우드에 가입하기 </a>
                     </li>
                 </ul>
             </div>
@@ -121,12 +165,9 @@
 		        		<h3>생산적인 팀 프로젝트를 위해<br> 
 		        					사용해보세요</h3>
     							<br><br>
-    							<div id="naver_id_login"></div>
-    							<br>
     							
-     						<input type="BUTTON" id="toJoin" class="btn btn-dark btn-lg" value="가입하기 " ><br><br>
-									<input type="BUTTON" id="toLogon" class="btn btn-dark btn-lg"  value="로그인하기 "  >  
-							
+									<input type="BUTTON" id="toLogon" class="btn btn-dark btn-lg"  value="사이트 로그인하기 "  >  <br><br>
+									<div id="naver_id_login"></div>
 			    </div> 
 	    </header>
     <!-- /.container -->
@@ -197,20 +238,7 @@
 		    
 		}
 		
-		
-		function setHiddenForm(){
-			
-			mail = naver.getProfileData('email');
-			nick = naver.getProfileData('nickname');
-			document.getElementsByName("email")[0].value = mail;
-			document.getElementsByName("nickname")[0].value = nick;
-			document.getElementsByName("password")[0].value = "";
-			document.getElementsByName("reg_date")[0].value = "";
-			document.getElementsByName("idType")[0].value = "naver";
-			console.log("네이버 프로필 보내기 : " + mail + " , " + nick);
-			document.forms["hiddenForm_oauth"].submit();
-		}
-		
+
 		
 		window.onload=function(){
 
@@ -252,7 +280,7 @@
 			%>
 		}
 		
-		 function wrapWindowByMask(){
+		 function wrapLogonModal(){
 			        //화면의 높이와 너비를 구한다.
         var maskHeight = $(document).height();  
         var maskWidth = $(window).width();  
@@ -260,54 +288,106 @@
         //마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채운다.
         $('#mask').css({'width':maskWidth,'height':maskHeight});  
 					$('#mask').fadeTo("slow",0.8);      
-						$('.window').show();
+						$('.logonModal').show();
+			}
+		 
+		 function wrapJoinModal(){
+			        //화면의 높이와 너비를 구한다.
+				 var maskHeight = $(document).height();  
+				 var maskWidth = $(window).width();  
+				
+				 //마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채운다.
+				 $('#mask').css({'width':maskWidth,'height':maskHeight});  
+					$('#mask').fadeTo("slow",0.8);      
+					$('.joinModal').show();
 			}
 		
+		 
 		 $(document).ready(function(){ 
 							$(	'#toLogon').click(function(e){
 								e.preventDefault();
-								wrapWindowByMask();
+								wrapLogonModal();
+							});
+							
+							$(	'#toJoin').click(function(e){
+								e.preventDefault();
+								wrapJoinModal();
 							});
 							
 							//닫기 버튼을 눌렀을 때
-							$('.window .close').click(function (e) {  
+							$('.logonModal .close').click(function (e) {  
 							    //링크 기본동작은 작동하지 않도록 한다.
 							    e.preventDefault();  
-							    $('#mask, .window').hide();  
+							    $('#mask, .logonModal').hide();  
 							});   
 				
-							//검은 막을 눌렀을 때
+							$('.joinModal .close').click(function (e) {  
+								    //링크 기본동작은 작동하지 않도록 한다.
+								    e.preventDefault();  
+								    $('#mask, .joinModal').hide();  
+								});   
+							
+							//검은 wrapLogonModal 눌렀을 때
 							$('#mask').click(function () {  
 								    $(this).hide();  
-								    $('.window').hide();  
+								    $('.logonModal').hide();  
+								    $('.joinModal').hide();
 								});
 		 })
 			
-	function innerJoin(){
+		 		
+		function setHiddenForm(){
 			
-				
+			mail = naver.getProfileData('email');
+			nick = naver.getProfileData('nickname');
+			document.getElementsByName("email")[0].value = mail;
+			document.getElementsByName("nickname")[0].value = nick;
+			document.getElementsByName("password")[0].value = "";
+			document.getElementsByName("reg_date")[0].value = "";
+			document.getElementsByName("idType")[0].value = "naver";
+			document.forms["joinForm"].submit();
+		}
+		
+		 
+	function innerJoin(){
+			 
+				document.getElementsByName("email")[1].value = document.getElementById("inner_email").value;
+				document.getElementsByName("nickname")[1].value = document.getElementById("inner_nickname").value;
+				document.getElementsByName("password")[1].value = document.getElementById("inner_password").value;
+				document.getElementsByName("reg_date")[1].value = "";
+				document.getElementsByName("idType")[1].value = "inner";
+				document.forms["innerJoinForm"].submit();
 	}
 	
 	function innerLogon(){
-		alert(	document.getElementsByName("inner_email")[0].value);
+
 		document.forms["innerLogonForm"].submit();
 	}
 	
 </script>
 
-
-
-		<div>
-		
-			<form method="GET" ACTION="/join.do" id="hiddenForm_oauth">
+	<div>
+			<form method="GET" ACTION="/join.do" id="joinForm">
 				<input type = "hidden" name = "email" value = "" >
 				<input type = "hidden" name = "nickname" value = "" >
 				<input type = "hidden" name = "password" value = "" >
 				<input type = "hidden" name = "idType" value = "" >
 				<input type = "hidden" name = "reg_date" value = "" >
 			</form>
-		</div> 
-
+	</div>
+			
+	
+	<div>
+			<form method="GET" ACTION="/Join.do" id="innerJoinForm">
+				<input type = "hidden" name = "email" value = "" >
+				<input type = "hidden" name = "nickname" value = "" >
+				<input type = "hidden" name = "password" value = "" >
+				<input type = "hidden" name = "idType" value = "" >
+				<input type = "hidden" name = "reg_date" value = "" >
+			</form>
+	</div>
+			
+	
 </body>
 
 </html>

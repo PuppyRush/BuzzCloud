@@ -28,10 +28,16 @@ public class innerLogon implements commandAction {
 		
 		if( ((String)request.getParameter("kind")).equals("inner") ){
 			
-			String emial = (String)request.getParameter("inner_email");
+			String email = (String)request.getParameter("inner_email");
 			String pw = (String)request.getParameter("inner_password");
 			
+			memberDataBean mdb = new memberDataBean();
+			mdb.setEmail(email);
+			mdb.setPassword(pw );
 			
+			if(!lb.logonMember(mdb))
+				returns.put("error", "패스워드가 일치하지 않거나 아이디가 존재하지 않습니다.");
+
 		}
 		
 		

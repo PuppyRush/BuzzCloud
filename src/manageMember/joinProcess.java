@@ -23,55 +23,43 @@ public class joinProcess implements commandAction {
 		HashMap<String , String> returns = new HashMap<String , String>();
 		String idType = (String) request.getParameter("idType");
 
+		
+		mdb.setId(0);
+		mdb.setEmail((String) request.getParameter("email"));
+		mdb.setIdType((String) request.getParameter("idType"));
+		mdb.setNickname((String) request.getParameter("nickname"));
+		mdb.setReg_date(new Timestamp(System.currentTimeMillis()));
+		
 		switch (idType) {
-			
-		case "facebook":
-		case "google":
-		case "naver":
-
-			
-			mdb.setId(0);
-			mdb.setEmail((String) request.getParameter("email"));
-			mdb.setIdType((String) request.getParameter("idType"));
-			mdb.setNickname((String) request.getParameter("nickname"));
-			mdb.setPassword(" ");
-			mdb.setReg_date(new Timestamp(System.currentTimeMillis()));
-
-			if (lb.joinMember(mdb, request))		
-				returns.put("message", "가입에 성공하였습니다.");
-			else
-				returns.put("message", "이전에 가입하셨습니다.");
-			
-			returns.put("view", "logonPage/entryPage.jsp");
-			returns.put("oauthJoin", "true");
-			
-			break;
-
-		case "inner":
-			
-			mdb.setId(0);
-			mdb.setEmail((String) request.getParameter("email"));
-			mdb.setIdType((String) request.getParameter("idType"));
-			mdb.setNickname((String) request.getParameter("nickname"));
-			mdb.setPassword((String) request.getParameter("password"));
-			mdb.setReg_date(new Timestamp(System.currentTimeMillis()));
-
-			if (lb.joinMember(mdb, request))		
-				returns.put("message", "가입에 성공하였습니다.");
-			else
-				returns.put("message", "이전에 가입하셨습니다.");
-			
-			returns.put("view", "logonPage/entryPage.jsp");
-			returns.put("innerJoin", "true");
-			
-			break;
-			
-
-		default:
-
+				
+			case "facebook":
+			case "google":
+			case "naver":
+		
+				mdb.setPassword(" ");
+				
+				break;
+	
+			case "inner":
+				
+				mdb.setPassword((String) request.getParameter("password"));
+				
+				break;
+	
+			default:
+				returns.put("message", "kind의 종류가 명확하지 않습니다");
+				return returns;
+				
 		}
 
+		if (lb.joinMember(mdb))		
+			returns.put("message", "가입에 성공하였습니다.");
+		else
+			returns.put("message", "이전에 가입하셨습니다.");
 		
+		returns.put("view", "logonPage/entryPage.jsp");
+		returns.put("innerJoin", "true");
+				
 	return returns;
     }
 }

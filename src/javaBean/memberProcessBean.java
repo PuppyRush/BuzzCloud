@@ -5,6 +5,7 @@ package javaBean;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -15,11 +16,12 @@ import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import org.mindrot.jbcrypt.BCrypt;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import property.constString;
 
 public class memberProcessBean {
 	
-	private static Connection conn = connectMysql.connectMysql();
+	private static Connection conn = connectMysql.getConnector();
 	private static memberDataBean instance = new memberDataBean();
 
 	public static memberDataBean getInstance() {
@@ -40,61 +42,69 @@ public class memberProcessBean {
 	/**
 	   *   해당 테이블의 속성에 원하는 값이 존재하는지 여부만 조사 
     * select count(*) as size from user where name="hk*" 같은용도의 사용 
-	 * @param  1 : 테이블 
-	 *	@param  2 : 속성 이름(들)
-	 * @param  3 : 값 이름(들)
+	 * @param tableName : 검색할 테이블
+	 *	@param  attr : 속성 이름(들)
+	 * @param  val : 값 이름(들)
 	 * @return 각 속성에 대하여 중복이 발생시 중복결과에 맞게 배열로 그 결과들을 반환함.
 	 */	
-	public boolean isExist(String tableName, Object val, String attr)
+	public boolean isExist(String tableName, String attr ,Object val)
 			throws Exception {
 
-		
 		boolean isDuplicated=false;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		
-		ps = conn.prepareStatement("select count(*) as size from ? where ? = ?");
-		ps.setString(1, tableName);
-		
+	
+		String sql;
+
 		try {
 			switch(attr){
 				
 			
 				case "Id" :
 	
-					ps.setString(2, attr);
-					ps.setInt(3, (int)val  );
+					sql = " SELECT count(*) FROM User WHERE Id = ? ";
+					ps = conn.prepareStatement(sql);
+					ps.setInt(1, (int)val);
 					break;
 				
 				case "Nickname" :
+					sql = " SELECT count(*) FROM User WHERE Nickname = ? ";
+					ps = conn.prepareStatement(sql);
+					
+					ps.setString(1, (String)val);
+
 				case "Email" :
-						
-					ps.setString(2, attr);
-					ps.setString(3, (String)val);
+					sql = " SELECT count(*) FROM UserMapping WHERE Email = ? ";
+					ps = conn.prepareStatement(sql);
+					
+					ps.setString(1, (String)val);
+
 					break;
 					
 				default :
 					
-					ps.setString(2, attr);
 					ps.setString(3, (String)val);
 					
 					break;
 			
 			}
-				
-				
+								
 				rs = ps.executeQuery();
-				rs.next();
+				
 				// 중복아이디가 있는지 결과를 저장
-				if (rs.getInt("size")>=1)
+				rs.next();
+				
+				if ( rs.getInt(1) >=1)
 					isDuplicated = true;
 				else
 					isDuplicated = false;
-				
-			
-		
 
-		}catch ( SQLException e){
+				
+		}catch ( MySQLSyntaxErrorException e){
+			System.out.println(e.getMessage());
+			e.printStackTrace();			
+		}		
+		catch ( SQLException e){
 			System.out.println(e.getMessage());
 			e.printStackTrace();			
 		}
@@ -135,21 +145,24 @@ public class memberProcessBean {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
+		
 			for(int i=0; i < val.length ; i++){
+				
+				ps = conn.prepareStatement(
+						"select count(*) as size from ? where ? = ?");
+				//ps.setString(1, tableName);
+				ps.setString(2, attr[i]);
 				switch (val[i]) {
 	
 					case "Id" :
-						ps = conn.prepareStatement(
-								"select count(*) as size from " + tableName + " where Id = ?");
-						ps.setInt(1, Integer.parseInt(attr[i]));
+			
+						ps.setInt(3, Integer.parseInt(val[i]));
 						break;
 	
 					case "Email" :
 					case "Nickname" :
-						ps = conn.prepareStatement("select count(*) as size from " + tableName + " where "
-								+ val[i] + " = ?");
-	
-						ps.setString(1, attr[i]);
+					
+						ps.setString(3, val[i]);
 						break;
 	
 					default :
@@ -210,7 +223,7 @@ public class memberProcessBean {
 					+ 10000000);
 			
 			boolean isDuplicatedAry = 
-					isExist("UserMapping", "Id", tempID);
+					isExist("UserMapping", "Id", Integer.valueOf(tempID));
 		
 			if(isDuplicatedAry == false)
 				return tempID;
@@ -226,22 +239,7 @@ public class memberProcessBean {
 		}
 		
 	}
-		
-	private boolean isSamePassword(int id, String pw){
 
-		Object postpw = getUniqVal("User", "ID", "Passwd", id); 
-
-		if(postpw == null)
-			return false;
-		
-		if( !BCrypt.checkpw(pw, (String)postpw))
-			return false;
-					
-		
-		return true;
-		
-	}
-	
 	
 	/**
 	 * 
@@ -308,37 +306,24 @@ public class memberProcessBean {
 		
 	}
 	
-	private Object getUniqVal(String tableName, String OriginAttr,String destAttr, Object originVal){
+	private String MailToId(String Email){
 		
 		
 		ResultSet rs = null;
 		PreparedStatement pstmt = null;
-		Object res;
+		int id;
 		try {
 
 
-			pstmt = conn.prepareStatement("select ? from ? where ? = ? ");
-			pstmt.setString(1, destAttr);
-			pstmt.setString(2, tableName);			
-			pstmt.setString(3, OriginAttr);
-			
-			if(OriginAttr.equals("ID"))
-				pstmt.setInt(4,(int)originVal);
-			else
-				pstmt.setString(4, (String)originVal);
-			
+			pstmt = conn.prepareStatement("select Id from UserMapping where EMail = ? ");
+			pstmt.setString(1, Email);
 			rs = pstmt.executeQuery();
+			rs.next();
+			id = rs.getInt(1);
+			if(id == 0)
+				throw new SQLException("해당하는 메일이 존재하지 않습니다");
 			
-			rs.last();
-			if(rs.getRow()>1)
-				throw new SQLException("값이 두개이상 존재합니다");
-			else if(rs.getRow()<=0)
-				throw new SQLException("찾으려는 값이 존재하지 않습니다.");
-				
-			rs.first();
-
-			res = rs.getObject(1);
-		
+			
 			
 		}
 
@@ -360,8 +345,8 @@ public class memberProcessBean {
 				}
 		}
 		
-	
-		return res;
+		return String.valueOf(id);
+		
 		
 	}
 
@@ -381,17 +366,18 @@ public class memberProcessBean {
 		try {
 			conn.setAutoCommit(false);
 			
-			// user매핑테이블 추가
-			String uniqId = getUniqueId();
-			member.setId(Integer.parseInt( uniqId));
 			
 			boolean isDuplicated = 
-					isExist("userMapping", "Email" ,member.getEmail() );
+					isExist("UserMapping", "Email" ,member.getEmail() );
 			
 			if(isDuplicated){
 				throw new Exception(member.getEmail() + " 메일이 중복됩니다");
 			}
-
+			
+			// user매핑테이블 추가
+			String uniqId = getUniqueId();
+			member.setId(Integer.parseInt( uniqId));
+		
 			pstmt = conn.prepareStatement(
 					"insert into UserMapping values (?,?)");
 			pstmt.setInt(1, member.getId());
@@ -401,10 +387,11 @@ public class memberProcessBean {
 			pstmt = conn.prepareStatement(
 					"insert into User values (?,?,?,?,?)");
 			
-			if(member.getIdType().equals("inner")==false){
+			if(member.getIdType().equals("inner")){
 				constString s = constString.salt;
 				int salt = Integer.valueOf(s.getString());
-				pstmt.setString(3, BCrypt.hashpw( member.getPassword(), BCrypt.gensalt(salt)));
+				String pw = BCrypt.hashpw( member.getPassword(), BCrypt.gensalt(salt));
+				pstmt.setString(3, pw);
 			}
 			else
 				pstmt.setString(3, "");
@@ -455,8 +442,8 @@ public class memberProcessBean {
 	 */
 	public boolean logonMember(memberDataBean member) throws SQLException {
 		
-
-		
+		Statement st;
+		ResultSet rs;
 		try {
 			boolean res = isExist("UserMapping", "Email", member.getEmail());
 			
@@ -465,10 +452,17 @@ public class memberProcessBean {
 				
 			}
 			
-			int uniqID = (int)getUniqVal("UserMapping", "ID", "Email", member.getEmail());
-		
-			res = isSamePassword(uniqID, member.getPassword());
+			String uniqID = MailToId(member.getEmail());
 			
+			st = conn.createStatement();
+			rs = st.executeQuery(" select Passwd from User where Id = " + uniqID);
+			rs.next();
+			String hasedpw =  rs.getString(1);
+			if( !BCrypt.checkpw(member.getPassword(), hasedpw ) )
+				res =  false;
+			else
+				res = true;
+		
 		}catch (SQLException e){
 			e.printStackTrace();
 			return false;

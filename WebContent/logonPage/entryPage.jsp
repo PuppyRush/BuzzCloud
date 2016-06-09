@@ -49,25 +49,25 @@
 				      </div>
 				      <div class="modal-body">
 				      
-				          <form class="form col-md-12 center-block">
+				          <form class="form col-md-12 center-block" id="innerJoinForm" method="GET" ACTION="join.do">
 				            <div class="form-group">
-         							 <input type="text" id="inner_email" class="form-control input-lg" placeholder="Email">
+         							 <input type="text" name="email" class="form-control input-lg" placeholder="Email">
 				            </div>
 				            <div class="form-group">
-         							 <input type="text" id="inner_nickname" class="form-control input-lg" placeholder="Nickname">
+         							 <input type="text" name="nickname" class="form-control input-lg" placeholder="Nickname">
 				            </div>
 				            <div class="form-group"> 
-				             <input type="password" id="inner_password" class="form-control input-lg" placeholder="Password">
+				             <input type="password" name="password" class="form-control input-lg" placeholder="Password">
 				            </div>
 				             <div class="form-group"> 
-				              <input type="password" id="inner_password2" class="form-control input-lg" placeholder="Rewrite Password">
+				              <input type="password" name="inner_password2" class="form-control input-lg" placeholder="Rewrite Password">
 				            </div>
 				            <div class="form-group">
 				              <button class="btn btn-primary btn-lg btn-block" onClick="innerJoin()" >가입하기</button>
 				              <span class="pull-right"><a href="#">로그인하기</a></span><span><a href="#">가입하면 무엇이 좋나요?</a></span>
 				            </div>
-				            
-				            	<input type="hidden" id="kind" value="inner">
+				            			
+				            	<input type="hidden" name="idType" value="inner">
 				          </form>
 				         		
 				      </div>
@@ -238,28 +238,45 @@
 		    
 		}
 		
-
-		
 		window.onload=function(){
-
 			<%
 	
 			/*  logonBean으로 부터 넘어온 값을 읽어 로그인 성공이 된 경우 로그인유지를 위해 세션에 별도의 값을 저장한다. */
-			
-				try{
-				   
-					if( session.getAttribute("id") != null)
-						response.sendRedirect("/main.do");
-					
-					if( (request.getAttribute("oauthJoin")!= null || request.getAttribute("innerJoin") != null) )	{
 						%>
 							alert( <%= (String)request.getAttribute("message") %> );
-						<%
-						
-						session.setAttribute("id", "naverLogon");
+						<%			
+				try{ 
+					//이미 로그인 했던 기록이 있다면 자동로그인 한다.   
+					if( session.getAttribute("alreadyLogon") != null &&
+							((String) session.getAttribute("alreadyLogon")).equals("true")){
+									response.sendRedirect("/main.do");
+					}
+					//Oauth 콜백을 처리 후 가입결과를 반환받아 성공하였다면 로그인처리한다.
+					else if( request.getAttribute("oauthJoin")!= null ||	request.getAttribute("innerJoin") != null) 	{
+						%>
+							alert( <%= (String)request.getAttribute("message") %> );
+						<%			
+						session.setAttribute("alreadyLogon", "true");
 						response.sendRedirect("/main.do");
 
-				}else{
+					}
+					else if( request.getAttribute("innerLogon")!= null){
+						if( 	((String)request.getAttribute("innerLogon")).equals("true")){
+							%>
+							alert( "add" );
+					<%
+							session.setAttribute("alreadyLogon", "true");
+							response.sendRedirect("/main.do");
+						}
+						else if(	((String)request.getAttribute("innerLogon")).equals("false")){
+							%>
+									alert( <%= (String)request.getAttribute("message") %> );
+							<%
+														
+						}
+					}
+					
+					else{
 					%>
 			//네이버로그인 콜백인지 확인 
 						var state = getParameter("state");
@@ -335,16 +352,14 @@
 								});
 		 })
 			
-		 		
 		function setHiddenForm(){
 			
 			mail = naver.getProfileData('email');
 			nick = naver.getProfileData('nickname');
-			document.getElementsByName("email")[0].value = mail;
-			document.getElementsByName("nickname")[0].value = nick;
-			document.getElementsByName("password")[0].value = "";
-			document.getElementsByName("reg_date")[0].value = "";
-			document.getElementsByName("idType")[0].value = "naver";
+			document.getElementsByName("email")[1].value = mail;
+			document.getElementsByName("nickname")[1].value = nick;
+			document.getElementsByName("password")[1].value = "";
+			document.getElementsByName("idType")[1].value = "naver";
 			document.forms["joinForm"].submit();
 		}
 		
@@ -354,7 +369,6 @@
 				document.getElementsByName("email")[1].value = document.getElementById("inner_email").value;
 				document.getElementsByName("nickname")[1].value = document.getElementById("inner_nickname").value;
 				document.getElementsByName("password")[1].value = document.getElementById("inner_password").value;
-				document.getElementsByName("reg_date")[1].value = "";
 				document.getElementsByName("idType")[1].value = "inner";
 				document.forms["innerJoinForm"].submit();
 	}
@@ -372,18 +386,6 @@
 				<input type = "hidden" name = "nickname" value = "" >
 				<input type = "hidden" name = "password" value = "" >
 				<input type = "hidden" name = "idType" value = "" >
-				<input type = "hidden" name = "reg_date" value = "" >
-			</form>
-	</div>
-			
-	
-	<div>
-			<form method="GET" ACTION="/Join.do" id="innerJoinForm">
-				<input type = "hidden" name = "email" value = "" >
-				<input type = "hidden" name = "nickname" value = "" >
-				<input type = "hidden" name = "password" value = "" >
-				<input type = "hidden" name = "idType" value = "" >
-				<input type = "hidden" name = "reg_date" value = "" >
 			</form>
 	</div>
 			

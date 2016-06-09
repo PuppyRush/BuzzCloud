@@ -6,7 +6,7 @@ import property.constString;
 
 public class connectMysql {
 
-	public static Connection connectMysql(){
+	public static Connection getConnector(){
 		
 		
 		Connection conn = null;
@@ -15,14 +15,14 @@ public class connectMysql {
 			constString url = constString.dbUrl;
 			constString id = constString.dbId;
 			constString pw = constString.dbPasswd;
-			
+			constString driver = constString.dbDriver;
 			
 			String jdbcUrl = url.getString();
 			String dbId = id.getString();
 			String dbPasswd = pw.getString();
 					
 			
-			Class.forName( "com.mysql.jdbc.Driver");
+			Class.forName( driver.getString());
 			
 			conn = DriverManager.getConnection(jdbcUrl, dbId, dbPasswd);
 			
@@ -38,9 +38,7 @@ public class connectMysql {
 			
 		}
 		return conn;
-		
-		
-		
+
 	}
 	
 }

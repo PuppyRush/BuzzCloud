@@ -35,11 +35,18 @@ public class innerLogon implements commandAction {
 			mdb.setEmail(email);
 			mdb.setPassword(pw );
 			
-			if(!lb.logonMember(mdb))
-				returns.put("error", "패스워드가 일치하지 않거나 아이디가 존재하지 않습니다.");
+			if(!lb.logonMember(mdb)){
+				returns.put("message", "패스워드가 일치하지 않거나 아이디가 존재하지 않습니다.");
+				returns.put("innerLogon", "false");
+			}
+			else{
+				
+				returns.put("innerLogon", "true");
+			}
 
 		}
 		
+		returns.put("view", "logonPage/entryPage.jsp");
 		
 		return returns;
 		

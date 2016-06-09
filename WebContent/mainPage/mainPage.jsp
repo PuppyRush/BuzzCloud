@@ -42,7 +42,45 @@
 <!-- Bootstrap Core JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
+<div class="row">
+  <div class="col-md-12"></div>
 
+</div>
+<div class="row">
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+  </div>
+<div class="row">
+  <div class="col-md-3"></div>
+  <div class="col-md-3"><img src="/image/Cloud1.jpg" class="img-responsive" alt="Responsive image"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+</div>
+<div class="row">
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"><img src="/image/Cloud2.jpg" class="img-responsive" alt="Responsive image"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+</div>
+<div class="row">
+  <div class="col-md-3"></div>
+  <div class="col-md-3"><img src="/image/Cloud3.jpg" class="img-responsive" alt="Responsive image"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+</div>
+<div class="row">
+  <div class="col-md-3"><img src="/image/icon/option.jpg" class="img-responsive" alt="Responsive image"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+  <div class="col-md-3"></div>
+</div>
 
 
 		

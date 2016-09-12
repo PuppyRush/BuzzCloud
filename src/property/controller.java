@@ -117,7 +117,7 @@ public class controller extends HttpServlet {
 			HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 
-			HashMap<String, String>preSplit = null;
+			HashMap<String, Object>preSplit = null;
 			String view = null;
 			commandAction com=null;
 			
@@ -125,17 +125,17 @@ public class controller extends HttpServlet {
 				String command = request.getRequestURI();
 		        if(command.indexOf(request.getContextPath()) == 0) 
 		           command = command.substring(request.getContextPath().length());
-		        
+		        System.out.println(command);
 		        com = (commandAction)commandMap.get(command);  
 		        preSplit = com.requestPro(request, response);
-		        	view = preSplit.get("view");
+		        	view = (String)preSplit.get("view");
 		        	if(preSplit.size() > 1){
 		        		preSplit.remove("view");
 		        	
-	        			Set<Entry<String, String>> set = preSplit.entrySet();
-        				Iterator<Entry<String, String>> it = set.iterator();
+	        			Set<Entry<String, Object>> set = preSplit.entrySet();
+        				Iterator<Entry<String, Object>> it = set.iterator();
 	        			while(it.hasNext()){
-	        				Map.Entry<String, String> e = (Map.Entry<String, String>)it.next();
+	        				Map.Entry<String, Object> e = (Map.Entry<String, Object>)it.next();
         					request.setAttribute(e.getKey(), e.getValue());
 	        				}
 		        		}

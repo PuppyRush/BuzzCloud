@@ -19,10 +19,10 @@
   </servlet-mapping>
   <error-page>
     <error-code>404</error-code>
-    <location>/error/404code.jsp</location>
+    <location>/page/error/404code.jsp</location>
   </error-page>
   <error-page>
     <error-code>500</error-code>
-    <location>/error/500code.jsp</location>
+    <location>/page/error/500code.jsp</location>
   </error-page>
 </web-app>

@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 import org.mindrot.jbcrypt.BCrypt;
 import property.*;
 import property.enums.enumStandard;
-import property.enums.enumUserState;
+import property.enums.enumUserAbnormalState;
 
 
 public class MemberProcess {
@@ -451,7 +451,7 @@ public class MemberProcess {
 					
 					setSthJustOne("userState", "u_num", id, "isAbnormal", "true");
 					int code = (int)getSthJustOne("userState", "id", member.getId(), "abnormalCode");
-					code = code & Integer.valueOf(enumUserState.FAILD_LOGIN.getString());
+					code = code & Integer.valueOf(enumUserAbnormalState.FAILD_LOGIN.getString());
 					setSthJustOne("userState", "u_num", id, "abnoramlCode", code);
 					
 				}

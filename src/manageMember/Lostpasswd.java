@@ -8,7 +8,7 @@ import java.util.HashMap;
 import javaBean.MemberProcess;
 import javaBean.Member;
 import property.commandAction;
-import property.enums.enumUserState;
+import property.enums.enumUserAbnormalState;
 
 /**
  *  JSP페이지에서 폼을 통하여 값을 전달받아 회원가입을 처리받는다.
@@ -34,7 +34,7 @@ public class Lostpasswd implements commandAction {
 				returns.put("message", "가입된 메일이 아닙니다");
 			}
 			else{				
-				if(MemberProcess.isSendmail(mdb, Integer.valueOf(enumUserState.LOSTPW.getString())))
+				if(MemberProcess.isSendmail(mdb, Integer.valueOf(enumUserAbnormalState.LOSTPW.getString())))
 					returns.put("view", "WHERE?");
 				else
 					returns.put("view", "WHEER?");				

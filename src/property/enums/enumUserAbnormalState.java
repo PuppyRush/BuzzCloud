@@ -1,6 +1,6 @@
 package property.enums;
 
-public enum enumUserState {
+public enum enumUserAbnormalState {
 
 	NORMAL("0"),
 	LOSTPW("1"),
@@ -11,7 +11,7 @@ public enum enumUserState {
 	
 	private String enumStr;
 	
-	enumUserState(String str){
+	enumUserAbnormalState(String str){
 		enumStr = str;
 	}
 	

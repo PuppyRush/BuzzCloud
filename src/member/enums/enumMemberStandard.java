@@ -1,7 +1,7 @@
-package property.enums;
+package member.enums;
 
 
-public enum enumStandard {
+public enum enumMemberStandard {
 	
 	RESEND_STANDRATE_DATE("24"),				//hour
 	PASSWD_CHANGE_STADNDATE_DATE("90"),		//day
@@ -9,11 +9,11 @@ public enum enumStandard {
 	
 	private String enumStr;
 	
-	enumStandard(String str){
+	enumMemberStandard(String str){
 		enumStr = str;
 	}
 	
-	public String toString(){
+	public String getString(){
 		return enumStr;
 	}
 	

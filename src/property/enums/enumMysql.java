@@ -2,15 +2,11 @@ package property.enums;
 
 
 public enum enumMysql {
-	
-	dbId("widget"),
-	dbPasswd("widget"),
-	dbUrl("jdbc:mysql://221.166.236.59:3306/widgetstore"),
-	
-/*	dbId("root"),
+
+	dbId("root"),
 	dbPasswd("oss()90"),
-	dbUrl("jdbc:mysql://127.0.0.1:3306/widgetstore"),
-	*/
+	dbUrl("jdbc:mysql://127.0.0.1:3306/buzzcloud"),
+	
 	dbDriver("com.mysql.jdbc.Driver");
 			
 	

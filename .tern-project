@@ -1,0 +1,20 @@
+{
+  "plugins": {
+    "guess-types": {
+      
+    }
+  },
+  "libs": [
+    "ecma5",
+    "browser"
+  ],
+  "ecmaVersion": 6,
+  "parserOptions": {
+    "syntaxErrors": 2,
+    "reservedWordsInPropNames": 1,
+    "returnOutsideOfFunction": 1,
+    "importExportOutsideOfTopBlock": 2,
+    "hashBang": 0,
+    "pebbleSyntax": 2
+  }
+}

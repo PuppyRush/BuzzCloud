@@ -14,7 +14,11 @@ import property.commandAction;
 		
 			
 			HashMap<String, Object> r = new HashMap<String, Object>();
-			r.put("view", "page/entryPage.jsp");
+			
+			String sId = request.getRequestedSessionId();
+			
+			
+			r.put("view", "/page/entryPage/entryPage.jsp");
 			
 			return r;
 		}

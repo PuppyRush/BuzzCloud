@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WidgetStore>
+
+    <required>
+
+        <manifest_version>2</manifest_version>				
+
+        <widget>
+
+            <name>SCBUS</name>
+
+            <version>1.0</version>								
+
+            <root>SCBUS.html</root>
+
+        </widget>
+
+        <position kind="none">									
+
+		  </position>
+
+     </required>
+
+
+
+    <recommanded>
+		<resolution method="fixed">                      
+	
+        
+				<fixed>
+					<width>500</width>
+					<height>500</height>
+
+				</fixed>
+			</resolution>
+
+    </recommanded>
+
+</WidgetStore>
+

@@ -1,0 +1,606 @@
+package member;
+
+import java.awt.Point;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.mindrot.jbcrypt.BCrypt;
+
+import mail.enumMailType;
+import member.enums.enumMemberAbnormalState;
+import member.enums.enumMemberStandard;
+import member.enums.enumMemberState;
+import member.enums.enumMemberType;
+import page.PageException;
+import page.enums.enumPage;
+import page.enums.enumPageError;
+import property.ConnectMysql;
+import property.enums.enumSystem;
+
+import java.util.Set;
+import java.util.EnumMap;
+/**
+ * member에 대한 객체 정보는 sessionId,email을 이용해  getMember를 통해서만 얻을 수 있으며
+ * member객체를 생성하기 위한 생성자는 private이며 Builder를 통해서만 생성이 가능하다.
+ *    또 생성후에 이를 관리 하기 위해 addMember 메서드를 이용해 map에 추가해야한다.
+ *    제거할때는 removeMember 메서드를 통해서만 제거가 가능하다.
+ * 	
+ * @author cmk
+ *
+ */
+public class Member {
+
+
+	
+	private static Connection conn = ConnectMysql.getConnector();
+	
+	/**
+	 * Member객체를 생성하기 위한 Builder. build를 통해 최종적으로 member객체 생성 완료.
+	 * @author cmk
+	 *
+	 */
+	public static class Builder{
+		
+		private final int id;
+		private String nickname;
+		private String planePassword;
+		private enumMemberType idType;
+		private final String email;
+		private Timestamp regDate;
+		private final String sessionId;
+		private EnumMap<enumMemberAbnormalState, Boolean> abnormalState;
+		
+		public Builder(int id, String email, String sId){
+			
+			this.id = id;
+			this.email = email;
+			sessionId = sId;
+			
+			nickname="";
+			planePassword = "";
+			regDate = new Timestamp(System.currentTimeMillis());
+			idType = enumMemberType.NOTHING;
+			abnormalState = new EnumMap<enumMemberAbnormalState, Boolean>(enumMemberAbnormalState.class);
+		}
+		
+		public Builder(String email, String sId){
+			this.id = -1;
+			this.email = email;
+			sessionId = sId;
+			
+			nickname="";
+			planePassword = "";
+			regDate = new Timestamp(System.currentTimeMillis());
+			idType = enumMemberType.NOTHING;
+			abnormalState = new EnumMap<enumMemberAbnormalState, Boolean>(enumMemberAbnormalState.class);
+		}
+		
+		public Builder nickname(String nick){
+			nickname = nick; return this;
+		}
+		
+		public Builder planePassword(String pw){
+			planePassword = pw; return this;
+		}
+		
+		public Builder regDate(Timestamp date){
+			regDate=date; return this;
+		}
+		
+		public Builder idType(enumMemberType idType){
+			this.idType = idType; return this;
+		}
+		
+		public Builder abnormalState(EnumMap<enumMemberAbnormalState, Boolean> map){
+			abnormalState = map; return this;
+		}
+		
+		public Member build(){
+			return new Member(this);
+		}
+		
+		
+	}
+	
+
+	
+	protected EnumMap<enumMemberAbnormalState, Boolean> abnormalState;
+	
+	public static final int DEFAULT_VALUE = -1;
+	protected int id;
+	protected String nickname;
+	protected String planePassword;
+	protected enumMemberType idType;
+	protected String email;
+	protected Timestamp regDate;
+	protected String sessionId;
+	protected boolean isLogin;
+	protected boolean isLogout;
+	protected boolean isJoin;
+	
+	
+	protected Member(){
+		
+	}
+	
+	protected Member(Builder bld){
+		id = bld.id;
+
+		nickname=bld.nickname;
+		planePassword=bld.planePassword;
+		abnormalState = new EnumMap<>(enumMemberAbnormalState.class);
+		idType=bld.idType;
+		email=bld.email;
+		regDate =  new Timestamp(System.currentTimeMillis());
+		sessionId= bld.sessionId;
+		
+		
+	}
+	
+	
+	@Override
+	public int hashCode(){
+		
+		return 17;
+	}
+	
+	@Override
+	public String toString(){
+		
+		return new String("해당 객체는 사이트에서... ");
+		
+	}
+	
+	@Override
+	public boolean equals(Object mdb){
+		
+		if( mdb == null)
+			throw new NullPointerException();
+		else if( !(mdb instanceof Member))
+			throw new IllegalArgumentException("비교대상으로 적합하지 않은 객체가 비교시도 되었습니다.");
+		
+		Member m = (Member )mdb;
+		
+		return ( id==m.getId() && planePassword.equals(m.getPlanePassword()) ) ? true : false;
+	}
+
+	
+
+	
+	////getter setter////
+	
+	public int getId() {
+		return id;
+	}
+	
+	public String getNickname() {
+		return nickname;
+	}
+	
+	public String getPlanePassword() {
+		return planePassword;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public boolean isLogin() {
+	
+		return isLogin;
+	}
+	
+	public boolean isLogout() {
+		return isLogout;
+	}
+
+	public boolean isJoin() {	
+			
+		return isJoin;
+	}
+
+
+	public enumMemberType getUserType() {
+		return idType;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+	
+	public Timestamp getRegDate() {
+		return regDate;
+	}
+
+	public void setRegDate(Timestamp regDate) {
+		this.regDate = regDate;
+	}
+
+	public EnumMap<enumMemberAbnormalState, Boolean> getAbnormalState() {
+		return abnormalState;
+	}
+
+	
+	/////method/////
+
+	/**
+	 * @param member  가입할 유저의 정보의 객체 
+	 * @param request jsp페이지로부터  넘어온 attribute값을 이용하기 위함 
+	 * @return 가입이 무사히 성사됐는지 여부를 반환
+	 * @throws Throwable 
+	 */
+	@SuppressWarnings("resource")
+	public boolean doJoin() throws Throwable {
+		
+		conn.setAutoCommit(false);
+		ResultSet _rs = null;
+		PreparedStatement _ps = null;
+		int _idKey=-1;
+		
+		try {
+			
+			_ps = conn.prepareStatement("select userId from user where email = ?");
+			_ps.setString(1, email);
+			_rs = _ps.executeQuery();
+
+			//이미 가입한 경우
+			if(_rs.next()){
+	
+				int id = _rs.getInt("userId");
+				
+				_ps = conn.prepareStatement("select joinCertification from userState where userId = ? , certificationType = ?");
+						
+				_ps.setInt(1, id);
+				_ps.setInt(2, Integer.valueOf(enumMailType.JOIN.toString()));
+				_rs = _ps.executeQuery();
+						
+				if(_rs.next())				
+					throw new MemberException( "가입후  인증하지 않은 상태입니다.메일 인증 후 로그인 하세요" ,enumMemberState.NOT_JOIN_CERTIFICATION, enumPage.ENTRY);
+				else
+					throw new MemberException(enumMemberState.JOIN, enumPage.LOGIN);
+
+			}
+		
+			////////user table
+			
+			_ps = conn.prepareStatement(
+					"insert into user ( email, nickname, password, registrationDate, registrationKind) values (?,?,?,?,?)",
+					PreparedStatement.RETURN_GENERATED_KEYS);
+
+			_ps.setString(1,email);
+			_ps.setString(2, nickname);
+			_ps.setTimestamp(4, new Timestamp( System.currentTimeMillis()) );
+			_ps.setString(5, idType.toString());
+			if( idType.equals(enumMemberType.NOTHING)){
+
+				String _pw = BCrypt.hashpw( planePassword, BCrypt.gensalt(12));
+				_ps.setString(3, _pw);
+			}
+			else
+				_ps.setString(3, "");
+			
+			_ps.executeUpdate();
+
+			_rs = _ps.getGeneratedKeys();
+
+			if (_rs.next()) {
+			    _idKey = _rs.getInt(1);
+			}	
+			else{
+				
+				throw new SQLException("-");
+			}
+			
+			Member member = (new Member.Builder(_idKey, email, sessionId)).idType(idType).nickname(nickname).planePassword(planePassword)
+			.regDate(new Timestamp(System.currentTimeMillis())).build();
+			MemberManager.addMember(member);
+			
+			_ps.close();
+			_rs.close();
+	
+			conn.commit();
+		}
+		finally {
+			if(conn!=null) 
+				try{conn.rollback();}// Exception 발생시 rollback 한다.
+					catch(SQLException ex1){
+						System.out.println(ex1.getMessage());
+						ex1.printStackTrace();
+					}
+			if (_ps != null)
+				try {
+					_ps.close();
+				} catch (SQLException ex) {
+					System.out.println(ex.getMessage());
+					ex.printStackTrace();
+				}
+			if (_rs != null)
+				try {
+					_rs.close();
+				} catch (SQLException ex) {
+					System.out.println(ex.getMessage());
+					ex.printStackTrace();
+				}
+		}
+		
+			
+	
+		return true;
+	}
+
+	/**
+	 * @throws Exception 
+	 * @param member  가입할 유저의 정보의 객체 
+	 * @param request jsp페이지로부터  넘어온 attribute값을 이용하기 위함 
+	 * @return 로그인 무사히 성사됐는지 여부를 반환
+	 * @throws  
+	 */
+	public boolean doLogin() throws Exception {
+		
+		PreparedStatement __ps =null;
+		ResultSet __rs = null;
+		Statement _st = conn.createStatement();
+		PreparedStatement _ps = null;
+		ResultSet _rs=null;
+		boolean _res=false;
+
+		try {				
+			
+			conn.setAutoCommit(false);
+			
+			_ps = conn.prepareStatement("select * from user where email = ? ");
+			_ps.setString(1, email);
+			_rs = _ps.executeQuery();	
+			_rs.next();
+			String hashedpw =  _rs.getString("password");
+			int _idKey = _rs.getInt("userId");
+			id = _idKey;
+			
+			switch(idType){
+				case NOTHING:
+					if( BCrypt.checkpw( planePassword, hashedpw ) ){
+						
+						_res =  true;
+
+						////// 마지막 로그인 날짜 갱신
+						__ps = conn.prepareStatement("update userDetail set lastLoginDate = ?, failedLoginCount = ? where userId = ?");
+						
+						
+						Timestamp t = new Timestamp(System.currentTimeMillis());
+						__ps.setTimestamp(1, t);
+						__ps.setInt(2, 0);
+						__ps.setInt(3, _idKey);
+						__ps.executeUpdate();
+						__ps.close();
+										
+						
+						//잠금상태 해제 
+						//sleep인경우?
+						
+						_rs.close();
+						_ps.close();
+						
+						isLogin = true;
+						MemberManager.addMember(this);
+						
+					}
+					//불일치
+					else{
+						_res = false;
+						
+						__ps = conn.prepareStatement("select failedLoginCount from userDetail where userId =?");
+						__ps.setInt(1,_idKey);
+						__rs = __ps.executeQuery();
+						__rs.next();
+						int _failedLoginCount = __rs.getInt("failedLoginCount");
+						__ps.close();
+										
+						__ps = conn.prepareStatement("update userDetail set failedLoginCount = ? where userId = ?");
+						__ps.setInt(1, _failedLoginCount+1);
+						__ps.setInt(2, _idKey);					
+						__ps.close();
+						if(_failedLoginCount >= Integer.valueOf(enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString())){
+							__ps = conn.prepareStatement("update userState set isAbnormal = 1 , failedLogin = 1 where userId = ?");
+							__ps.setInt(1, _idKey);
+							__ps.executeUpdate();
+							__ps.close();
+						}
+							
+		
+						isLogin = false;
+						
+					}
+				
+					break;
+				
+				case GOOGLE:
+				case NAVER:
+					
+					////// 마지막 로그인 날짜 갱신
+					__ps = conn.prepareStatement("update userDetail set lastLoginDate = ?, failedLoginCount = ? where userId = ?");
+					
+					
+					Timestamp t = new Timestamp(System.currentTimeMillis());
+					__ps.setTimestamp(1, t);
+					__ps.setInt(2, 0);
+					__ps.setInt(3,_idKey);
+					__ps.executeUpdate();
+					__ps.close();
+									
+					
+					//잠금상태 해제 
+					//sleep인경우?
+					
+					_rs.close();
+					_ps.close();
+					
+					isLogin = true;
+					MemberManager.addMember(this);
+					
+					
+					break;
+				
+				default:
+					throw new PageException(enumPageError.UNKNOWN_PARA_VALUE,enumPage.ERROR404);
+					
+			
+					
+			}
+			conn.setAutoCommit(true);
+		}
+		finally {
+			if (_ps != null)
+				try {
+					_ps.close();
+				} catch (SQLException ex) {
+					System.out.println(ex.getMessage());
+					ex.printStackTrace();
+				}
+			if (_rs != null)
+				try {
+					_rs.close();
+				} catch (SQLException ex) {
+					System.out.println(ex.getMessage());
+					ex.printStackTrace();
+				}
+			if (_st != null)
+				try {
+					_st.close();
+				} catch (SQLException ex) {
+					System.out.println(ex.getMessage());
+					ex.printStackTrace();
+				}
+		}
+
+		return _res;
+	}
+
+	public boolean doLoginManager() throws Throwable{
+		
+		
+		PreparedStatement _ps = null;
+		ResultSet _rs=null;
+		
+		
+		boolean _res=false;
+		try {	
+							
+			
+			if(!email.equals(enumSystem.ADMIN.toString()))
+				throw new MemberException(enumMemberState.NOT_ADMIN, enumPage.LOGIN_MANAGER);
+			
+			_ps = conn.prepareStatement("select password from user where email=? ");
+			_ps.setString(1,email);
+			_rs = _ps.executeQuery();	
+			
+			_rs = _ps.executeQuery();
+			_rs.next();
+			String hashedpw =  _rs.getString("password");
+			_ps.close();
+			_rs.close();
+
+				
+			//비밀번호 일치.
+			if( BCrypt.checkpw( planePassword, hashedpw ) ){
+				
+				_res =  true;
+				
+				////// 마지막 로그인 날짜 갱신
+				_ps = conn.prepareStatement("update userDetail set lastLoginDate = ?, failedLoginCount = ? where userId = ?");
+				
+				
+				Timestamp t = new Timestamp(System.currentTimeMillis());
+				_ps.setTimestamp(1, t);
+				_ps.setInt(2, 0);
+				_ps.setInt(3, id);
+				_ps.executeUpdate();
+				_ps.close();
+								
+				
+				//잠금상태 해제 
+				//sleep인경우?
+		
+				isLogin = true;
+				MemberManager.addMember(this);
+				
+			}
+			//불일치
+			else{
+				_res = false;
+				
+				_ps = conn.prepareStatement("select failedLoginCount from userDetail where userId =?");
+				_ps.setInt(1, id);
+				_rs = _ps.executeQuery();
+				_rs.next();
+				int _failedLoginCount = _rs.getInt("failedLoginCount");
+				_ps.close();
+								
+				_ps = conn.prepareStatement("update userDetail set failedLoginCount = ? where userId = ?");
+				_ps.setInt(1, _failedLoginCount+1);
+				_ps.setInt(2, id);					
+				_ps.close();
+				if(_failedLoginCount >= Integer.valueOf(enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString())){
+					_ps = conn.prepareStatement("update userState set isAbnormal = 1 , failedLogin = 1 where userId = ?");
+					_ps.setInt(1, id);
+					_ps.executeUpdate();
+					_ps.close();
+				}
+
+				isLogin = false;
+				
+			}
+		
+		}
+		finally {
+			if (_ps != null)
+				try {
+					_ps.close();
+				} catch (SQLException ex) {
+					System.out.println(ex.getMessage());
+					ex.printStackTrace();
+				}
+			if (_rs != null)
+				try {
+					_rs.close();
+				} catch (SQLException ex) {
+					System.out.println(ex.getMessage());
+					ex.printStackTrace();
+				}
+
+		}
+		
+		
+		return true;
+	}
+	
+	/**
+	 * 	로그아웃을 위한 처리를 합니다.
+	 * @param member
+	 * @throws Throwable 
+	 */
+	public void doLogout() throws Throwable {
+			
+		PreparedStatement _ps = conn.prepareStatement("update userState set lastLogoutDate = ? where userId = ?");
+		_ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()) ) ;
+		_ps.setInt(2,  id);
+		_ps.executeUpdate();
+
+		MemberManager.removeMember(this);
+	}
+	
+	
+	
+
+
+
+
+}

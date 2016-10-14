@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Directed Graph</title>
+
+    <script type="text/javascript" src="../network.js"></script>
+
+    <style type="text/css">
+        html, body, #network {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="network"></div>
+
+    <script type="text/javascript">
+        // create a network view
+        var network = new links.Network(document.getElementById('network'));
+
+        // parse data in DOT-notation
+        var dot = 'digraph {node[shape=circle]; 1 -> 1 -> 2; 2 -> 3; 2 -- 4; 2 -> 1 }';
+        var data = links.Network.util.DOTToNetwork(dot);
+
+        // draw the data
+        network.draw(data.nodes, data.edges, data.options);
+
+        // resize the network when window resizes
+        window.onresize = function () {
+            network.redraw()
+        };
+    </script>
+</body>
+</html>

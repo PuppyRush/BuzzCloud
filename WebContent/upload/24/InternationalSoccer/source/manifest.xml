@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WidgetStore>
+
+    <required>
+
+        <manifest_version>2</manifest_version>				
+
+        <widget>
+
+            <name>InternationalSoccer</name>
+
+            <version>1.0</version>								
+
+            <root>InterSoccre.jsp</root>
+
+        </widget>
+
+        <position kind="none">									
+
+			<git>
+       
+
+			</git>
+
+		  </position>
+
+     </required>
+
+
+
+    <recommanded>
+
+     		<resolution method="fixed">                      
+	
+        
+				<fixed>
+					<width>400</width>
+					<height>490</height>
+
+				</fixed>
+			</resolution>
+
+    </recommanded>
+
+</WidgetStore>
+

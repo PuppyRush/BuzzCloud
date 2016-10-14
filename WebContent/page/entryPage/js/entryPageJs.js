@@ -2,7 +2,7 @@
 				var mail;
 				var nick;
 				
-				var naver = new naver_id_login("Vf8cYbYQv2N0c_cSv_XA", "http://114.129.211.123:8181/");
+				var naver = new naver_id_login("Vf8cYbYQv2N0c_cSv_XA", "http://114.129.211.123:8100/");
 				var state = naver.getUniqState();
 				naver.setState(state);
 				naver.setButton(BUTTON_COLOR_GREEN, BANNER_BIG_TYPE, 40);
@@ -101,10 +101,10 @@
 									mail = naver.getProfileData('email');
 									nick = naver.getProfileData('nickname');
 									
-									$("#loginidType").val("naver");
-									$("#loginForm email").val(mail);
-									$("#loginForm nickname").val(nick);
-									$("#loginForm password").val("");
+									$("#loginForm").find("#idType").val("NAVER");
+									$("#loginForm").find("#email").val(mail);
+									$("#loginForm").find("#nickname").val(nick);
+									$("#loginForm").find("#password").val("");
 									$("#loginForm").submit();
 								}
 								

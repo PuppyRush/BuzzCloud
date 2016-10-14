@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WidgetStore>
+
+    <required>
+
+        <manifest_version>2</manifest_version>				
+
+        <widget>
+
+            <name>calculator</name>
+
+            <version>1.0</version>								
+
+            <root>calculator.html</root>
+
+        </widget>
+
+        <position kind="git">									
+
+			<git>
+
+			    <id>gooddaumi@naver.com</id>
+
+			    <repository>WidgetStore</repository>                     
+
+			    <branch>master</branch>                   
+
+			</git>
+
+		  </position>
+
+     </required>
+
+
+
+    <recommanded>
+
+  
+
+    		<resolution method="fixed">                      
+	
+        
+				<fixed>
+					<width>325</width>
+					<height>270</height>
+
+				</fixed>
+			</resolution>
+
+       
+
+    </recommanded>     
+
+</WidgetStore>
+

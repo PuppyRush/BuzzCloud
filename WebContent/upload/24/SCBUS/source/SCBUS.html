@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<meta http-equiv="refresh" content="60" >
+<title>Insert title here</title>
+
+<script type="text/javascript">
+
+
+var somedate,current_H ,current_M ,current_S;
+somedate = new Date();
+current_H = somedate.getHours();
+current_M = (somedate.getMinutes()<10?'0':'') + somedate.getMinutes();
+current_S = (somedate.getSeconds()<10?'0':'') + somedate.getSeconds();
+
+var timetable =
+	[
+		["8" , "00" , "8" , "07" , "8" , "11" , "8" , "16" , "8" , "24"],
+		["없" , "음" , "없" , "음" , "8" , "12" , "8" , "17" , "8" , "25"],
+		["8" , "25" , "8" , "32" , "8" , "36" , "8" , "41" , "8" , "49"],
+		["8" , "28" , "8" , "35" , "8" , "39" , "8" , "44" , "8" , "54"],
+		["8" , "33" , "8" , "40" , "8" , "44" , "8" , "49" , "8" , "57"],
+		["9" , "02" , "9" , "09" , "9" , "13" , "9" , "18" , "9" , "26"],
+		["9" , "25" , "9" , "32" , "9" , "36" , "9" , "41" , "9" , "49"],
+		["9" , "30" , "9" , "37" , "9" , "41" , "9" , "46" , "9" , "54"],
+		["9" , "32" , "9" , "39" , "9" , "43" , "9" , "48" , "9" , "56"],
+		["10" , "20" , "10" , "27" , "10" , "31" , "10" , "36" , "10" , "44"],
+		["11" , "20" , "11" , "27" , "11" , "31" , "11" , "36" , "11" , "44"],
+		["13" , "10" , "13" , "17" , "13" , "21" , "13" , "26" , "13" , "34"],
+		["13" , "15" , "13" , "22" , "13" , "26" , "13" , "31" , "13" , "39"],
+		["16" , "05" , "16" , "12" , "16" , "16" , "16" , "21" , "16" , "29"],
+		["16" , "15" , "16" , "22" , "16" , "26" , "16" , "31" , "16" , "39"],
+		["16" , "35" , "16" , "42" , "16" , "46" , "16" , "51" , "16" , "59"],
+		["17" , "00" , "17" , "07" , "17" , "11" , "17" , "16" , "17" , "24"],
+		["17" , "10" , "17" , "17" , "17" , "21" , "17" , "26" , "17" , "34"],
+		["17" , "15" , "17" , "22" , "17" , "26" , "17" , "31" , "17" , "39"],
+		["17" , "40" , "17" , "47" , "17" , "51" , "17" , "56" , "18" , "04"],
+		["18" , "05" , "18" , "12" , "18" , "16" , "18" , "21" , "18" , "29"],
+		["18" , "30" , "18" , "37" , "18" , "41" , "18" , "46" , "18" , "54"],
+		["20" , "10" , "20" , "18" , "20" , "22" , "20" , "26" , "20" , "34"],
+		["21" , "10", "21" , "18", "21" , "22", "21" , "26", "21" , "34"]
+	];
+
+	
+
+function updateT()
+{
+	var currentTime = document.getElementById("currentTime");
+	
+	 somedate = new Date();
+	 current_H = somedate.getHours();
+	 current_M = (somedate.getMinutes()<10?'0':'') + somedate.getMinutes();
+	 current_S = (somedate.getSeconds()<10?'0':'') + somedate.getSeconds();
+	var Formatted = current_H + " : " + current_M + " : " + current_S;
+	currentTime.innerHTML = Formatted;		
+	//setTimeout(updateT,1000);
+}
+
+
+//current_H = 01  ;
+//current_M = 14  ;
+
+var h;
+var breakpoint;
+var flag = false;
+
+for (h = 0 ; h < timetable.length; h++)
+{
+	
+	for(var j = 0 ; j < timetable[h].length; j+=2)
+	if(timetable[h][j] == current_H && flag == false)
+	{
+		
+		if(timetable[h][j+1] > current_M)
+		{
+			flag = true;
+			breakpoint = j/2;
+		}
+	}
+	else if( timetable[h][j] > current_H && flag == false)
+	{
+		flag  = true;
+		breakpoint = 0;
+	}
+	if(flag)
+		break;
+}
+
+function showall()
+{
+	var newWindow = window.open("about:blank");
+	newWindow.location.href = 'sub.html';
+}
+
+</script>
+
+<style>
+
+html,body,table{
+	margin : 0px;
+	height : 100%;
+}
+table,tr, td, th{
+	border : 1px solid;
+	text-align : center;
+}
+
+table{
+	border-collapse: collapse;
+	width : 100%;
+}
+
+th{
+	background-color: #e8503a; 
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+	height : 10%;
+}
+
+td{
+	width : 20%;
+	padding : 0.2em;
+}
+tr:nth-child(even){
+	background-color: #eee; 
+}
+
+tr:nth-child(odd){
+		background-color:#fff; 
+}
+</style>
+
+
+</head>
+
+<body>
+<!--
+<body onload="updateT()"> 
+<time id="currentTime"></time>
+ -->
+
+
+<table onclick="showall()">
+<tr>
+	<th>
+	학교
+	</th>
+	<th>
+	주유소
+	</th>
+	<th>
+	터미널
+	</th>
+	<th>
+	풍물거리
+	</th>
+	<th>
+	학교
+	</th>
+</tr>
+
+
+<script>
+
+for (var i = h; i < h+4; i++) 
+{  
+	
+	if(i == timetable.length)
+		break;
+	  
+
+	document.write("<tr>");
+
+	for (var j = 0; j < timetable[i].length; j++) 
+	{ 
+	 if(j%2 == 0)
+		 {
+		 	document.write("<td>");
+		 	if(timetable[i][j] =="없" || timetable[i][j] =="음")
+		 		document.write(timetable[i][j]);
+		 	else
+			 document.write(timetable[i][j] + " : ");
+		 }
+	  
+	 else{
+		 document.write(timetable[i][j]);
+		 document.write("</td>");
+	 	}
+	  
+	}
+	document.write("</tr>");
+} 
+if(!flag)
+	
+	document.write("<tr><td colspan=\"5\">버스없음</td></tr>");
+	
+	</script>
+</table>
+</body>
+</html>

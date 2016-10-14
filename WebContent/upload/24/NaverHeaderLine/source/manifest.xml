@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WidgetStore>
+
+    <required>
+
+        <manifest_version>2</manifest_version>				
+
+        <widget>
+
+            <name>NaverHeaderline</name>
+
+            <version>1.0</version>								
+
+            <root>NaverHeaderLine.jsp</root>
+
+        </widget>
+
+        <position kind="none">									
+
+
+		  </position>
+
+     </required>
+
+
+
+    <recommanded>
+
+   		<resolution method="fixed">                      
+	
+        
+				<fixed>
+					<width>410</width>
+					<height>400</height>
+
+				</fixed>
+			</resolution>
+
+    </recommanded>
+
+</WidgetStore>
+

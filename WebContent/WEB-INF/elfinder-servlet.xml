@@ -24,11 +24,11 @@
 		</property>
 		<property name="map">
 			<map>
-				<!--
+				
 				<entry key="tree">
 					<bean class="cn.bluejoe.elfinder.controller.executors.TreeCommandExecutor" />
 				</entry>
-				-->
+				
 			</map>
 		</property>
 	</bean>
@@ -43,8 +43,8 @@
 						<property name="tmbWidth" value="80" />
 					</bean>
 				</property>
-				<property name="volumeMap">
-					<!-- two volumes are mounted here -->
+		<!-- 		<property name="volumeMap">
+					two volumes are mounted here
 					<map>
 						<entry key="A">
 							<bean class="cn.bluejoe.elfinder.localfs.LocalFsVolume">
@@ -59,7 +59,7 @@
 							</bean>
 						</entry>
 					</map>
-				</property>
+				</property> -->
 				<!--
 				<property name="volumes">
 					<list>

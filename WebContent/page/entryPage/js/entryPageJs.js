@@ -44,21 +44,7 @@
 										});
 				 })
 				 
-		 					//네이버로그인 콜백인지 확인 
-								var state = getParameter("state");
-								if(state == null)
-									console.log("error of urlpaser");
-								var savedNaverState = naver.state;			
-											
-								if( state.match(savedNaverState) ){
-										naver.get_naver_userprofile("setHiddenForm()");			
-					}
-								
-								
-								
-								
-
-								
+	
 								 function wrapLogonModal(){
 									        //화면의 높이와 너비를 구한다.
 						        var maskHeight = $(document).height();  
@@ -108,5 +94,15 @@
 									$("#loginForm").submit();
 								}
 								
-
+			 					//네이버로그인 콜백인지 확인 
+									var state = getParameter("state");
+									if(state == null)
+										console.log("error of urlpaser");
+									var savedNaverState = naver.state;			
+												
+									if( state.match(savedNaverState) ){
+											naver.get_naver_userprofile("setHiddenForm()");			
+						}
+									
+									
 					

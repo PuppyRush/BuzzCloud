@@ -55,7 +55,6 @@ public class Member {
 		private String planePassword;
 		private enumMemberType idType;
 		private final String email;
-		private Timestamp regDate;
 		private final String sessionId;
 		private EnumMap<enumMemberAbnormalState, Boolean> abnormalState;
 		
@@ -67,7 +66,6 @@ public class Member {
 			
 			nickname="";
 			planePassword = "";
-			regDate = new Timestamp(System.currentTimeMillis());
 			idType = enumMemberType.NOTHING;
 			abnormalState = new EnumMap<enumMemberAbnormalState, Boolean>(enumMemberAbnormalState.class);
 		}
@@ -76,10 +74,8 @@ public class Member {
 			this.id = -1;
 			this.email = email;
 			sessionId = sId;
-			
 			nickname="";
 			planePassword = "";
-			regDate = new Timestamp(System.currentTimeMillis());
 			idType = enumMemberType.NOTHING;
 			abnormalState = new EnumMap<enumMemberAbnormalState, Boolean>(enumMemberAbnormalState.class);
 		}
@@ -91,11 +87,7 @@ public class Member {
 		public Builder planePassword(String pw){
 			planePassword = pw; return this;
 		}
-		
-		public Builder regDate(Timestamp date){
-			regDate=date; return this;
-		}
-		
+	
 		public Builder idType(enumMemberType idType){
 			this.idType = idType; return this;
 		}
@@ -142,7 +134,7 @@ public class Member {
 		email=bld.email;
 		regDate =  new Timestamp(System.currentTimeMillis());
 		sessionId= bld.sessionId;
-		
+	
 		
 	}
 	
@@ -300,8 +292,7 @@ public class Member {
 				throw new SQLException("-");
 			}
 			
-			Member member = (new Member.Builder(_idKey, email, sessionId)).idType(idType).nickname(nickname).planePassword(planePassword)
-			.regDate(new Timestamp(System.currentTimeMillis())).build();
+			Member member = (new Member.Builder(_idKey, email, sessionId)).idType(idType).nickname(nickname).planePassword(planePassword).build();
 			MemberManager.addMember(member);
 			
 			_ps.close();
@@ -597,6 +588,11 @@ public class Member {
 		MemberManager.removeMember(this);
 	}
 	
+	public void doWithdraw() {
+		
+		
+		
+	}
 	
 	
 

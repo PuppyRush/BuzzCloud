@@ -442,8 +442,8 @@ public final class MemberManager {
 						state.put(enumMemberAbnormalState.JOIN_CERTIFICATION, false);
 				}
 		
-				Member member = (new Member.Builder(_rs.getInt("userId"), _rs.getString("email"), "")).idType(enumMemberType.valueOf(_rs.getString("idType"))  ).nickname(_rs.getString("nickname"))
-						.regDate(_rs.getTimestamp("registrationDate") ).abnormalState(state).build();
+				Member member = (new Member.Builder(_rs.getInt("userId"), _rs.getString("email"), "")).idType(enumMemberType.valueOf(_rs.getString("idType"))  )
+						.nickname(_rs.getString("nickname")).abnormalState(state).build();
 				
 				_members.add(member);
 				
@@ -605,8 +605,8 @@ public final class MemberManager {
 		_rs.next();
 		String hashedpw =  _rs.getString("password");
 		
-		return (new Member.Builder(_rs.getInt("userId"), email, sId)).idType(enumMemberType.valueOf(_rs.getString("registrationKind"))  ).nickname(_rs.getString("nickname"))
-				.regDate(new Timestamp(System.currentTimeMillis())).build();
+		return (new Member.Builder(_rs.getInt("userId"), email, sId)).idType(enumMemberType.valueOf(_rs.getString("registrationKind"))  )
+				.nickname(_rs.getString("nickname")).build();
 		
 		
 	}

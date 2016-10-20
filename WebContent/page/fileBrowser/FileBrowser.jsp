@@ -32,7 +32,7 @@
 		
 		<!-- custom CSS -->
 				<link rel="stylesheet" type="text/css"			href="/page/fileBrowser/css/filebrowser.css">
-				<link rel="stylesheet" type="text/css"			href="/page/fileBrowser/css/form.css">
+				
 		
 		<!-- jQuery UI (REQUIRED) -->
 		<link rel="stylesheet" type="text/css"			href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
@@ -65,11 +65,6 @@
     <script src="https://swisnl.github.io/jQuery-contextMenu/js/main.js" type="text/javascript"></script>
     <script type="text/javascript" src="/page/fileBrowser/js/contextmenu.js"></script>
 		
-			
-		<!-- network js-->
-			<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-			<script type="text/javascript" src="/include/network-1.5.0/network.js"></script>
-			<script type="text/javascript" src="/page/fileBrowser/js/network.js"></script>
 		
 
 <!-- GoogleDocs Quicklook plugin for GoogleDrive Volume (OPTIONAL) -->
@@ -91,29 +86,6 @@
 <body>
 
 
-	<div id="mask"></div>
-	
-	<div class="issueModal">
-
-		<div id="issue">
-				<img src="/image/icon/option.jpg"	class="img-fluid context-menu-one btn btn-neutral">
-		</div>
-
-	</div>	
-	
-	<div class="subNetworkModal">
-
-		<div id="subNetwork"></div>
-
-	</div>
-
-	<div class="supperNetworkModal">
-
-		<div id="supperNetwork"></div>
-
-	</div>
-
-
 <div id="elfinder"></div>
 
 <div class="container">
@@ -132,19 +104,21 @@
 </form>
 
 
-<form id="supperGroupForm" method="POST" ACTION="viewSupperGroup.do">
+<form id="superGroupForm" method="POST" ACTION="viewsuperGroup.do">
 	<input type="hidden" name="groupId" id="groupId">
+</form>
+
+<form id="issueForm" method="POST" ACTION="viewIssueForm.do">
+	<input type="hidden" name="groupId" id="groupId">
+	<input type="hidden" name="isSelectUpper" id="isSelectUpper">
+	<input type="hidden" name="isSelectSub" id="isSelectsub">
 </form>
 
 
 <script>
 		
 		window.onload=function(){
-			$('.issueModal').hide();
-			$('.subNetworkModal').hide();		
-			$('.supperNetworkModal').hide();
-			$('.supperNetwork').hide();		
-			$('.subNetwork').hide();		
+	
 		}
 
 </script>

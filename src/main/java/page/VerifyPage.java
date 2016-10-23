@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import member.Member;
+import member.MemberController;
 import member.MemberException;
 import member.MemberManager;
 import member.enums.enumMemberState;
@@ -34,7 +35,7 @@ public class VerifyPage {
 		
 		try{				
 			
-			member = MemberManager.getMember(sId);
+			member = MemberController.getMember(sId);
 			if(member.isLogout())
 				throw new MemberException(enumMemberState.NOT_LOGIN, enumPage.ENTRY);
 			

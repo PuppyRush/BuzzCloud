@@ -12,5 +12,15 @@ public class GroupAuthority extends Authority{
 		authorityType = type;
 	}
 
+	public EnumMap<enumGroupAuthority, Boolean> getAuthorityType() {
+		return authorityType;
+	}
 
+	public void setAuthorityType(EnumMap<enumGroupAuthority, Boolean> authorityType) {
+		this.authorityType = authorityType;
+	}
+
+	
+	
+	
 }

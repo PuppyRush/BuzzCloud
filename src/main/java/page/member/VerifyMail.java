@@ -32,36 +32,24 @@ public class VerifyMail implements commandAction {
 		
 		HashMap<String , Object> returns = new HashMap<String , Object>();
 		
-		String sId = request.getRequestedSessionId();
-		String mail = (String) request.getParameter("mail");
-		Member member = MemberManager.getMember(sId);
-		
+		String sessionId = request.getRequestedSessionId();
+		String email = (String) request.getParameter("mail");
+
 		try{
-			if(!MemberManager.isMember(member))
+			if(!MemberManager.isMember(email))
 				throw new MemberException("일치하는 메일이 존재하지 않습니다.", enumMemberState.NOT_JOIN, enumPage.JOIN);
 			
-	
-					
-			if(member.getEmail().equals(mail)){
-				returns.put("view", enumPage.ENTRY.toString());
-				returns.put("message", "메일로 인증번호가 전송되었습니다. 메일을 확인하세요.");
-				returns.put("messageKind", enumCautionKind.NORMAL);
-				returns.put("notExistMail","false");
-			}
-			else
-				throw new MemberException("일치하는 메일이 존재하지 않습니다.", enumMemberState.NOT_EXIST_IN_DB, enumPage.INPUT_MAIL);
-				
-					
-			
+			returns.put("view", enumPage.ENTRY.toString());
+			returns.put("message", "메일로 인증번호가 전송되었습니다. 메일을 확인하세요.");
+			returns.put("messageKind", enumCautionKind.NORMAL);
+			returns.put("notExistMail","false");
+		
 		}catch(MemberException e){
 			returns.put("view", e.getToPage().toString());
 			returns.put("message", e.toString());
 			returns.put("messageKind", enumCautionKind.ERROR);
 		}
-		
-		
-		
-				
-	return returns;
+					
+		return returns;
     }
 }

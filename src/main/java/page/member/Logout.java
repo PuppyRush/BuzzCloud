@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import member.MemberManager;
 import member.Member;
+import member.MemberController;
 import member.MemberException;
 import member.enums.enumMemberState;
 
@@ -15,7 +16,9 @@ import page.PageException;
 import page.enums.enumCautionKind;
 import page.enums.enumPage;
 import page.enums.enumPageError;
+import property.ControllerException;
 import property.commandAction;
+import property.enums.enumController;
 
 
 /**
@@ -32,23 +35,24 @@ public class Logout implements commandAction {
 		
 		HashMap<String , Object> returns = new HashMap<String , Object>();
 		Member member = null;
-		String nick_or_mail = null;
 		
 		try{
 						
 			if(request.getParameter("sessionId")==null)				
 				throw new PageException(enumPageError.UNKNOWN_PARAMATER, enumPage.ERROR404);
 			
-			String sId = (String)request.getParameter("sessionId");
-			member = MemberManager.getMember(sId);
+			String sessionId = (String)request.getParameter("sessionId");
 			
-			if(!MemberManager.isContainsMember(sId))
-				throw new MemberException(enumMemberState.NOT_EXIST_MEMBER_FROM_MAP, enumPage.ENTRY);
+			
+			if(!MemberController.containsMember(sessionId))
+				throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
+			
+			member = MemberController.getMember(sessionId);
 			
 			if(!member.isLogin())
 				throw new MemberException("로그인 한 유저가 아닙니다.", enumMemberState.NOT_LOGIN, enumPage.ENTRY);
 			
-			member.doLogout();
+			member.doLogout(sessionId);
 			
 			returns.put("view", enumPage.ENTRY.toString());	
 			returns.put("doLogout", true);
@@ -64,7 +68,6 @@ public class Logout implements commandAction {
 		}
 		catch( MemberException e){
 			switch(e.getErrCode()){
-				case NOT_EXIST_MEMBER_FROM_MAP:
 				case NOT_LOGIN:
 				case NOT_JOIN:
 					returns.put("initSession", true);
@@ -85,7 +88,12 @@ public class Logout implements commandAction {
 			
 			e.printStackTrace();
 			
-		} catch (Throwable e) {
+		}catch(ControllerException e){
+			returns.put("view", e.getToPage().toString());		
+			
+		}
+		
+		catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -13,5 +13,13 @@ public class FileAuthority extends Authority{
 
 	}
 
+	public EnumMap<enumFileAuthority, Boolean> getAuthorityType() {
+		return authorityType;
+	}
+
+	public void setAuthorityType(EnumMap<enumFileAuthority, Boolean> authorityType) {
+		this.authorityType = authorityType;
+	}
+
 	
 }

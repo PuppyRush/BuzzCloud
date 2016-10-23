@@ -55,15 +55,13 @@ public class Member {
 		private String planePassword;
 		private enumMemberType idType;
 		private final String email;
-		private final String sessionId;
 		private EnumMap<enumMemberAbnormalState, Boolean> abnormalState;
 		
-		public Builder(int id, String email, String sId){
+		public Builder(int id, String email){
 			
 			this.id = id;
 			this.email = email;
-			sessionId = sId;
-			
+						
 			nickname="";
 			planePassword = "";
 			idType = enumMemberType.NOTHING;
@@ -73,7 +71,7 @@ public class Member {
 		public Builder(String email, String sId){
 			this.id = -1;
 			this.email = email;
-			sessionId = sId;
+		
 			nickname="";
 			planePassword = "";
 			idType = enumMemberType.NOTHING;
@@ -105,26 +103,25 @@ public class Member {
 	
 
 	
-	protected EnumMap<enumMemberAbnormalState, Boolean> abnormalState;
+	private EnumMap<enumMemberAbnormalState, Boolean> abnormalState;
 	
 	public static final int DEFAULT_VALUE = -1;
-	protected int id;
-	protected String nickname;
-	protected String planePassword;
-	protected enumMemberType idType;
-	protected String email;
-	protected Timestamp regDate;
-	protected String sessionId;
-	protected boolean isLogin;
-	protected boolean isLogout;
-	protected boolean isJoin;
+	private int id;
+	private String nickname;
+	private String planePassword;
+	private enumMemberType idType;
+	private String email;
+	private Timestamp regDate;
+	private boolean isLogin;
+	private boolean isLogout;
+	private boolean isJoin;
 	
 	
-	protected Member(){
+	private Member(){
 		
 	}
 	
-	protected Member(Builder bld){
+	private Member(Builder bld){
 		id = bld.id;
 
 		nickname=bld.nickname;
@@ -133,7 +130,7 @@ public class Member {
 		idType=bld.idType;
 		email=bld.email;
 		regDate =  new Timestamp(System.currentTimeMillis());
-		sessionId= bld.sessionId;
+		
 	
 		
 	}
@@ -204,10 +201,6 @@ public class Member {
 	public enumMemberType getUserType() {
 		return idType;
 	}
-
-	public String getSessionId() {
-		return sessionId;
-	}
 	
 	public Timestamp getRegDate() {
 		return regDate;
@@ -221,7 +214,6 @@ public class Member {
 		return abnormalState;
 	}
 
-	
 	/////method/////
 
 	/**
@@ -231,96 +223,56 @@ public class Member {
 	 * @throws Throwable 
 	 */
 	@SuppressWarnings("resource")
-	public boolean doJoin() throws Throwable {
+	public boolean doJoin(String sId) throws Throwable {
 		
 		conn.setAutoCommit(false);
-		ResultSet _rs = null;
-		PreparedStatement _ps = null;
+		ResultSet rs = null;
+		PreparedStatement ps = null;
 		int _idKey=-1;
 		
 		try {
 			
-			_ps = conn.prepareStatement("select userId from user where email = ?");
-			_ps.setString(1, email);
-			_rs = _ps.executeQuery();
-
-			//이미 가입한 경우
-			if(_rs.next()){
-	
-				int id = _rs.getInt("userId");
-				
-				_ps = conn.prepareStatement("select joinCertification from userState where userId = ? , certificationType = ?");
-						
-				_ps.setInt(1, id);
-				_ps.setInt(2, Integer.valueOf(enumMailType.JOIN.toString()));
-				_rs = _ps.executeQuery();
-						
-				if(_rs.next())				
-					throw new MemberException( "가입후  인증하지 않은 상태입니다.메일 인증 후 로그인 하세요" ,enumMemberState.NOT_JOIN_CERTIFICATION, enumPage.ENTRY);
-				else
-					throw new MemberException(enumMemberState.JOIN, enumPage.LOGIN);
-
-			}
-		
 			////////user table
 			
-			_ps = conn.prepareStatement(
+			ps = conn.prepareStatement(
 					"insert into user ( email, nickname, password, registrationDate, registrationKind) values (?,?,?,?,?)",
 					PreparedStatement.RETURN_GENERATED_KEYS);
 
-			_ps.setString(1,email);
-			_ps.setString(2, nickname);
-			_ps.setTimestamp(4, new Timestamp( System.currentTimeMillis()) );
-			_ps.setString(5, idType.toString());
+			ps.setString(1,email);
+			ps.setString(2, nickname);
+			ps.setTimestamp(4, new Timestamp( System.currentTimeMillis()) );
+			ps.setString(5, idType.toString());
 			if( idType.equals(enumMemberType.NOTHING)){
 
 				String _pw = BCrypt.hashpw( planePassword, BCrypt.gensalt(12));
-				_ps.setString(3, _pw);
+				ps.setString(3, _pw);
 			}
 			else
-				_ps.setString(3, "");
+				ps.setString(3, "");
 			
-			_ps.executeUpdate();
+			ps.executeUpdate();
 
-			_rs = _ps.getGeneratedKeys();
+			rs = ps.getGeneratedKeys();
 
-			if (_rs.next()) {
-			    _idKey = _rs.getInt(1);
+			if (rs.next()) {
+			    _idKey = rs.getInt(1);
 			}	
 			else{
 				
 				throw new SQLException("-");
 			}
 			
-			Member member = (new Member.Builder(_idKey, email, sessionId)).idType(idType).nickname(nickname).planePassword(planePassword).build();
-			MemberManager.addMember(member);
+			id = _idKey;
 			
-			_ps.close();
-			_rs.close();
+			MemberController.addMember(this, sId);
+			
+			ps.close();
+			rs.close();
 	
 			conn.commit();
 		}
-		finally {
-			if(conn!=null) 
-				try{conn.rollback();}// Exception 발생시 rollback 한다.
-					catch(SQLException ex1){
-						System.out.println(ex1.getMessage());
-						ex1.printStackTrace();
-					}
-			if (_ps != null)
-				try {
-					_ps.close();
-				} catch (SQLException ex) {
-					System.out.println(ex.getMessage());
-					ex.printStackTrace();
-				}
-			if (_rs != null)
-				try {
-					_rs.close();
-				} catch (SQLException ex) {
-					System.out.println(ex.getMessage());
-					ex.printStackTrace();
-				}
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		
 			
@@ -335,75 +287,74 @@ public class Member {
 	 * @return 로그인 무사히 성사됐는지 여부를 반환
 	 * @throws  
 	 */
-	public boolean doLogin() throws Exception {
+	public boolean doLogin(String sId) throws Exception {
 		
-		PreparedStatement __ps =null;
-		ResultSet __rs = null;
-		Statement _st = conn.createStatement();
-		PreparedStatement _ps = null;
-		ResultSet _rs=null;
-		boolean _res=false;
+		PreparedStatement _ps =null;
+		ResultSet _rs = null;
+		PreparedStatement ps = null;
+		ResultSet rs=null;
+		boolean res=false;
 
 		try {				
 			
 			conn.setAutoCommit(false);
 			
-			_ps = conn.prepareStatement("select * from user where email = ? ");
-			_ps.setString(1, email);
-			_rs = _ps.executeQuery();	
-			_rs.next();
-			String hashedpw =  _rs.getString("password");
-			int _idKey = _rs.getInt("userId");
+			ps = conn.prepareStatement("select * from user where email = ? ");
+			ps.setString(1, email);
+			rs = ps.executeQuery();	
+			rs.next();
+			String hashedpw =  rs.getString("password");
+			int _idKey = rs.getInt("userId");
 			id = _idKey;
 			
 			switch(idType){
 				case NOTHING:
 					if( BCrypt.checkpw( planePassword, hashedpw ) ){
 						
-						_res =  true;
+						res =  true;
 
 						////// 마지막 로그인 날짜 갱신
-						__ps = conn.prepareStatement("update userDetail set lastLoginDate = ?, failedLoginCount = ? where userId = ?");
+						_ps = conn.prepareStatement("update userDetail set lastLoginDate = ?, failedLoginCount = ? where userId = ?");
 						
 						
 						Timestamp t = new Timestamp(System.currentTimeMillis());
-						__ps.setTimestamp(1, t);
-						__ps.setInt(2, 0);
-						__ps.setInt(3, _idKey);
-						__ps.executeUpdate();
-						__ps.close();
+						_ps.setTimestamp(1, t);
+						_ps.setInt(2, 0);
+						_ps.setInt(3, _idKey);
+						_ps.executeUpdate();
+						_ps.close();
 										
 						
 						//잠금상태 해제 
 						//sleep인경우?
 						
-						_rs.close();
-						_ps.close();
+						rs.close();
+						ps.close();
 						
 						isLogin = true;
-						MemberManager.addMember(this);
+						MemberController.addMember(this, sId);
 						
 					}
 					//불일치
 					else{
-						_res = false;
+						res = false;
 						
-						__ps = conn.prepareStatement("select failedLoginCount from userDetail where userId =?");
-						__ps.setInt(1,_idKey);
-						__rs = __ps.executeQuery();
-						__rs.next();
-						int _failedLoginCount = __rs.getInt("failedLoginCount");
-						__ps.close();
+						_ps = conn.prepareStatement("select failedLoginCount from userDetail where userId =?");
+						_ps.setInt(1,_idKey);
+						_rs = _ps.executeQuery();
+						_rs.next();
+						int _failedLoginCount = _rs.getInt("failedLoginCount");
+						_ps.close();
 										
-						__ps = conn.prepareStatement("update userDetail set failedLoginCount = ? where userId = ?");
-						__ps.setInt(1, _failedLoginCount+1);
-						__ps.setInt(2, _idKey);					
-						__ps.close();
+						_ps = conn.prepareStatement("update userDetail set failedLoginCount = ? where userId = ?");
+						_ps.setInt(1, _failedLoginCount+1);
+						_ps.setInt(2, _idKey);					
+						_ps.close();
 						if(_failedLoginCount >= Integer.valueOf(enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString())){
-							__ps = conn.prepareStatement("update userState set isAbnormal = 1 , failedLogin = 1 where userId = ?");
-							__ps.setInt(1, _idKey);
-							__ps.executeUpdate();
-							__ps.close();
+							_ps = conn.prepareStatement("update userState set isAbnormal = 1 , failedLogin = 1 where userId = ?");
+							_ps.setInt(1, _idKey);
+							_ps.executeUpdate();
+							_ps.close();
 						}
 							
 		
@@ -417,25 +368,25 @@ public class Member {
 				case NAVER:
 					
 					////// 마지막 로그인 날짜 갱신
-					__ps = conn.prepareStatement("update userDetail set lastLoginDate = ?, failedLoginCount = ? where userId = ?");
+					_ps = conn.prepareStatement("update userDetail set lastLoginDate = ?, failedLoginCount = ? where userId = ?");
 					
 					
 					Timestamp t = new Timestamp(System.currentTimeMillis());
-					__ps.setTimestamp(1, t);
-					__ps.setInt(2, 0);
-					__ps.setInt(3,_idKey);
-					__ps.executeUpdate();
-					__ps.close();
+					_ps.setTimestamp(1, t);
+					_ps.setInt(2, 0);
+					_ps.setInt(3,_idKey);
+					_ps.executeUpdate();
+					_ps.close();
 									
 					
 					//잠금상태 해제 
 					//sleep인경우?
 					
-					_rs.close();
-					_ps.close();
+					rs.close();
+					ps.close();
 					
 					isLogin = true;
-					MemberManager.addMember(this);
+					MemberController.addMember(this, sId);
 					
 					
 					break;
@@ -446,36 +397,18 @@ public class Member {
 			
 					
 			}
+			
+			
 			conn.setAutoCommit(true);
+			
+		}catch(SQLException e){
+			e.printStackTrace();
 		}
-		finally {
-			if (_ps != null)
-				try {
-					_ps.close();
-				} catch (SQLException ex) {
-					System.out.println(ex.getMessage());
-					ex.printStackTrace();
-				}
-			if (_rs != null)
-				try {
-					_rs.close();
-				} catch (SQLException ex) {
-					System.out.println(ex.getMessage());
-					ex.printStackTrace();
-				}
-			if (_st != null)
-				try {
-					_st.close();
-				} catch (SQLException ex) {
-					System.out.println(ex.getMessage());
-					ex.printStackTrace();
-				}
-		}
-
-		return _res;
+	
+		return res;
 	}
 
-	public boolean doLoginManager() throws Throwable{
+	public boolean doLoginManager(String sId) throws Throwable{
 		
 		
 		PreparedStatement _ps = null;
@@ -521,7 +454,7 @@ public class Member {
 				//sleep인경우?
 		
 				isLogin = true;
-				MemberManager.addMember(this);
+				MemberController.addMember(this, sId);
 				
 			}
 			//불일치
@@ -549,25 +482,10 @@ public class Member {
 				isLogin = false;
 				
 			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
 		
-		}
-		finally {
-			if (_ps != null)
-				try {
-					_ps.close();
-				} catch (SQLException ex) {
-					System.out.println(ex.getMessage());
-					ex.printStackTrace();
-				}
-			if (_rs != null)
-				try {
-					_rs.close();
-				} catch (SQLException ex) {
-					System.out.println(ex.getMessage());
-					ex.printStackTrace();
-				}
-
-		}
 		
 		
 		return true;
@@ -578,14 +496,14 @@ public class Member {
 	 * @param member
 	 * @throws Throwable 
 	 */
-	public void doLogout() throws Throwable {
+	public void doLogout(String sId) throws Throwable {
 			
 		PreparedStatement _ps = conn.prepareStatement("update userState set lastLogoutDate = ? where userId = ?");
 		_ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()) ) ;
 		_ps.setInt(2,  id);
 		_ps.executeUpdate();
 
-		MemberManager.removeMember(this);
+		MemberController.removeMember(this.getId());
 	}
 	
 	public void doWithdraw() {
@@ -593,10 +511,5 @@ public class Member {
 		
 		
 	}
-	
-	
-
-
-
 
 }

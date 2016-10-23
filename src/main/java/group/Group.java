@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.EnumMap;
 
 import authority.Authority;
@@ -12,6 +14,7 @@ import authority.FileAuthority;
 import authority.GroupAuthority;
 import authority.MemberAuthority;
 import authority.enumFileAuthority;
+import authority.enumGroupAuthority;
 import authority.enumMemberAuthority;
 import member.Member;
 import message.*;
@@ -35,49 +38,59 @@ public class Group {
 		
 	}
 	
+	private boolean isFinal;
+	private boolean isRoot;
+	
 	private int groupId;
 	private Member owner;
 	private String groupName;
 	private GroupAuthority groupAuthority;
-	private HashMap<Integer,Group> upperGroups;
-	private HashMap<Integer,Group> subGroups;
+	private int upperGroup;
+	private ArrayList<Integer> subGroups;
 	private HashMap<Integer,AuthoritedMember> members;
 	
 
-	private Group(Builder b){
+	private Group(Builder b){ 
 		
 		groupId = b.groupId;
 		owner = b.owner;
 		groupName = b.groupName;
-		upperGroups = b.upperGroups;
+		upperGroup = b.upperGroup;
 		subGroups = b.subGroups;
 		members = b.members;		
 		
 	}
 	
 	public static class Builder{
-		
+	
+
+		private boolean isFinal;
+		private boolean isRoot;
+				
 		private int groupId;
 		private Member owner;
 		private String groupName;
+		private Timestamp createdDate;
 		private GroupAuthority groupAuthority;
-		private HashMap<Integer,Group> upperGroups;
-		private HashMap<Integer,Group> subGroups;
+		private int upperGroup;
+		private ArrayList<Integer> subGroups;
 		private HashMap<Integer,AuthoritedMember> members; 
 		
 		private MemberAuthority memberAuth;
 		private FileAuthority fileAuth;
 		
-		public Builder(Member owner, String name) throws SQLException{
+		public Builder(Member owner,int groupId , String name) throws SQLException{ 
+			
+			this.isFinal = false;
+			this.isRoot = false;
+			this.groupId = groupId;
 			this.owner = owner;
 			groupName = name;
 			
-			subGroups = new HashMap<Integer,Group>();
-			upperGroups = new HashMap<Integer,Group>();
+			subGroups = new ArrayList<Integer>();
 			members = new HashMap<Integer,AuthoritedMember>();
-			
-			
-			setGroupId();
+						
+		
 			setGroupAuthority();
 			setMemberAuthority();
 			setFileAuthority();
@@ -85,20 +98,7 @@ public class Group {
 			AuthoritedMember auth = new AuthoritedMember(owner, memberAuth, fileAuth);
 		
 		}
-		
-		private void setGroupId() throws SQLException{
-			
-			PreparedStatement ps = conn.prepareStatement("select groupId from group where owner = ?");
-			ps.setInt(1, owner.getId());
-			ResultSet rs = ps.executeQuery();
-			
-			if(rs.next())
-				groupId = rs.getInt("groupId");
-			else
-				throw new SQLException("사용자가 속한 그룹이 없습니다.");
-			
-		}
-		
+				
 		private void setGroupAuthority() throws SQLException{
 			
 			PreparedStatement ps = conn.prepareStatement("select * from groupAuthority where groupId = ?");
@@ -176,8 +176,33 @@ public class Group {
 			
 		}
 	
-		private void setUpperGroup(){
+		private void setUpperGroup() throws SQLException{
 			
+			
+			
+			if(groupAuthority.getAuthorityType().containsKey(enumGroupAuthority.ROOT)
+					 && groupAuthority.getAuthorityType().get(enumGroupAuthority.ROOT) )
+				isRoot = true;
+			else if(groupAuthority.getAuthorityType().containsKey(enumGroupAuthority.ROOT)
+					 && groupAuthority.getAuthorityType().get(enumGroupAuthority.ROOT)==false){
+				
+				PreparedStatement ps = conn.prepareStatement("select * from groupRelation where from to = ?");
+				ps.setInt(1, groupId);
+				ResultSet rs = ps.executeQuery();
+				int upperGroupId = rs.getInt("from");
+							
+			}
+				
+			if(groupAuthority.getAuthorityType().containsKey(enumGroupAuthority.FINAL)
+					 && groupAuthority.getAuthorityType().get(enumGroupAuthority.FINAL) )
+				isFinal = true;
+			else if(groupAuthority.getAuthorityType().containsKey(enumGroupAuthority.ROOT)
+					 && groupAuthority.getAuthorityType().get(enumGroupAuthority.ROOT)==false ){
+				
+				
+				
+			}
+				 
 			
 			
 		}
@@ -186,22 +211,16 @@ public class Group {
 			
 			
 		}
-		
+	
+		public Builder createdDate(Timestamp date){
+			createdDate = date; return this;
+		}
 
 		public Builder groupId(int id){
 			groupId = id;
 			return this;
 		}
 		
-		public Builder upperGroups(HashMap<Integer, Group> groups){
-			upperGroups = groups;
-			return this;
-		}
-		
-		public Builder subGroups(HashMap<Integer, Group> groups){
-			subGroups = groups;
-			return this;
-		}
 			
 		public Group build(){
 			return new Group(this);

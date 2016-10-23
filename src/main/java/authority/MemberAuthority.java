@@ -13,5 +13,13 @@ public class MemberAuthority extends Authority{
 	
 	}
 
+	public enumMemberAuthority getAuthorityType() {
+		return authorityType;
+	}
+
+	public void setAuthorityType(enumMemberAuthority authorityType) {
+		this.authorityType = authorityType;
+	}
+
 	
 }

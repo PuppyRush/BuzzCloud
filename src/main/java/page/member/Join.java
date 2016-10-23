@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import property.commandAction;
 import member.*;
+import member.enums.enumMemberState;
 import member.enums.enumMemberType;
 import page.PageException;
 import page.enums.enumCautionKind;
@@ -29,25 +30,24 @@ public class Join implements commandAction {
 			if(request.getParameter("email")==null || request.getParameter("idType")==null || request.getParameter("password")==null|| request.getParameter("nickname")==null)
 				throw new PageException(enumPageError.NO_PARAMATER, enumPage.ERROR404);
 							
-			enumMemberType _idType = enumMemberType.valueOf(request.getParameter("idType"));		
+			enumMemberType idType = enumMemberType.valueOf(request.getParameter("idType"));		
 			
 		
-			String _sId = request.getRequestedSessionId();
-			String _email =request.getParameter("email"); 
-			String _pw="";			
-			String _nickname= request.getParameter("nickname");
+			String sId = request.getRequestedSessionId();
+			String email =request.getParameter("email"); 
+			String pw="";			
+			String nickname= request.getParameter("nickname");
 			
-			switch (_idType) {
+			switch (idType) {
 					
 				case GOOGLE:
 				case NAVER:			
-					_pw="";
+					pw="";
 					
 					break;
 		
 				case NOTHING:
-					_pw = request.getParameter("password");
-					
+					pw = request.getParameter("password");
 					break;
 		
 				default:
@@ -55,18 +55,25 @@ public class Join implements commandAction {
 										
 			}	
 	
-			Member tempMember = new Member.Builder(_email, _sId).idType(_idType).planePassword(_pw).build();
+			Member tempMember = new Member.Builder(email, sId).idType(idType).planePassword(pw).build();
 			
-			if ( tempMember.doJoin())
-				if(MemberManager.requestCertificateJoin(MemberManager.getMember(_sId))){
-					returns.put("view", enumPage.ENTRY.toString());
-					returns.put("isSuccessJoin", "true");
-					returns.put("message", "가입에 성공하였습니다. 메일인증을 하신 후 로그인하세요.");
-					returns.put("messageKind", enumCautionKind.NORMAL);					
-				}
+			if(MemberManager.isMember(tempMember.getEmail()) ){
 				
-			
-			
+				MemberManager.requestCertificateJoin(tempMember);
+				
+			}
+			else{
+				
+				tempMember.doJoin(sId);
+				
+				returns.put("view", enumPage.ENTRY.toString());
+				returns.put("isSuccessJoin", "true");
+				returns.put("message", "가입에 성공하였습니다. 메일인증을 하신 후 로그인하세요.");
+				returns.put("messageKind", enumCautionKind.NORMAL);	
+				
+			}
+		
+	
 		}catch(PageException e){
 			returns.put("view", e.getPage().toString());
 			returns.put("isSuccessJoin", "false");

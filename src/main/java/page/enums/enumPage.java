@@ -14,6 +14,7 @@ public enum enumPage {
 	CERTIFICATE("verifyRegistration.do"),
 		LOGIN("/Member/Login.jsp"),	//  /Member 폴더에서 시작.
 		JOIN("/Member/Join.jsp"),
+		LOST_PASSWORD("/Member/Lostpassword.jsp"),
 		RESET_PASSWORD("/Member/ResetPassword.jsp"),
 		CERTIFICATE_FAILED_PASSWORD("/Member/CertificatePassword.jsp"),
 		INPUT_CERTIFICATION_NUMBER("/Member/CheckAuthNum.jsp"),

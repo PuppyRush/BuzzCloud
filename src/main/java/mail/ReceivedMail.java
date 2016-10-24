@@ -5,7 +5,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import member.MemberManager;
+import entity.member.MemberManager;
 import page.PageException;
 import page.enums.enumCautionKind;
 import page.enums.enumPage;

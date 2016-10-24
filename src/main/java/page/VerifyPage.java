@@ -5,12 +5,12 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import member.Member;
-import member.MemberController;
-import member.MemberException;
-import member.MemberManager;
-import member.enums.enumMemberState;
-import member.enums.enumMemberType;
+import entity.member.Member;
+import entity.member.MemberController;
+import entity.member.MemberException;
+import entity.member.MemberManager;
+import entity.member.enums.enumMemberState;
+import entity.member.enums.enumMemberType;
 import page.enums.enumCautionKind;
 import page.enums.enumPage;
 import property.commandAction;

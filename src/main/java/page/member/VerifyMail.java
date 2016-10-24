@@ -3,10 +3,10 @@ package page.member;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import member.MemberManager;
-import member.Member;
-import member.MemberException;
-import member.enums.enumMemberState;
+import entity.member.Member;
+import entity.member.MemberException;
+import entity.member.MemberManager;
+import entity.member.enums.enumMemberState;
 import page.enums.enumCautionKind;
 import page.enums.enumPage;
 

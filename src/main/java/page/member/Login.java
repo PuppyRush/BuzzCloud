@@ -4,14 +4,14 @@ package page.member;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entity.member.Member;
+import entity.member.MemberController;
+import entity.member.MemberException;
+import entity.member.MemberManager;
+import entity.member.enums.enumMemberAbnormalState;
+import entity.member.enums.enumMemberState;
+import entity.member.enums.enumMemberType;
 import mail.enumMailType;
-import member.MemberManager;
-import member.Member;
-import member.MemberController;
-import member.MemberException;
-import member.enums.enumMemberAbnormalState;
-import member.enums.enumMemberState;
-import member.enums.enumMemberType;
 
 import java.sql.SQLException;
 import java.util.EnumMap;
@@ -67,7 +67,7 @@ public class Login implements commandAction {
 						throw new MemberException("이메일이 존재하지 않습니다. 가입후 사용하세요. ", enumMemberState.NOT_JOIN, enumPage.JOIN);
 					
 					//로그인 여부 확인.				
-					if(MemberController.containsMember(sessionId)){
+					if(MemberController.containsObject(sessionId)){
 						tempMember = MemberController.getMember(sessionId);
 						if(tempMember.isLogin())
 							throw new MemberException( enumMemberState.ALREADY_LOGIN, enumPage.LOGIN);

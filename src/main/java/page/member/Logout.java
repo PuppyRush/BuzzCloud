@@ -4,11 +4,12 @@ package page.member;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import member.MemberManager;
-import member.Member;
-import member.MemberController;
-import member.MemberException;
-import member.enums.enumMemberState;
+import entity.ControllerException;
+import entity.member.Member;
+import entity.member.MemberController;
+import entity.member.MemberException;
+import entity.member.MemberManager;
+import entity.member.enums.enumMemberState;
 
 import java.util.HashMap;
 
@@ -16,7 +17,6 @@ import page.PageException;
 import page.enums.enumCautionKind;
 import page.enums.enumPage;
 import page.enums.enumPageError;
-import property.ControllerException;
 import property.commandAction;
 import property.enums.enumController;
 
@@ -44,7 +44,7 @@ public class Logout implements commandAction {
 			String sessionId = (String)request.getParameter("sessionId");
 			
 			
-			if(!MemberController.containsMember(sessionId))
+			if(!MemberController.containsObject(sessionId))
 				throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
 			
 			member = MemberController.getMember(sessionId);

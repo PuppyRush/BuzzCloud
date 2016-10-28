@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.plaf.synth.SynthSpinnerUI;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -44,6 +45,9 @@ public class ConnectorController
 	public void connector(HttpServletRequest request,
 			final HttpServletResponse response) throws IOException
 	{
+		
+		System.out.println("connn!");
+		
 		try
 		{
 			request = parseMultipartContent(request);

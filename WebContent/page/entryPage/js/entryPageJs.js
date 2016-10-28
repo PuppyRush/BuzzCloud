@@ -2,7 +2,7 @@
 				var mail;
 				var nick;
 				
-				var naver = new naver_id_login("Vf8cYbYQv2N0c_cSv_XA", "http://114.129.211.123:8100/");
+				var naver = new naver_id_login("Vf8cYbYQv2N0c_cSv_XA", "http://114.129.212.30:8100/");
 				var state = naver.getUniqState();
 				naver.setState(state);
 				naver.setButton(BUTTON_COLOR_GREEN, BANNER_BIG_TYPE, 40);
@@ -44,21 +44,7 @@
 										});
 				 })
 				 
-		 					//네이버로그인 콜백인지 확인 
-								var state = getParameter("state");
-								if(state == null)
-									console.log("error of urlpaser");
-								var savedNaverState = naver.state;			
-											
-								if( state.match(savedNaverState) ){
-										naver.get_naver_userprofile("setHiddenForm()");			
-					}
-								
-								
-								
-								
-
-								
+	
 								 function wrapLogonModal(){
 									        //화면의 높이와 너비를 구한다.
 						        var maskHeight = $(document).height();  
@@ -108,5 +94,15 @@
 									$("#loginForm").submit();
 								}
 								
-
+			 					//네이버로그인 콜백인지 확인 
+									var state = getParameter("state");
+									if(state == null)
+										console.log("error of urlpaser");
+									var savedNaverState = naver.state;			
+												
+									if( state.match(savedNaverState) ){
+											naver.get_naver_userprofile("setHiddenForm()");			
+						}
+									
+									
 					

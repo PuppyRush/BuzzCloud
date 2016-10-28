@@ -5,11 +5,12 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import member.Member;
-import member.MemberException;
-import member.MemberManager;
-import member.enums.enumMemberState;
-import member.enums.enumMemberType;
+import entity.EntityException;
+import entity.member.Member;
+import entity.member.MemberController;
+import entity.member.MemberManager;
+import entity.member.enums.enumMemberState;
+import entity.member.enums.enumMemberType;
 import page.enums.enumCautionKind;
 import page.enums.enumPage;
 import property.commandAction;
@@ -30,50 +31,49 @@ public class VerifyPage {
 			
 		HashMap<String , Object> returns = new HashMap<String , Object>();
 		Member member = null;
-	
-		
+			
 		try{				
 			
-			member = MemberManager.getMember(sId);
+			member = MemberController.getInstance().getMember(sId);
 			if(member.isLogout())
-				throw new MemberException(enumMemberState.NOT_LOGIN, enumPage.ENTRY);
+				throw new EntityException(enumMemberState.NOT_LOGIN, enumPage.ENTRY);
 			
 			switch(fromPage){
 					
-	
-					
 				case SETTINGS:
 					
-					if(!member.isJoin()){
-						throw new MemberException(enumMemberState.NOT_JOIN, enumPage.LOGIN);
-						
-					}
-					else if(!member.isLogin()){
-						throw new MemberException(enumMemberState.NOT_LOGIN, enumPage.LOGIN);
-					}
+					if(!member.isJoin())
+						throw new EntityException(enumMemberState.NOT_JOIN, enumPage.JOIN);
+					else if(!member.isLogin())
+						throw new EntityException(enumMemberState.NOT_LOGIN, enumPage.LOGIN);
 					
 					break;
-					
-
-					
 				
 				case LOGIN_MANAGER:
 					
 					if(member.getEmail().equals(enumSystem.ADMIN.toString()))
-							throw new MemberException(enumMemberState.NOT_ADMIN, enumPage.LOGIN_MANAGER);
-					
-					
+							throw new EntityException(enumMemberState.NOT_ADMIN, enumPage.LOGIN_MANAGER);
+
 					break;
 					
 				case MANAGE_SERVER:
 				case MANAGE_MEMBER:
 			
-
 					if(!member.getEmail().equals(enumSystem.ADMIN.toString()))
-							throw new MemberException(enumMemberState.NOT_ADMIN, enumPage.LOGIN_MANAGER);
-					
-					
+							throw new EntityException(enumMemberState.NOT_ADMIN, enumPage.LOGIN_MANAGER);
+								
 					break;
+					
+				case MAIN:
+				case ENTRYTOMAIN:
+					
+					if(!member.isJoin())
+						throw new EntityException(enumMemberState.NOT_JOIN, enumPage.JOIN);
+					else if(!member.isLogin())
+						throw new EntityException(enumMemberState.NOT_LOGIN, enumPage.LOGIN);
+					else if(member.isLogout())
+						throw new EntityException(enumMemberState.LOGOUT, enumPage.LOGIN);
+					
 					
 				default:
 					
@@ -81,12 +81,10 @@ public class VerifyPage {
 
 			
 			}//switch
-			
-		
 		
 			returns.put("isSuccessVerify", true);
 	
-		}catch(MemberException e){
+		}catch(EntityException e){
 			returns.put("isSuccessVerify", false);
 			returns.put("to", e.getToPage());
 			returns.put("message", e.getMessage());

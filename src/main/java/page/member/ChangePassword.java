@@ -4,7 +4,7 @@ package page.member;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import member.Member;
+import entity.member.Member;
 
 import java.sql.Timestamp;
 import java.util.HashMap;

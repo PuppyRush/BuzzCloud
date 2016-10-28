@@ -1,4 +1,4 @@
-package member.enums;
+package entity.member.enums;
 
 
 public enum enumMemberType {

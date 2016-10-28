@@ -1,4 +1,4 @@
-package member.enums;
+package entity.member.enums;
 
 import page.enums.enumPage;
 

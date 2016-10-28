@@ -23,10 +23,7 @@ import cn.bluejoe.elfinder.impl.StaticFsServiceFactory;
 import cn.bluejoe.elfinder.localfs.LocalFsVolume;
 import property.commandAction;
 
-@WebServlet(urlPatterns = { "/elfinder/servlet-connector" },
-				initParams = {
-@WebInitParam(name = "propertyConfig", value = "commandMapping.properties") 
-})
+@WebServlet(urlPatterns = { "/elfinder-servlet/*" })
 public class ConnectorServlet extends HttpServlet
 {
 	//core member of this Servlet
@@ -77,10 +74,10 @@ public class ConnectorServlet extends HttpServlet
 		fsService.setServiceConfig(serviceConfig);
 
 		fsService.addVolume("A",
-				createLocalFsVolume("My Files", new File("/tmp/a")));
-		fsService.addVolume("B",
+				createLocalFsVolume(InitializeFsAtOpen.getGroupName(), new File( InitializeFsAtOpen.getGroupDir()) ));
+		/*fsService.addVolume("B",
 				createLocalFsVolume("Shared", new File("/tmp/b")));
-
+*/
 		return fsService;
 	}
 

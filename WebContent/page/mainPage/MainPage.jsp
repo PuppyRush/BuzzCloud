@@ -1,5 +1,35 @@
+<%@page import="entity.member.MemberController"%>
+<%@ page import="page.VerifyPage, page.enums.enumPage, java.util.ArrayList, java.util.HashMap , entity.member.Member , entity.band.Band, entity.band.BandManager" %>
+<%@ page import="page.enums.enumCautionKind, property.tree.Tree, property.tree.Node"%>	
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+  
+<%
+
+	request.setCharacterEncoding("UTF-8");
+
+	Member member = null;
+ 	boolean isSuccessVerify = false;
+	HashMap<String,Object> results =  VerifyPage.Verify(session.getId(), enumPage.MAIN);
+	
+	if((boolean)results.get("isSuccessVerify")){
+	
+		member = MemberController.getInstance().getMember(session.getId());
+		isSuccessVerify = true;		
+		
+	}else{
+		isSuccessVerify = false;
+		enumPage to = (enumPage)results.get("to");
+		
+		request.setAttribute("message",  (String)results.get("message"));
+		request.setAttribute("messageKind", results.get("messageKind"));
+		response.sendRedirect(to.toString());
+		return;
+				
+	}
+	
+%>
     
 <!DOCTYPE html>
 <html class="full" lang="ko">
@@ -23,7 +53,9 @@
 
     <!-- Custom CSS -->
 			<link href="/page/mainPage/css/main.css?<?=filemtime(\'./css/readizgen.css\')?" rel="stylesheet" type="text/css">
-
+			<link href="/include/notificator/ohsnap.css" rel="stylesheet">
+		
+		
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -74,19 +106,76 @@
 
 
 <div id="mynetwork"></div>
-
+	<div id="ohsnap"></div>
 
 <form id="groupForm" method="GET" ACTION="viewFileBrowser.do">
 	<input type="hidden" name="groupId" id="groupId">
 </form>
 
 
-
+<script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript" src="/include/network-1.5.0/network.js"></script>
 <script type="text/javascript" src="/page/mainPage/js/network.js"></script>
+<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>
 
 
+<script>
+
+	var bandMap = new Map();
+	var bandAry = new Array();
+	
+	window.onload=function(){
+	
+		//메세지
+		var message;
+		var popup_color;
+		<% if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
+			enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
+		%>
+		  message = "<%=(String)request.getAttribute("message")%>";
+		  popup_color = "<%=(String)kind.getString()%>";
+		  ohSnap(message,{color:popup_color});
+		<%
+		}
+	
+		if(isSuccessVerify){
+			
+				ArrayList<Band> bands = 	BandManager.getInstance().getMyAdministeredBands(member.getId());
+				if(bands.size()>0){
+					for(Band band : bands){
+						
+						Tree<Band> tree = BandManager.getInstance().getSubBands(band.getBandId());
+						HashMap<Integer,ArrayList<Band>> subBands = tree.toHashMapOfInteger();
+						for(Integer key : subBands.keySet()){
+							%>
+								
+								
+							<%
+							for(Band subBand : subBands.get(key) ){
+												
+							%>
+								bandMap.put("<%=subBand.getBandId()%>","<%=subBand.getBandName()%>"));
+								bandAry.put(["<%=key%>","<%=subBand.getBandId()%>"]);
+							<%		
+							}
+							%>
+							alert(bandAry[0][0] + "," + bandAry[0][1]);
+							//addBandToPage(bandAry);
+							<%
+					}
+				}
+			}
+		}
+		%>
+			
+			
+	}
+			
+	////member가져오기
+
+
+</script>
 
 
 </body>

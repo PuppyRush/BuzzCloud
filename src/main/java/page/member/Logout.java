@@ -4,10 +4,14 @@ package page.member;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import member.MemberManager;
-import member.Member;
-import member.MemberException;
-import member.enums.enumMemberState;
+import entity.ControllerException;
+import entity.EntityException;
+import entity.enumController;
+import entity.enumEntityState;
+import entity.member.Member;
+import entity.member.MemberController;
+import entity.member.MemberManager;
+import entity.member.enums.enumMemberState;
 
 import java.util.HashMap;
 
@@ -32,23 +36,24 @@ public class Logout implements commandAction {
 		
 		HashMap<String , Object> returns = new HashMap<String , Object>();
 		Member member = null;
-		String nick_or_mail = null;
 		
 		try{
 						
 			if(request.getParameter("sessionId")==null)				
 				throw new PageException(enumPageError.UNKNOWN_PARAMATER, enumPage.ERROR404);
 			
-			String sId = (String)request.getParameter("sessionId");
-			member = MemberManager.getMember(sId);
+			String sessionId = (String)request.getParameter("sessionId");
 			
-			if(!MemberManager.isContainsMember(sId))
-				throw new MemberException(enumMemberState.NOT_EXIST_MEMBER_FROM_MAP, enumPage.ENTRY);
+			
+			if(!MemberController.getInstance().containsObject(sessionId))
+				throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
+			
+			member = MemberController.getInstance().getMember(sessionId);
 			
 			if(!member.isLogin())
-				throw new MemberException("로그인 한 유저가 아닙니다.", enumMemberState.NOT_LOGIN, enumPage.ENTRY);
+				throw new EntityException("로그인 한 유저가 아닙니다.", enumMemberState.NOT_LOGIN, enumPage.ENTRY);
 			
-			member.doLogout();
+			member.doLogout(sessionId);
 			
 			returns.put("view", enumPage.ENTRY.toString());	
 			returns.put("doLogout", true);
@@ -62,30 +67,35 @@ public class Logout implements commandAction {
 			returns.put("messageKind", enumCautionKind.ERROR);
 			e.printStackTrace();
 		}
-		catch( MemberException e){
-			switch(e.getErrCode()){
-				case NOT_EXIST_MEMBER_FROM_MAP:
-				case NOT_LOGIN:
-				case NOT_JOIN:
-					returns.put("initSession", true);
-					returns.put("view", e.getToPage().toString());		
-					returns.put("message", "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.");
-					returns.put("messageKind", enumCautionKind.ERROR);
-
-					break;
-				default:
-					
-					returns.put("doLogout", false);
-					returns.put("view", e.getToPage().toString());		
-					returns.put("message", "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.");
-					returns.put("messageKind", enumCautionKind.ERROR);
-					
-					break;
-			}
-			
+		catch( EntityException e){
+			if(e.getErrCode() instanceof enumMemberState)
+				switch((enumMemberState)e.getErrCode()){
+					case NOT_LOGIN:
+					case NOT_JOIN:
+						returns.put("initSession", true);
+						returns.put("view", e.getToPage().toString());		
+						returns.put("message", "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.");
+						returns.put("messageKind", enumCautionKind.ERROR);
+	
+						break;
+					default:
+						
+						returns.put("doLogout", false);
+						returns.put("view", e.getToPage().toString());		
+						returns.put("message", "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.");
+						returns.put("messageKind", enumCautionKind.ERROR);
+						
+						break;
+				}
+				
 			e.printStackTrace();
 			
-		} catch (Throwable e) {
+		}catch(ControllerException e){
+			returns.put("view", e.getToPage().toString());		
+			
+		}
+		
+		catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

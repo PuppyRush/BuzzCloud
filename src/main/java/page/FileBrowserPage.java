@@ -4,6 +4,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.bluejoe.elfinder.servlet.InitializeFsAtOpen;
 import page.enums.enumPage;
 import property.commandAction;
 
@@ -15,6 +16,8 @@ import property.commandAction;
 		
 			
 			HashMap<String, Object> r = new HashMap<String, Object>();
+			
+			InitializeFsAtOpen.setGroup("bz", "/home/cmk/workspace/");
 			
 			r.put("view", enumPage.BROWSER.toString());
 			

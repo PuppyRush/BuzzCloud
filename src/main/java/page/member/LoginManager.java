@@ -5,10 +5,11 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import member.MemberManager;
-import member.Member;
-import member.MemberException;
-import member.enums.enumMemberState;
+import entity.EntityException;
+import entity.member.Member;
+import entity.member.MemberController;
+import entity.member.MemberManager;
+import entity.member.enums.enumMemberState;
 import page.PageException;
 import page.enums.enumCautionKind;
 import page.enums.enumPage;
@@ -25,28 +26,33 @@ public class LoginManager implements commandAction{
 		
 		HashMap<String , Object> returns = new HashMap<String , Object>();
 		Member member = null;
-		String nick_or_mail = null;
-		String userType="";
-		String _sId;
+		String email = "";
+		String sessionId = request.getRequestedSessionId();
 		try{
 			
 			//필요조건
 			if( request.getParameter("email")==null || request.getParameter("password")==null)
 				throw new PageException(enumPageError.NO_PARAMATER, enumPage.ERROR404);
 	
-			_sId = (String)request.getParameter("sessionId");
-			member = MemberManager.getMember(_sId);
-			String id = (String)request.getParameter("login_username");
+			email = (String)request.getParameter("email");
+			
+			if(MemberController.getInstance().containsObject(sessionId)){
+				member = MemberController.getInstance().getMember(sessionId);
+				MemberController.getInstance().addMember(member,sessionId);
+			}
+			else
+				member = MemberManager.getInstance().getMember(email);
+			
 
 			if(!member.doLoginManager())
-				throw new MemberException(enumMemberState.NOT_EQUAL_PASSWORD, enumPage.LOGIN_MANAGER);
+				throw new EntityException(enumMemberState.NOT_EQUAL_PASSWORD, enumPage.LOGIN_MANAGER);
 			
 			returns.put("view", enumPage.MANAGE_MEMBER.toString());
 			
-		}catch(MemberException e){
+		}catch(EntityException e){
 			
 			returns.put("view", enumPage.LOGIN_MANAGER.toString());
-			returns.put("message", e.getErrCode().getString());
+			returns.put("message", e.getErrCode().toString());
 			returns.put("messageKind", enumCautionKind.ERROR);
 			
 		}

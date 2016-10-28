@@ -18,44 +18,54 @@
 <title>버즈클라우드에 오신걸 환영합니다!</title>
 		
 		<!-- Bootstrap Core CSS -->
-		<link
-			href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-			rel="stylesheet"
-			integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
-			crossorigin="anonymous">
-		
+		<link	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+			rel="stylesheet"	integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"	crossorigin="anonymous">
+
+	<!-- jQuery and jQuery UI (REQUIRED) -->
+				<script			src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
+		<script type="text/javascript" charset="utf-8"			src="http://code.jquery.com/jquery-latest.js"></script>
+		<script type="text/javascript" charset="utf-8"			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
+
+
 		
 <!-- Section CSS -->
 		
 		<!-- custom CSS -->
 				<link rel="stylesheet" type="text/css"			href="/page/fileBrowser/css/filebrowser.css">
+				
 		
 		<!-- jQuery UI (REQUIRED) -->
 		<link rel="stylesheet" type="text/css"			href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
-		
+		<script			src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>		
+		<!-- context menu css  -->
+    <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css"/>
+		    
 		<!-- elFinder CSS (REQUIRED) -->
-		<link rel="stylesheet" type="text/css"
-			href="/include/elFinder-2.1.16/css/elfinder.min.css">		<!-- 	<link rel="stylesheet" type="text/css" href="css/theme.css"> -->
+		<link rel="stylesheet" type="text/css"	href="/include/elFinder-2.1.16/css/elfinder.min.css">		
+			<!-- <link rel="stylesheet" type="text/css" href="css/theme.css"> -->
 		<link rel="stylesheet" type="text/css" media="screen"			href="/include/elFinder-2.1.16/theme_win10/css/theme.css">
 		
 		<!-- Section JavaScript -->
-		<!-- jQuery and jQuery UI (REQUIRED) -->
-		<script type="text/javascript" charset="utf-8"			src="http://code.jquery.com/jquery-latest.js"></script>
-		<script type="text/javascript" charset="utf-8"			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
-		
-		<script			src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
 		<link rel="stylesheet" type="text/css"			href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/smoothness/jquery-ui.css">
 		
-		
 		<!-- elFinder JS (REQUIRED) -->
-		<script src="/include/elFinder-2.1.16/js/elfinder.min.js"></script>
-		
+		<script src="/include/elFinder-2.1.16/js/elfinder.full.js"></script>
+			<script type="text/javascript" src="/page/fileBrowser/js/fileBrowser.js"></script>
 		
 		<!-- Bootstrap Core JavaScript -->
-		<script
+		<script 
 			src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 		
+		<!-- custom JS  -->
+			<script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
 
+		<!-- context menu js  -->
+    <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.js" type="text/javascript"></script>
+    <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
+    <script src="https://swisnl.github.io/jQuery-contextMenu/js/main.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/page/fileBrowser/js/contextmenu.js"></script>
+		
+		
 
 <!-- GoogleDocs Quicklook plugin for GoogleDrive Volume (OPTIONAL) -->
 <!--<script src="js/extras/quicklook.googledocs.js"></script>-->
@@ -76,50 +86,46 @@
 <body>
 
 
+<div id="elfinder"></div>
 
-	<nav class="navbar navbar-inverse navbar-fixed-bottom"
-		role="navigation">
-		<div class="container">
-			<!-- Brand and toggle get grouped for better mobile display -->
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse"
-					data-target="#bs-example-navbar-collapse-1">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">BuzzCloud</a>
-			</div>
-			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="collapse navbar-collapse"
-				id="bs-example-navbar-collapse-1">
-				<ul class="nav navbar-nav">
-					<li><a href="#">버즈클라우드?</a></li>
-					<li><a href="#">어떻게 사용하죠?</a></li>
-					<li><a href="#">문제점보고와 건의사항</a></li>
-					<li><a href="#">개발자와 연락하기</a></li>
-					<li><a href="#" class="joinToBuzzCloud">버즈클라우드에 가입하기 </a></li>
-				</ul>
-			</div>
-			<!-- /.navbar-collapse -->
+<div class="container">
+		<div class="row">
+	    <div class="col-md-11"></div>
+					<div id="context-menu-icon" class="col-md-1">
+						<img src="/image/icon/option.jpg"	class="img-fluid context-menu-one btn btn-neutral">
+					</div>
 		</div>
-		<!-- /.container -->
-	</nav>
+	</div>
 
 
-	<div id="elfinder"></div>
+<form id="subGroupForm" method="POST" ACTION="viewSubGroup.do">
+	<input type="hidden" name="groupId" id="groupId">
+	
+</form>
 
-	<script type="text/javascript" charset="utf-8">
-			// Documentation for client options:
-			// https://github.com/Studio-42/elFinder/wiki/Client-configuration-options
-			$(document).ready(function() {
-				$('#elfinder').elfinder({
-					url : '/elfinder/servlet-connector'  // connector URL (REQUIRED)
-					// , lang: 'ru'                    // language (OPTIONAL)
-				});
-			});
-		</script>
+
+<form id="superGroupForm" method="POST" ACTION="viewsuperGroup.do">
+	<input type="hidden" name="groupId" id="groupId">
+</form>
+
+<form id="issueForm" method="POST" ACTION="viewIssueForm.do">
+	<input type="hidden" name="groupId" id="groupId">
+	<input type="hidden" name="isSelectUpper" id="isSelectUpper">
+	<input type="hidden" name="isSelectSub" id="isSelectsub">
+</form>
+
+
+<script>
+		
+		window.onload=function(){
+	
+		}
+
+</script>
 
 
 </body>
+
+
+
 </html>

@@ -2,7 +2,7 @@
 @font-face {font-family:ngttf; src:url(NanumGothic.ttf);}
 @font-face {font-family:ngeot; src:url(NanumGothic.eot);}
 
-	#mask {  
+#mask{  
 	  position:absolute;  
 	  z-index:9000;  
 	  background-color:#000;  

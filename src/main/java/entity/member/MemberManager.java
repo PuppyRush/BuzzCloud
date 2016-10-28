@@ -7,6 +7,8 @@ import java.util.*;
 import java.util.Date;
 import org.mindrot.jbcrypt.BCrypt;
 
+import entity.EntityException;
+import entity.enumEntityState;
 import entity.member.enums.enumMemberAbnormalState;
 import entity.member.enums.enumMemberStandard;
 import entity.member.enums.enumMemberState;
@@ -26,14 +28,24 @@ public final class MemberManager {
 	private MemberManager() {
 	}
 
-	public static EnumMap<enumMemberAbnormalState, Boolean> getMemberAbnormalStates(int userId) throws Throwable{
+
+	private static class Singleton {
+		private static final MemberManager instance = new MemberManager();
+	}
+	
+	public static MemberManager getInstance () {
+		return Singleton.instance;
+	}
+	
+	
+	public  EnumMap<enumMemberAbnormalState, Boolean> getMemberAbnormalStates(int memberId) throws Throwable{
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		EnumMap<enumMemberAbnormalState, Boolean> stateMap = new EnumMap<>(enumMemberAbnormalState.class);
 
-		ps = conn.prepareStatement("select * from userState where userId = ?");
-		ps.setInt(1, userId);			
+		ps = conn.prepareStatement("select * from memberState where memberId = ?");
+		ps.setInt(1, memberId);			
 		rs = ps.executeQuery();
 		rs.next();
 	
@@ -58,12 +70,12 @@ public final class MemberManager {
 	 * @return	3개월 이상 지났다면 true 아니면 false
 	 * @throws SQLException 
 	 */
-	public static boolean isPassingDateOfMail(String email, enumMailType mailType) throws SQLException{
+	public  boolean isPassingDateOfMail(String email, enumMailType mailType) throws SQLException{
 		
-		int userId = emailToIdFromDB(email);
+		int memberId = emailToIdFromDB(email);
 		
-		PreparedStatement ps = conn.prepareStatement("select sendedDate from mail where userId = ?, certificationKind=?");
-		ps.setInt(1,userId);
+		PreparedStatement ps = conn.prepareStatement("select sendedDate from mail where memberId = ? and certificationKind=?");
+		ps.setInt(1,memberId);
 		ps.setInt(2,Integer.valueOf(mailType.toString()));
 		ResultSet _rs = ps.executeQuery();
 		_rs.next();		
@@ -97,9 +109,9 @@ public final class MemberManager {
 					
 	}
 
-	public static boolean isOverDateOfChangePassword(int uId) throws SQLException{
+	public  boolean isOverDateOfChangePassword(int uId) throws SQLException{
 		
-		PreparedStatement ps = conn.prepareStatement("lastModifiedPasswordDate from userDetail where userId = ?");
+		PreparedStatement ps = conn.prepareStatement("lastModifiedPasswordDate from memberDetail where memberId = ?");
 		ps.setInt(1, uId);
 		ResultSet rs = ps.executeQuery();
 		rs.next();
@@ -140,13 +152,13 @@ public final class MemberManager {
 	 * @throws SQLException 
 	 * @throws NumberFormatException 
 	 */
-	public static boolean isSendedmail(String email, enumMailType mailType) throws NumberFormatException, SQLException{
+	public  boolean isSendedmail(String email, enumMailType mailType) throws NumberFormatException, SQLException{
 		
 		//이미 전송하였는가?
-		int userId = emailToIdFromDB(email);
+		int memberId = emailToIdFromDB(email);
 		boolean isAlreadySend=false;
-		PreparedStatement ps =conn.prepareStatement("select isSendedMail, sendedMailDate from mail where userId = ?, certificationKind = ?");
-		ps.setInt(1, userId);
+		PreparedStatement ps =conn.prepareStatement("select isSendedMail, sendedMailDate from mail where memberId = ? and certificationKind = ?");
+		ps.setInt(1, memberId);
 		ps.setInt(2, Integer.valueOf(mailType.toString()));
 		ResultSet _rs = ps.executeQuery();
 		_rs.next();
@@ -164,13 +176,13 @@ public final class MemberManager {
 	 * @throws Exception 
 	 * @throws Throwable 
 	 */
-	public static boolean resolveCertificateJoin(String sId, String email, String hashedUUID) throws Exception {
+	public  boolean resolveCertificateJoin(String sId, String email, String hashedUUID) throws Exception {
 		
 		PreparedStatement _ps = null;
 		ResultSet _rs = null;
 		
 		if(!isMember(sId))
-			throw new MemberException(enumMemberState.NOT_JOIN, enumPage.ERROR404);
+			throw new EntityException(enumMemberState.NOT_JOIN, enumPage.ERROR404);
 		
 		try{
 			
@@ -180,7 +192,7 @@ public final class MemberManager {
 			 
 			int _id = member.getId();
 			
-			 _ps= conn.prepareStatement("select certificationNumber from joinCertification where userId = ?, certificationType = ? ");
+			 _ps= conn.prepareStatement("select certificationNumber from joinCertification where memberId = ? and certificationType = ? ");
 			_ps.setInt(1, _id);
 			_ps.setInt(2, Integer.parseInt(enumMailType.JOIN.toString()) );
 			_rs = _ps.executeQuery();
@@ -192,12 +204,12 @@ public final class MemberManager {
 			
 			if(BCrypt.checkpw( planeUUID, hashedUUID )){
 				
-				_ps = conn.prepareStatement("delete from joinCertification where userId = ?  certificationType = ? ");
+				_ps = conn.prepareStatement("delete from joinCertification where memberId = ? and certificationType = ? ");
 				_ps.setInt(1, _id);
 				_ps.setInt(2, Integer.parseInt(enumMailType.JOIN.toString()));
 				_ps.executeUpdate();
 				
-				_ps = conn.prepareStatement("update userState set joinCertification = 0 where userId = ?");
+				_ps = conn.prepareStatement("update memberState set joinCertification = 0 where memberId = ?");
 				_ps.setInt(1, _id);
 				_ps.executeUpdate();
 
@@ -205,7 +217,7 @@ public final class MemberManager {
 				////////userDetail table
 				
 				Timestamp date = new Timestamp(System.currentTimeMillis());
-				_ps = conn.prepareStatement("update userDetail set lastModifiedPasswordDate =? , lastLogoutDate = ? where userId = ?");				
+				_ps = conn.prepareStatement("update memberDetail set lastModifiedPasswordDate =? , lastLogoutDate = ? where memberId = ?");				
 				_ps.setInt(3,_id);
 				_ps.setTimestamp(1, date);
 				_ps.setTimestamp(2, date);
@@ -226,7 +238,7 @@ public final class MemberManager {
 		return true;
 	}
 	
-	public static boolean requestCertificateJoin(Member member) throws MemberException{
+	public  boolean requestCertificateJoin(Member member) throws EntityException{
 		
 	
 		PreparedStatement ps;
@@ -240,7 +252,7 @@ public final class MemberManager {
 			
 			if(isCertificatingJoin(member.getId())){
 				
-				ps = conn.prepareStatement("delete from mail where userId = ? , certificationType = ?");
+				ps = conn.prepareStatement("delete from mail where memberId = ? and certificationType = ?");
 				ps.setInt(1, member.getId());
 				ps.setInt(2, Integer.valueOf(enumMailType.JOIN.toString()));
 				ps.executeUpdate();
@@ -248,7 +260,7 @@ public final class MemberManager {
 				
 			}
 			
-			ps = conn.prepareStatement("insert into mail (userId, certificationNumber, certificationType) values(?,?,?)" );
+			ps = conn.prepareStatement("insert into mail (memberId, certificationNumber, certificationType) values(?,?,?)" );
 			ps.setInt(1,member.getId() );
 			ps.setString(2, _uuid);
 			ps.setInt(3, Integer.parseInt(enumMailType.JOIN.toString()) );	
@@ -279,9 +291,9 @@ public final class MemberManager {
 	}
 	
 
-	public static boolean changePassword(Member member, String newPassword) throws Throwable{
+	public  boolean changePassword(Member member, String newPassword) throws Throwable{
 				
-		PreparedStatement _sp = conn.prepareStatement("update user set password = ? where userId = ?");
+		PreparedStatement _sp = conn.prepareStatement("update member set password = ? where memberId = ?");
 		
 		String _hashPassword = BCrypt.hashpw( newPassword, BCrypt.gensalt());
 		_sp.setString(1, _hashPassword);
@@ -291,7 +303,7 @@ public final class MemberManager {
 		
 	}
 
-	public static void withdrawMember(int uId, String nickname, String email, String reason) throws SQLException{
+	public  void withdrawMember(int uId, String nickname, String email, String reason) throws SQLException{
 		
 		PreparedStatement _ps= null;
 		try{
@@ -299,7 +311,7 @@ public final class MemberManager {
 			conn.setAutoCommit(false);
 		
 		
-			_ps= conn.prepareStatement("delete from user where userId = ?");
+			_ps= conn.prepareStatement("delete from member where memberId = ?");
 			_ps.setInt(1, uId);
 			_ps.executeQuery();			
 			
@@ -313,7 +325,7 @@ public final class MemberManager {
 		
 	}
 	
-	public static ArrayList<Member> getAllMember(){
+	public  ArrayList<Member> getAllMember(){
 		
 		ArrayList<Member> _members = new ArrayList<Member>();
 		PreparedStatement _ps=null, __ps=null;
@@ -321,15 +333,15 @@ public final class MemberManager {
 		
 		try{
 			
-			 _ps = conn.prepareStatement("select * from user");
+			 _ps = conn.prepareStatement("select * from member");
 			 _rs = _ps.executeQuery();
 			
 			while(_rs.next()){
 											
 			
 							
-				__ps = conn.prepareStatement("select * from userState where userId = ?");
-				__ps.setInt(1, _rs.getInt("userId"));
+				__ps = conn.prepareStatement("select * from memberState where memberId = ?");
+				__ps.setInt(1, _rs.getInt("memberId"));
 				__rs = __ps.executeQuery();
 				__rs.next();
 				
@@ -365,7 +377,7 @@ public final class MemberManager {
 						state.put(enumMemberAbnormalState.JOIN_CERTIFICATION, false);
 				}
 		
-				Member member = (new Member.Builder(_rs.getInt("userId"), _rs.getString("email"))).idType(enumMemberType.valueOf(_rs.getString("idType"))  )
+				Member member = (new Member.Builder(_rs.getInt("memberId"), _rs.getString("email"))).registrationKind(enumMemberType.valueOf(_rs.getString("idType"))  )
 						.nickname(_rs.getString("nickname")).abnormalState(state).build();
 				
 				_members.add(member);
@@ -401,12 +413,12 @@ public final class MemberManager {
 	}
 	
 
-	public static boolean isMember(int uId) throws SQLException{
+	public  boolean isMember(int uId) throws SQLException{
 		
 		PreparedStatement _ps = null;
 		ResultSet _rs = null;
 		
-		_ps = conn.prepareStatement("select * from user where userId = ?");
+		_ps = conn.prepareStatement("select * from member where memberId = ?");
 		_ps.setInt(1, uId);
 		_rs = _ps.executeQuery();
 		
@@ -418,12 +430,12 @@ public final class MemberManager {
 		
 	}
 	
-	public static boolean isMember(String email) throws SQLException{
+	public  boolean isMember(String email) throws SQLException{
 		
 		PreparedStatement _ps = null;
 		ResultSet _rs = null;
 		
-		_ps = conn.prepareStatement("select * from user where email = ?");
+		_ps = conn.prepareStatement("select * from member where email = ?");
 		_ps.setString(1, email);
 		_rs = _ps.executeQuery();
 		
@@ -435,66 +447,78 @@ public final class MemberManager {
 		
 	}
 	
-	private static int emailToIdFromDB(String email) throws SQLException{
+	private  int emailToIdFromDB(String email) throws SQLException{
 		
-		PreparedStatement ps = conn.prepareStatement(" select userId from user where email = ? ");
+		PreparedStatement ps = conn.prepareStatement(" select memberId from member where email = ? ");
 		ps.setString(1,"email");
 		ResultSet rs = ps.executeQuery();
 		rs.next();
-		return rs.getInt("userId");		
+		return rs.getInt("memberId");		
 		
 	}
 
-	private static boolean isCertificatingJoin(int uId) throws SQLException, MemberException{
+	private  boolean isCertificatingJoin(int uId) throws EntityException{
 		
-		PreparedStatement ps = conn.prepareStatement(" select * from userState where userId = ? ");
-		ps.setInt(1, uId);
-		ResultSet rs = ps.executeQuery();
-		if(rs.next()){
+		boolean isDoing = false;
+		
+		try{
+				
+			PreparedStatement ps = conn.prepareStatement(" select * from memberState where memberId = ? ");
+			ps.setInt(1, uId);
+			ResultSet rs = ps.executeQuery();
 			
+			if(!rs.next())
+				throw new EntityException(enumMemberState.NOT_JOIN, enumPage.JOIN);
+						
 			if(rs.getInt("certificationJoin")==1){
 				
 				ps.close();
 				rs.close();
 				
-				ps = conn.prepareStatement("select * from mail where userId = ?, certificationKind = ?");
+				ps = conn.prepareStatement("select * from mail where memberId = ?, certificationKind = ?");
 				ps.setInt(1, uId);
 				ps.setInt(2, Integer.valueOf(enumMailType.JOIN.toString()));
 				rs = ps.executeQuery();
 				
-				if(rs.next()){
-					
-					return true;
-					
-				}else
-					return false;
+				if(rs.next())					
+					isDoing = true;
+				else
+					isDoing = false;
 				
 			}else
-				throw new MemberException("가입 인증 메일을 보낸 상태입니다. 인증메일을 다시 요청하고 싶으시면 같은 메일로 다시 가입 하세요.",
+				throw new EntityException("가입 인증 메일을 보낸 상태입니다. 인증메일을 다시 요청하고 싶으시면 같은 메일로 다시 가입 하세요.",
 						enumMemberState.ALREADY_CERTIFICATION, enumPage.LOGIN);
+
 			
-		
+		}catch(SQLException e){
+			
+			e.printStackTrace();
+			
 		}
-		else 
-			throw new MemberException(enumMemberState.NOT_JOIN, enumPage.JOIN);
 		
+		return isDoing;
 	}
 	
-	public static Member getMember(int userId) throws SQLException{
+	public  Member getMember(int memberId){
 		
-		PreparedStatement ps = conn.prepareStatement("select * from user where userId = ?");
-		ps.setInt(1, userId);
-		ResultSet rs = ps.executeQuery();
+		PreparedStatement ps = null;
+		ResultSet rs= null;
 		Member member = null;
 		
 		try{
+			
+			ps = conn.prepareStatement("select * from member where memberId = ?");
+			ps.setInt(1, memberId);
+			rs = ps.executeQuery();
+			if(!rs.next())
+				throw new EntityException(enumEntityState.NOT_EXIST_IN_MAP);
+			
 			String email = rs.getString("email");
-			Timestamp date = rs.getTimestamp("registrationDate");
-			EnumMap<enumMemberAbnormalState, Boolean> state = getMemberAbnormalStates(userId);
-			enumMemberType idType = enumMemberType.valueOf(rs.getString("idType"));
+			EnumMap<enumMemberAbnormalState, Boolean> state = getMemberAbnormalStates(memberId);
+			enumMemberType idType = enumMemberType.valueOf(rs.getString("registrationKind"));
 			String nickname = rs.getString("nickname");
 			
-			member = new Member.Builder(userId,email).abnormalState(state).idType(idType).nickname(nickname).build();
+			member = new Member.Builder(memberId,email).abnormalState(state).registrationKind(idType).nickname(nickname).build();
 					
 		}catch(SQLException e){
 			e.printStackTrace();
@@ -502,10 +526,63 @@ public final class MemberManager {
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			
+			try {
+				ps.close();
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 		
 		return member;
 	}
+	
+	public Member getMember(String email){
+			
+		PreparedStatement ps = null;
+		ResultSet rs= null;
+		Member member = null;
+		
+		try{
+			
+			ps = conn.prepareStatement("select * from member where email = ?");
+			ps.setString(1, email);
+			rs = ps.executeQuery();
+			if(!rs.next())
+				throw new EntityException(enumEntityState.NOT_EXIST_IN_MAP);
+			
+			int memberId= rs.getInt("memberId");
+			EnumMap<enumMemberAbnormalState, Boolean> state = getMemberAbnormalStates(memberId);
+			enumMemberType idType = enumMemberType.valueOf(rs.getString("registrationKind"));
+			String nickname = rs.getString("nickname");
+			
+			member = new Member.Builder(memberId,email).abnormalState(state).registrationKind(idType).nickname(nickname).build();
+					
+		}catch(SQLException e){
+			e.printStackTrace();
+			
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			
+			try {
+				ps.close();
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return member;
+	}
+		
 }
 
 

@@ -3,7 +3,7 @@ package entity.authority;
 import java.sql.Connection;
 import java.sql.Timestamp;
 
-import entity.Entity;
+import entity.interfaces.Entity;
 import property.ConnectMysql;
 
 public class Authority implements Entity{

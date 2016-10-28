@@ -50,7 +50,7 @@ public class ReceivedMail {
 						String email = (String)request.getParameter("email");
 						String planeUUID = (String)request.getParameter("number");					
 						
-						if (MemberManager.resolveCertificateJoin(request.getRequestedSessionId(), email, planeUUID)) {
+						if (MemberManager.getInstance().resolveCertificateJoin(request.getRequestedSessionId(), email, planeUUID)) {
 							returns.put("view", enumPage.ENTRY.toString());
 							returns.put("message", "가입인증에 성공하셨습니다. 로그인 하세요.");
 							returns.put("messageKind", enumCautionKind.NORMAL);

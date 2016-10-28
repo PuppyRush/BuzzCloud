@@ -7,14 +7,12 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 
-import entity.EntityControllerImpl;
 import entity.member.MemberController;
-import entity.member.MemberController.Singleton;
 import entity.ControllerException;
+import entity.impl.EntityControllerImpl;
 import property.ConnectMysql;
-import property.enums.enumController;
 
-public final class MessageController extends EntityControllerImpl{
+public final class MessageController extends EntityControllerImpl<Message>{
 
 	private MessageController(){}
 

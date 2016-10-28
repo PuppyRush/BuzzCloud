@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import entity.ControllerException;
-import entity.EntityControllerImpl;
 import entity.enumController;
-import entity.group.GroupController;
+import entity.band.BandController;
+import entity.impl.EntityControllerImpl;
 import entity.member.enums.enumMemberState;
 import entity.member.enums.enumMemberType;
 import page.enums.enumPage;
@@ -35,7 +35,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		if(sessionIdMap.containsKey(sId))
 		{
 			Integer userId = sessionIdMap.get(sId);
-			if(containsObject(userId)){
+			if(containsEntity(userId)){
 				return true;
 			}
 		}
@@ -68,7 +68,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		_rs.next();
 		
 		String email = _rs.getString("email");
-		return new Member.Builder(_rs.getInt("userId"), email).idType(enumMemberType.valueOf(_rs.getString("registrationKind"))  )
+		return new Member.Builder(_rs.getInt("userId"), email).registrationKind(enumMemberType.valueOf(_rs.getString("registrationKind"))  )
 				.nickname(_rs.getString("nickname")).build();
 		
 	}
@@ -81,7 +81,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		ResultSet _rs = _ps.executeQuery();	
 		_rs.next();
 
-		return new Member.Builder(_rs.getInt("userId"), email).idType(enumMemberType.valueOf(_rs.getString("registrationKind"))  )
+		return new Member.Builder(_rs.getInt("userId"), email).registrationKind(enumMemberType.valueOf(_rs.getString("registrationKind"))  )
 				.nickname(_rs.getString("nickname")).build();
 		
 	}
@@ -90,8 +90,6 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		
 		if(member==null)
 			throw new NullPointerException();
-		
-		removeMember(sId);
 		
 		entityMap.put(member.getId(), member);
 		sessionIdMap.put(sId, member.getId());
@@ -104,9 +102,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		
 		if(member==null)
 			throw new NullPointerException();
-		
-		removeMember(sId);
-		
+
 		entityMap.put(member.getId(), member);
 		sessionIdMap.put(sId, member.getId());
 		
@@ -131,7 +127,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		
 		if(containsObject(sId)){
 			int userId = sessionIdMap.get(sId);
-			if(containsObject(userId)){
+			if(containsEntity(userId)){
 				entityMap.remove(userId);
 				sessionIdMap.remove(sId);
 				return;
@@ -144,7 +140,5 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
 		
 	}
-
-
 	
 }

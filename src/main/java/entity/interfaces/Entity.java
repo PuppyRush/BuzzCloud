@@ -1,4 +1,4 @@
-package entity;
+package entity.interfaces;
 
 public interface Entity {
 

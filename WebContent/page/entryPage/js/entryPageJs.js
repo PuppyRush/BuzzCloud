@@ -2,7 +2,7 @@
 				var mail;
 				var nick;
 				
-				var naver = new naver_id_login("Vf8cYbYQv2N0c_cSv_XA", "http://114.129.211.123:8100/");
+				var naver = new naver_id_login("Vf8cYbYQv2N0c_cSv_XA", "http://114.129.212.30:8100/");
 				var state = naver.getUniqState();
 				naver.setState(state);
 				naver.setButton(BUTTON_COLOR_GREEN, BANNER_BIG_TYPE, 40);

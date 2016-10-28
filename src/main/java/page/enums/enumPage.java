@@ -10,17 +10,18 @@ public enum enumPage {
 	ERROR403("/error/403error.jsp"),
 	
 	ENTRY("/page/entryPage/EntryPage.jsp"),
+	ENTRYTOMAIN("/page/entryPage/EntryToMain.jsp"),
 	MAIN("/page/mainPage/MainPage.jsp"),
 	CERTIFICATE("verifyRegistration.do"),
-		LOGIN("/Member/Login.jsp"),	//  /Member 폴더에서 시작.
-		JOIN("/Member/Join.jsp"),
-		LOST_PASSWORD("/Member/Lostpassword.jsp"),
-		RESET_PASSWORD("/Member/ResetPassword.jsp"),
-		CERTIFICATE_FAILED_PASSWORD("/Member/CertificatePassword.jsp"),
-		INPUT_CERTIFICATION_NUMBER("/Member/CheckAuthNum.jsp"),
-		INPUT_MAIL("/Member/InputMail.jsp"),
-		REGSTRY_DEVELOPER("/Member/RegistryDeveloper.jsp"),
-		CHANGE_OLD_PWD("/Member/ChangeOldPasswodjsp"),
+		LOGIN("/page/member/Login.jsp"),	//  /Member 폴더에서 시작.
+		JOIN("/page/member/Join.jsp"),
+		LOST_PASSWORD("/page/member/Lostpassword.jsp"),
+		RESET_PASSWORD("/page/member/ResetPassword.jsp"),
+		CERTIFICATE_FAILED_PASSWORD("/page/member/CertificatePassword.jsp"),
+		INPUT_CERTIFICATION_NUMBER("/page/member/CheckAuthNum.jsp"),
+		INPUT_MAIL("/page/member/InputMail.jsp"),
+		REGSTRY_DEVELOPER("/page/member/RegistryDeveloper.jsp"),
+		CHANGE_OLD_PWD("/page/member/ChangeOldPasswodjsp"),
 		
 	BROWSER("/page/fileBrowser/FileBrowser.jsp"),
 		

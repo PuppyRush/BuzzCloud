@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 import com.sun.mail.handlers.message_rfc822;
 
-import entity.Entity;
+import entity.interfaces.Entity;
 import entity.member.Member;
 
 public class Message implements Entity {

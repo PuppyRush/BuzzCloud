@@ -2,7 +2,6 @@ package entity;
 
 import entity.member.enums.enumMemberState;
 import page.enums.enumPage;
-import property.enums.enumController;
 
 public class ControllerException extends Exception {
 	
@@ -17,7 +16,7 @@ public class ControllerException extends Exception {
 	}
 	
 	public ControllerException(enumController errcode){// 생성자
-		this(errcode.getString(), errcode);// ERR_CODE를 100(기본값)으로 초기화한다.
+		this(errcode.toString(), errcode);// ERR_CODE를 100(기본값)으로 초기화한다.
 
 	}
 	

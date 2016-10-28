@@ -4,9 +4,9 @@ package page.member;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entity.EntityException;
 import entity.member.Member;
 import entity.member.MemberController;
-import entity.member.MemberException;
 import entity.member.MemberManager;
 import entity.member.enums.enumMemberAbnormalState;
 import entity.member.enums.enumMemberState;
@@ -57,48 +57,48 @@ public class Login implements commandAction {
 			//가입 방식에 따라 달리 처리한다.
 			idType = enumMemberType.valueOf(request.getParameter("idType"));
 			
-			Member tempMember = new Member.Builder(email, sessionId).idType(idType).nickname(nickname).planePassword(planePassword).build();
+			Member tempMember = new Member.Builder(email, sessionId).registrationKind(idType).nickname(nickname).planePassword(planePassword).build();
 			
 			switch(idType){
 				case NOTHING:
 					
 					//가입여부 확인.
-					if(!MemberManager.isMember(email))
-						throw new MemberException("이메일이 존재하지 않습니다. 가입후 사용하세요. ", enumMemberState.NOT_JOIN, enumPage.JOIN);
+					if(!MemberManager.getInstance().isMember(email))
+						throw new EntityException("이메일이 존재하지 않습니다. 가입후 사용하세요. ", enumMemberState.NOT_JOIN, enumPage.JOIN);
 					
 					//로그인 여부 확인.				
-					if(MemberController.containsObject(sessionId)){
-						tempMember = MemberController.getMember(sessionId);
+					if(MemberController.getInstance().containsObject(sessionId)){
+						tempMember = MemberController.getInstance().getMember(sessionId);
 						if(tempMember.isLogin())
-							throw new MemberException( enumMemberState.ALREADY_LOGIN, enumPage.LOGIN);
+							throw new EntityException( enumMemberState.ALREADY_LOGIN, enumPage.LOGIN);
 					}
 
-					EnumMap<enumMemberAbnormalState, Boolean> state = MemberManager.getMemberAbnormalStates(tempMember);
+					EnumMap<enumMemberAbnormalState, Boolean> state = MemberManager.getInstance().getMemberAbnormalStates(tempMember.getId());
 					//잠김상태인가?
 					if( state.containsValue(true)){
 						
 						//아직 가입 인증을 안한경우.
 						if(state.containsKey(enumMemberAbnormalState.JOIN_CERTIFICATION) && state.get( enumMemberAbnormalState.JOIN_CERTIFICATION))
-							throw new MemberException(enumMemberState.NOT_JOIN_CERTIFICATION, enumPage.ENTRY);
+							throw new EntityException(enumMemberState.NOT_JOIN_CERTIFICATION, enumPage.ENTRY);
 							
 						//비밀번호 분실상태인가?
 						//아래의 두 상태는 비밀번호 일치여부를 검사할 필요 없음.
 						if( state.get(enumMemberAbnormalState.LOST_PASSWORD) ){					
 							
-							if(MemberManager.isSendedmail(tempMember.getEmail(), enumMailType.LOST_PASSWORD))
-								throw new MemberException(enumMemberState.LOST_PASSWORD, enumPage.INPUT_CERTIFICATION_NUMBER);
+							if(MemberManager.getInstance().isSendedmail(tempMember.getEmail(), enumMailType.LOST_PASSWORD))
+								throw new EntityException(enumMemberState.LOST_PASSWORD, enumPage.INPUT_CERTIFICATION_NUMBER);
 							else
-								throw new MemberException(enumMemberState.LOST_PASSWORD, enumPage.INPUT_MAIL);
+								throw new EntityException(enumMemberState.LOST_PASSWORD, enumPage.INPUT_MAIL);
 							
 		
 						}
 						//비밀번호 초과상태인가
 						else if(state.get(enumMemberAbnormalState.FAILD_LOGIN) ){
 						
-							if(MemberManager.isSendedmail(tempMember.getEmail(), enumMailType.FAILED_LOGIN))
-								throw new MemberException(enumMemberState.EXCEED_FAILD_LOGIN, enumPage.INPUT_CERTIFICATION_NUMBER);
+							if(MemberManager.getInstance().isSendedmail(tempMember.getEmail(), enumMailType.FAILED_LOGIN))
+								throw new EntityException(enumMemberState.EXCEED_FAILD_LOGIN, enumPage.INPUT_CERTIFICATION_NUMBER);
 							else
-								throw new MemberException(enumMemberState.EXCEED_FAILD_LOGIN, enumPage.INPUT_MAIL);
+								throw new EntityException(enumMemberState.EXCEED_FAILD_LOGIN, enumPage.INPUT_MAIL);
 		
 						
 						}
@@ -122,7 +122,7 @@ public class Login implements commandAction {
 					else{
 					
 						if(tempMember.doLogin(sessionId)==false)
-							throw new MemberException(enumMemberState.NOT_EQUAL_PASSWORD, enumPage.LOGIN);	
+							throw new EntityException(enumMemberState.NOT_EQUAL_PASSWORD, enumPage.LOGIN);	
 						else{//로그인성공
 							
 							returns.put("message", "로그인에 성공하셨습니다.");
@@ -131,7 +131,7 @@ public class Login implements commandAction {
 							returns.put("id", email);
 						}
 						
-						returns.put("view", enumPage.ENTRY.toString());				
+						returns.put("view", enumPage.ENTRYTOMAIN.toString());				
 						
 					}	
 					break;
@@ -139,16 +139,19 @@ public class Login implements commandAction {
 				case NAVER:
 				case GOOGLE:
 					
-					if(!MemberManager.isMember(email)){
-						tempMember.doJoin(sessionId);
-						tempMember = MemberController.getMember(sessionId);
-	
-					}
-					else{
+					if(!MemberManager.getInstance().isMember(email))
 						tempMember.doLogin(sessionId);
+						if(tempMember.verify())
+							MemberController.getInstance().addMember(tempMember, sessionId);
+					else{
+						tempMember.doJoin(sessionId);
+						tempMember.doLogin(sessionId);
+						if(tempMember.verify())
+							MemberController.getInstance().addMember(tempMember, sessionId);
+						
 					}
-					returns.put("view", enumPage.MAIN.toString());		
-					
+						
+					returns.put("view", enumPage.ENTRYTOMAIN.toString());		
 					break;
 					
 				default:
@@ -162,7 +165,7 @@ public class Login implements commandAction {
 			returns.put("view",e.getPage());		
 			
 		
-		}catch(MemberException e){
+		}catch(EntityException e){
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			returns.put("view", e.getToPage().toString());	

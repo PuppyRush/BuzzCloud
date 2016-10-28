@@ -3,6 +3,7 @@ package page.member;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import entity.EntityException;
 import entity.member.*;
 import entity.member.enums.enumMemberState;
 import entity.member.enums.enumMemberType;
@@ -56,11 +57,11 @@ public class Join implements commandAction {
 										
 			}	
 	
-			Member tempMember = new Member.Builder(email, sId).idType(idType).planePassword(pw).build();
+			Member tempMember = new Member.Builder(email, sId).registrationKind(idType).planePassword(pw).build();
 			
-			if(MemberManager.isMember(tempMember.getEmail()) ){
+			if(MemberManager.getInstance().isMember(tempMember.getEmail()) ){
 				
-				MemberManager.requestCertificateJoin(tempMember);
+				MemberManager.getInstance().requestCertificateJoin(tempMember);
 				
 			}
 			else{
@@ -80,7 +81,7 @@ public class Join implements commandAction {
 			returns.put("isSuccessJoin", "false");
 			returns.put("message",e.getMessage());
 			returns.put("messageKind", enumCautionKind.ERROR);
-		}catch(MemberException e){
+		}catch(EntityException e){
 			returns.put("view", enumPage.JOIN.toString());
 			returns.put("isSuccessJoin", "false");
 			returns.put("message",e.getMessage());

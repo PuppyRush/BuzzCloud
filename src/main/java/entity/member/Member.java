@@ -15,7 +15,8 @@ import java.util.Map.Entry;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-import entity.Entity;
+import entity.EntityException;
+import entity.interfaces.Entity;
 import entity.member.enums.enumMemberAbnormalState;
 import entity.member.enums.enumMemberStandard;
 import entity.member.enums.enumMemberState;
@@ -54,7 +55,7 @@ public final class Member implements Entity {
 		private final int id;
 		private String nickname;
 		private String planePassword;
-		private enumMemberType idType;
+		private enumMemberType registrationKind;
 		private final String email;
 		private EnumMap<enumMemberAbnormalState, Boolean> abnormalState;
 		
@@ -65,7 +66,7 @@ public final class Member implements Entity {
 						
 			nickname="";
 			planePassword = "";
-			idType = enumMemberType.NOTHING;
+			registrationKind = enumMemberType.NOTHING;
 			abnormalState = new EnumMap<enumMemberAbnormalState, Boolean>(enumMemberAbnormalState.class);
 		}
 		
@@ -75,7 +76,7 @@ public final class Member implements Entity {
 		
 			nickname="";
 			planePassword = "";
-			idType = enumMemberType.NOTHING;
+			registrationKind = enumMemberType.NOTHING;
 			abnormalState = new EnumMap<enumMemberAbnormalState, Boolean>(enumMemberAbnormalState.class);
 		}
 		
@@ -87,8 +88,8 @@ public final class Member implements Entity {
 			planePassword = pw; return this;
 		}
 	
-		public Builder idType(enumMemberType idType){
-			this.idType = idType; return this;
+		public Builder registrationKind(enumMemberType registrationKind){
+			this.registrationKind = registrationKind; return this;
 		}
 		
 		public Builder abnormalState(EnumMap<enumMemberAbnormalState, Boolean> map){
@@ -110,7 +111,7 @@ public final class Member implements Entity {
 	private int id;
 	private String nickname;
 	private String planePassword;
-	private enumMemberType idType;
+	private enumMemberType registrationKind;
 	private String email;
 	private Timestamp regDate;
 	private boolean isLogin;
@@ -128,7 +129,7 @@ public final class Member implements Entity {
 		nickname=bld.nickname;
 		planePassword=bld.planePassword;
 		abnormalState = new EnumMap<>(enumMemberAbnormalState.class);
-		idType=bld.idType;
+		registrationKind=bld.registrationKind;
 		email=bld.email;
 		regDate =  new Timestamp(System.currentTimeMillis());
 		
@@ -200,7 +201,7 @@ public final class Member implements Entity {
 
 
 	public enumMemberType getUserType() {
-		return idType;
+		return registrationKind;
 	}
 	
 	public Timestamp getRegDate() {
@@ -236,14 +237,14 @@ public final class Member implements Entity {
 			////////user table
 			
 			ps = conn.prepareStatement(
-					"insert into user ( email, nickname, password, registrationDate, registrationKind) values (?,?,?,?,?)",
+					"insert into member ( email, nickname, password, registrationDate, registrationKind) values (?,?,?,?,?)",
 					PreparedStatement.RETURN_GENERATED_KEYS);
 
 			ps.setString(1,email);
 			ps.setString(2, nickname);
 			ps.setTimestamp(4, new Timestamp( System.currentTimeMillis()) );
-			ps.setString(5, idType.toString());
-			if( idType.equals(enumMemberType.NOTHING)){
+			ps.setString(5, registrationKind.toString());
+			if( registrationKind.equals(enumMemberType.NOTHING)){
 
 				String _pw = BCrypt.hashpw( planePassword, BCrypt.gensalt(12));
 				ps.setString(3, _pw);
@@ -264,6 +265,7 @@ public final class Member implements Entity {
 			}
 			
 			id = _idKey;
+			isJoin = true;
 			
 			MemberController.getInstance().addMember(this, sId);
 			
@@ -300,22 +302,22 @@ public final class Member implements Entity {
 			
 			conn.setAutoCommit(false);
 			
-			ps = conn.prepareStatement("select * from user where email = ? ");
+			ps = conn.prepareStatement("select * from member where email = ? ");
 			ps.setString(1, email);
 			rs = ps.executeQuery();	
 			rs.next();
 			String hashedpw =  rs.getString("password");
-			int _idKey = rs.getInt("userId");
+			int _idKey = rs.getInt("memberId");
 			id = _idKey;
 			
-			switch(idType){
+			switch(registrationKind){
 				case NOTHING:
 					if( BCrypt.checkpw( planePassword, hashedpw ) ){
 						
 						res =  true;
 
 						////// 마지막 로그인 날짜 갱신
-						_ps = conn.prepareStatement("update userDetail set lastLoginDate = ?, failedLoginCount = ? where userId = ?");
+						_ps = conn.prepareStatement("update memberDetail set lastLoginDate = ?, failedLoginCount = ? where memberId = ?");
 						
 						
 						Timestamp t = new Timestamp(System.currentTimeMillis());
@@ -332,6 +334,7 @@ public final class Member implements Entity {
 						rs.close();
 						ps.close();
 						
+						isJoin = true;
 						isLogin = true;
 						MemberController.getInstance().addMember(this, sId);
 						
@@ -340,25 +343,25 @@ public final class Member implements Entity {
 					else{
 						res = false;
 						
-						_ps = conn.prepareStatement("select failedLoginCount from userDetail where userId =?");
+						_ps = conn.prepareStatement("select failedLoginCount from memberDetail where memberId =?");
 						_ps.setInt(1,_idKey);
 						_rs = _ps.executeQuery();
 						_rs.next();
 						int _failedLoginCount = _rs.getInt("failedLoginCount");
 						_ps.close();
 										
-						_ps = conn.prepareStatement("update userDetail set failedLoginCount = ? where userId = ?");
+						_ps = conn.prepareStatement("update memberDetail set failedLoginCount = ? where memberId = ?");
 						_ps.setInt(1, _failedLoginCount+1);
 						_ps.setInt(2, _idKey);					
 						_ps.close();
 						if(_failedLoginCount >= Integer.valueOf(enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString())){
-							_ps = conn.prepareStatement("update userState set isAbnormal = 1 , failedLogin = 1 where userId = ?");
+							_ps = conn.prepareStatement("update memberState set isAbnormal = 1 , failedLogin = 1 where memberId = ?");
 							_ps.setInt(1, _idKey);
 							_ps.executeUpdate();
 							_ps.close();
 						}
 							
-		
+						isJoin = true;
 						isLogin = false;
 						
 					}
@@ -369,7 +372,7 @@ public final class Member implements Entity {
 				case NAVER:
 					
 					////// 마지막 로그인 날짜 갱신
-					_ps = conn.prepareStatement("update userDetail set lastLoginDate = ?, failedLoginCount = ? where userId = ?");
+					_ps = conn.prepareStatement("update memberDetail set lastLoginDate = ?, failedLoginCount = ? where memberId = ?");
 					
 					
 					Timestamp t = new Timestamp(System.currentTimeMillis());
@@ -386,6 +389,7 @@ public final class Member implements Entity {
 					rs.close();
 					ps.close();
 					
+					isJoin = true;
 					isLogin = true;
 					MemberController.getInstance().addMember(this, sId);
 					
@@ -421,9 +425,9 @@ public final class Member implements Entity {
 							
 			
 			if(!email.equals(enumSystem.ADMIN.toString()))
-				throw new MemberException(enumMemberState.NOT_ADMIN, enumPage.LOGIN_MANAGER);
+				throw new EntityException(enumMemberState.NOT_ADMIN, enumPage.LOGIN_MANAGER);
 			
-			_ps = conn.prepareStatement("select password from user where email=? ");
+			_ps = conn.prepareStatement("select password from member where email=? ");
 			_ps.setString(1,email);
 			_rs = _ps.executeQuery();	
 			
@@ -440,7 +444,7 @@ public final class Member implements Entity {
 				_res =  true;
 				
 				////// 마지막 로그인 날짜 갱신
-				_ps = conn.prepareStatement("update userDetail set lastLoginDate = ?, failedLoginCount = ? where userId = ?");
+				_ps = conn.prepareStatement("update memberDetail set lastLoginDate = ?, failedLoginCount = ? where memberId = ?");
 				
 				
 				Timestamp t = new Timestamp(System.currentTimeMillis());
@@ -462,19 +466,19 @@ public final class Member implements Entity {
 			else{
 				_res = false;
 				
-				_ps = conn.prepareStatement("select failedLoginCount from userDetail where userId =?");
+				_ps = conn.prepareStatement("select failedLoginCount from memberDetail where memberId =?");
 				_ps.setInt(1, id);
 				_rs = _ps.executeQuery();
 				_rs.next();
 				int _failedLoginCount = _rs.getInt("failedLoginCount");
 				_ps.close();
 								
-				_ps = conn.prepareStatement("update userDetail set failedLoginCount = ? where userId = ?");
+				_ps = conn.prepareStatement("update memberDetail set failedLoginCount = ? where memberId = ?");
 				_ps.setInt(1, _failedLoginCount+1);
 				_ps.setInt(2, id);					
 				_ps.close();
 				if(_failedLoginCount >= Integer.valueOf(enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString())){
-					_ps = conn.prepareStatement("update userState set isAbnormal = 1 , failedLogin = 1 where userId = ?");
+					_ps = conn.prepareStatement("update memberState set isAbnormal = 1 , failedLogin = 1 where memberId = ?");
 					_ps.setInt(1, id);
 					_ps.executeUpdate();
 					_ps.close();
@@ -499,12 +503,12 @@ public final class Member implements Entity {
 	 */
 	public void doLogout(String sId) throws Throwable {
 			
-		PreparedStatement _ps = conn.prepareStatement("update userState set lastLogoutDate = ? where userId = ?");
+		PreparedStatement _ps = conn.prepareStatement("update memberState set lastLogoutDate = ? where memberId = ?");
 		_ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()) ) ;
 		_ps.setInt(2,  id);
 		_ps.executeUpdate();
-
-		MemberController.getInstance().removeObject(this.getId());
+	
+		MemberController.getInstance().removeEntity(this.getId());
 	}
 	
 	public void doWithdraw() {
@@ -513,4 +517,18 @@ public final class Member implements Entity {
 		
 	}
 
+	public boolean verify(){
+		
+		if(id<=0)
+			return false;
+		if(email==null && email.equals("") && email.contains("@")==false)
+			return false;
+		if(registrationKind==null)
+			return false;
+		if(nickname==null && nickname.equals(""))
+			return false;
+		
+		return true;
+		
+	}
 }

@@ -1,12 +1,15 @@
-package entity;
+package entity.impl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import entity.group.Group;
-import entity.group.GroupController;
-import entity.group.GroupController.Singleton;
+import entity.ControllerException;
+import entity.enumController;
+import entity.band.Band;
+import entity.band.BandController;
+import entity.interfaces.Entity;
+import entity.interfaces.EntityController;
 import entity.member.Member;
 import property.ConnectMysql;
 
@@ -17,17 +20,16 @@ public class EntityControllerImpl<T extends Entity> implements EntityController{
 	
 	protected EntityControllerImpl() {
 	}
-	
 
 	@Override
-	public boolean containsObject(int id) {
+	public boolean containsEntity(int id) {
 		return entityMap.containsKey(id);
 		
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Entity> T getObject(int id) throws ControllerException {
+	public <T extends Entity> T getEntity(int id) throws ControllerException {
 
 		if(id<=0)
 			throw new IllegalArgumentException("userId는 0보다 커야 합니다.");
@@ -37,11 +39,10 @@ public class EntityControllerImpl<T extends Entity> implements EntityController{
 		
 		throw new ControllerException("비 정상적인 접근입니다.",enumController.NOT_EXIST_MEMBER_FROM_MAP);
 		
-		
 	}
 
 	@Override
-	public <V extends Entity> void addObject(int id, V obj) throws ControllerException {
+	public <V extends Entity> void addEntity(int id, V obj) throws ControllerException {
 		
 		if(entityMap.containsKey(obj))
 			throw new ControllerException(enumController.ALREAY_EXIST_MEMBER_FROM_MAP);
@@ -51,7 +52,7 @@ public class EntityControllerImpl<T extends Entity> implements EntityController{
 	}
 
 	@Override
-	public void removeObject(int id) throws ControllerException {
+	public void removeEntity(int id) throws ControllerException {
 		
 		if(!entityMap.containsKey(id))
 			throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);

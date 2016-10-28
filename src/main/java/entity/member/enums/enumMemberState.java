@@ -1,8 +1,10 @@
 package entity.member.enums;
 
-public enum enumMemberState
-{
+import entity.interfaces.EnumEntity;
 
+public enum enumMemberState implements EnumEntity
+{
+	LOGOUT("로그아웃했습니다."),
 	NOT_LOGIN("로그인후 사용 가능합니다."),
 	ALREADY_LOGIN("이미 로그인중 입니다."),
 	NOT_JOIN("가입후 사용 가능합니다."),
@@ -24,7 +26,7 @@ public enum enumMemberState
 		enumStr = str;
 	}
 	
-	public String getString(){
+	public String toString(){
 		return enumStr;
 	}
 }

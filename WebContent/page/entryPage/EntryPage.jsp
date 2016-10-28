@@ -1,4 +1,4 @@
-<%@page import="page.enums.enumPage, page.*, member.*, java.util.HashMap" %>
+<%@page import="page.enums.enumPage, page.* , java.util.HashMap" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -28,8 +28,7 @@
 	href="/page/entryPage/css/mainpage.css?<?=filemtime(\'./css/readizgen.css\')?"
 	rel="stylesheet" type="text/css">
 <link
-	href="/page/entryPage/css/form.css?<?=filemtime(\'./css/readizgen.css\')?"
-	rel="stylesheet" type="text/css">
+	href="/page/entryPage/css/form.css?<?=filemtime(\'./css/readizgen.css\')?" rel="stylesheet" type="text/css">
 <!--  -->
 
 <!--  notificator include -->
@@ -181,10 +180,7 @@
 	</header>
 	<!-- /.container -->
 
-
-
 	<div id="ohsnap"></div>
-
 
 	<!--  static library -->
 
@@ -195,18 +191,12 @@
 	<!-- Bootstrap Core JavaScript -->
 	<script 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-
 	<!-- custom library  -->
 
 	<script type="text/javascript" charset="utf-8"		src="/commanJs/clientSideLibrary.js"></script>
-	<script type="text/javascript" charset="utf-8" src="page/entryPage/js/entryPageJs.js"></script>
-
-
-
-
+	<script type="text/javascript" charset="utf-8" src="/page/entryPage/js/entryPageJs.js"></script>
+	
 	<script type="text/javascript">
-			
-		 
 		
 				
 				window.onload=function(){

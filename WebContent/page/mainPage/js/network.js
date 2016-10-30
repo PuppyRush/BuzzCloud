@@ -1,7 +1,20 @@
 
-		
-      function addBandToPage(ary){
+				function bundleBand(){
+						var fromBand;
+						var toband;
+				} 
+
+				function band(){
+					var id;
+					var name;
+				}
+
+      function addBandToPage(ary, bands){
 							
+    	  			var relationAry = ary;
+    	  			var bandsMap = bands;
+    	  					
+    	  
 				  		var network = null;
 							GROUP_IMG_PATH = "image/groupImage.jpg"
 							
@@ -17,26 +30,25 @@
 									nodesTable.addColumn('number', 'id');
 									nodesTable.addColumn('string', 'text');
 									nodesTable.addColumn('string', 'style');  // optional
-									nodesTable.addRow([1, "안드로이드 강의", "circle"]);
-									nodesTable.addRow([2, "팀1", "circle"]);
-									nodesTable.addRow([3, "팀2", "circle"]);
-									nodesTable.addRow([4, "팀3", "circle"]);
-									nodesTable.addRow([101, "UI", "circle"]);
-									nodesTable.addRow([102, "Database", undefined]);
-									nodesTable.addRow([103, "Server", undefined]);
-									
+									alert(bandsMap.size());
+									for(int i=0 ; i < bandsMap.size() ; i++){
+										nodesTable.addColumn([bandsMap.get(i).id, bandsMap.get(i).name,"circle"]);
+									}
+							
 									
 									// create a datatable for the links between the nodes
 									var linksTable = new google.visualization.DataTable();
 									linksTable.addColumn('number', 'from');
 									linksTable.addColumn('number', 'to');
 									linksTable.addColumn('number', 'width');  // optional
-									linksTable.addRow([1, 2, 1]);
-									linksTable.addRow([1, 3, 1]);
-									linksTable.addRow([1, 4, 1]);
-									linksTable.addRow([2, 101, 1]);
-									linksTable.addRow([2, 102, 1]);
-									linksTable.addRow([2, 103, 1]);
+									for(int i=0 ; i < relationAry.length ; i++){
+										localBandAry = relationAry.get(i);
+										for(int l=0 ; l < localBandAry.length ; l++){
+											alert(localBandAry.get(l).fromBand);
+											linksTable.addRow([localBandAry.get(l).fromBand, localBandAry.get(l).toBand , 1]);							
+										}
+									}
+									
 									// specify options
 									
 									var options = {

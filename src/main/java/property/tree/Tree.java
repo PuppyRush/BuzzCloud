@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import entity.band.Band;
+import entity.band.Band.BundleBand;
+import entity.interfaces.Entity;
 
-public class Tree<E> {
+public class Tree<E extends Entity> {
 
 	
 	private Node<E>	root;
 	private Node<E>	presentNode;	// present node
-
+	private ArrayList<E> datas;
+	
 	public Tree() {
+		datas = new ArrayList<>();
 		root = null;
 		presentNode = null;
 	}
@@ -20,6 +24,8 @@ public class Tree<E> {
 
 		root = new Node<E>(data);
 		presentNode = root;
+		datas = new ArrayList<E>();
+		datas.add(data);
 
 	}
 
@@ -31,7 +37,7 @@ public class Tree<E> {
 	}
 
 	public void SetPN(Node<E> n) {
-
+		root.SetChild(n);
 		presentNode = n;
 
 	}
@@ -165,36 +171,68 @@ public class Tree<E> {
 		}
 
 	}
+
+	public ArrayList<E> getDatas(){
+		getDatasRecursirve(root);
+		return datas;
+	}
 	
-	public HashMap<Integer,ArrayList<Band>> toHashMapOfInteger(){
+	private ArrayList<BundleBand> getDatasRecursirve(Node<E> upperNode){
+				
+		if(upperNode.GetChild() == null)
+			return new ArrayList<>();
 		
-		if(presentNode.GetData() instanceof Band)
-			return getSubNodes((Node<Band>)presentNode);
+		ArrayList<Node<E>> siblingAry = new ArrayList<Node<E>>();		
+		ArrayList<BundleBand> bundleBands = new ArrayList<>();		
+		
+		Node<E> nextNode = upperNode.GetChild();
+		while(nextNode.GetSibling()!=null){
+			datas.add( nextNode.GetData());
+			siblingAry.add(nextNode);
+			nextNode = nextNode.GetSibling();	
+		}		
+		siblingAry.add(nextNode);
+		datas.add( nextNode.GetData());
+		
+		for(Node<E> siblingNode : siblingAry)
+			bundleBands.addAll( getDatasRecursirve(siblingNode));
 	
-		return new HashMap<>();
+		return bundleBands;
+		
 	}
 
-	private HashMap<Integer,ArrayList<Band>> getSubNodes(Node<Band> node){
-		
-		Integer upperNodeId = node.GetData().getBandId();		
-		HashMap<Integer,ArrayList<Band>> nodes = new HashMap<Integer, ArrayList<Band>>();
-		ArrayList<Band> ary = new ArrayList<Band>();
-		
-		while(node.GetSibling()!=null){
-			ary.add(node.GetData());
-			node = node.GetSibling();
-		}		
-		
-		while(node.GetChild()!=null){
-			HashMap<Integer,ArrayList<Band>> subGroups = getSubNodes(node);
-			for(Integer key : subGroups.keySet())
-				nodes.put(key, subGroups.get(key));
-		}
-			
-		
-		
-		nodes.put(upperNodeId, ary);
-		
-		return nodes;
+	
+	public ArrayList<BundleBand> getSubNodes(){
+		ArrayList<BundleBand> bands = getSubNodesRecursive(root);
+		return bands;
 	}
+
+	
+	private ArrayList<BundleBand> getSubNodesRecursive(Node<E> upperNode){
+		
+		if(upperNode.GetChild() == null){
+			return new ArrayList<>();
+		}
+		
+		ArrayList<BundleBand> bundleBands = new ArrayList<>();		
+		ArrayList<Node<E>> siblingAry = new ArrayList<Node<E>>();
+	
+		Node<E> nextNode = upperNode.GetChild();
+		while(nextNode.GetSibling()!=null){
+			bundleBands.add(new BundleBand( (Band)nextNode.GetData(),(Band)upperNode.GetData() ));
+			siblingAry.add(nextNode);
+			nextNode = nextNode.GetSibling();
+		}	
+		siblingAry.add(nextNode);
+		bundleBands.add(new BundleBand( (Band)nextNode.GetData(),(Band)upperNode.GetData() ));
+		
+		if(siblingAry.size()>0){
+			for(Node<E> siblingNode : siblingAry)
+				bundleBands.addAll( getSubNodesRecursive(siblingNode));
+		}
+		
+		return bundleBands;
+	}
+	
+
 }

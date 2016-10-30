@@ -309,7 +309,6 @@ public class BandManager {
 			tree = new Tree<Band>(band);
 			tree.SetPN(node);
 			
-			
 		}catch(ControllerException e){
 			e.printStackTrace();
 		}
@@ -317,32 +316,32 @@ public class BandManager {
 		return tree;
 	}
 	
-	private Node<Band> getSubBandsRecursive(int bandId) throws EntityException{
+	private Node<Band> getSubBandsRecursive(int upperBandId) throws EntityException{
 	
 		Node<Band> upperNode = null;
 		
 		try{		
 			
 			List<Band> siblingBandsId = new ArrayList<Band>();
-			Band band = BandController.getInstance().containsEntity(bandId) ?  BandController.getInstance().getEntity(bandId) : BandManager.getInstance().getBand(bandId);
-			upperNode = new Node<Band>(band);
-			
+		
 			PreparedStatement ps = conn.prepareStatement("select toBand from bandRelation where fromBand = ?");
-			ps.setInt(1, bandId);
+			ps.setInt(1, upperBandId);
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()){
-				
-				int toBand = rs.getInt("toBand");
-				if(bandId==toBand)
+	
+				int tobandId = rs.getInt("toBand");
+				if(upperBandId==tobandId)
 					continue;
 				
-				int tobandId = rs.getInt("toBand");
 				Band _band = BandController.getInstance().containsEntity(tobandId) ?  BandController.getInstance().getEntity(tobandId) : BandManager.getInstance().getBand(tobandId);			
 				siblingBandsId.add(_band);
-				
+	
 			}
 			if(siblingBandsId.size()>0){
+				
+				Band band = BandController.getInstance().containsEntity(upperBandId) ?  BandController.getInstance().getEntity(upperBandId) : BandManager.getInstance().getBand(upperBandId);
+				upperNode = new Node<Band>(band);
 				
 				ArrayList<Node<Band>> sibligBands = new ArrayList<Node<Band>>();
 				Node<Band> childNodeOfUpperNode = new Node<Band>(siblingBandsId.get(0));
@@ -357,11 +356,9 @@ public class BandManager {
 					
 				}
 				
-				for(Node<Band> node : sibligBands){
-					if(isExistSubBand(node.GetData().getBandId()))
-						node.SetChild( getSubBandsRecursive(node.GetData().getBandId()));
-											
-				}
+				for(Node<Band> node : sibligBands)
+					node.SetChild( getSubBandsRecursive(node.GetData().getBandId()));
+				
 			}				
 				
 		}
@@ -372,7 +369,7 @@ public class BandManager {
 			e.printStackTrace();
 		} 
 		
-		return upperNode;
+		return upperNode==null ? null : upperNode.GetChild();
 		
 	}
 

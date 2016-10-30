@@ -31,6 +31,17 @@ public final class Band implements Entity{
 	
 	private static Connection conn = ConnectMysql.getConnector();
 	
+
+	public static class BundleBand{
+		public Band toBand;
+		public Band fromBand;
+		
+		public BundleBand(Band to, Band from){
+			toBand = to;
+			fromBand = from;
+		}
+	}
+	
 	public static class AuthoritedMember{
 		
 		public Member member;

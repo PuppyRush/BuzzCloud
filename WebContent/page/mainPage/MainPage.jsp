@@ -1,6 +1,6 @@
 <%@page import="entity.member.MemberController"%>
 <%@ page import="page.VerifyPage, page.enums.enumPage, java.util.ArrayList, java.util.HashMap , entity.member.Member , entity.band.Band, entity.band.BandManager" %>
-<%@ page import="page.enums.enumCautionKind, property.tree.Tree, property.tree.Node"%>	
+<%@ page import="page.enums.enumCautionKind, entity.band.Band.BundleBand,  property.tree.Tree, property.tree.Node"%>	
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
@@ -123,48 +123,56 @@
 <script>
 
 	var bandMap = new Map();
-	var bandAry = new Array();
+	var rootsBand = new Array();
 	
 	window.onload=function(){
 	
 		//메세지
 		var message;
 		var popup_color;
-		<% if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
-			enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
+		<% 
+			if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
+				enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
 		%>
-		  message = "<%=(String)request.getAttribute("message")%>";
-		  popup_color = "<%=(String)kind.getString()%>";
-		  ohSnap(message,{color:popup_color});
+			  message = "<%=(String)request.getAttribute("message")%>";
+			  popup_color = "<%=(String)kind.getString()%>";
+			  ohSnap(message,{color:popup_color});
 		<%
-		}
+			}
 	
 		if(isSuccessVerify){
 			
 				ArrayList<Band> bands = 	BandManager.getInstance().getMyAdministeredBands(member.getId());
 				if(bands.size()>0){
 					for(Band band : bands){
-						
+					
 						Tree<Band> tree = BandManager.getInstance().getSubBands(band.getBandId());
-						HashMap<Integer,ArrayList<Band>> subBands = tree.toHashMapOfInteger();
-						for(Integer key : subBands.keySet()){
-							%>
-								
-								
+						ArrayList<BundleBand> subBands = tree.getSubNodes();
+						ArrayList<Band> localBands = tree.getDatas();
+						
+						%>
+							var bundleBand = new Array( Number("<%=subBands.size()%>"));
+						<%
+						for(int i=0 ; i < subBands.size() ; i++){
+							%>		
+								bundleBand[<%=i%>].fromBand = "<%=subBands.get(i).fromBand.getBandId()%>";
+								bundleBand[<%=i%>].toBand = "<%=subBands.get(i).toBand.getBandId()%>";
 							<%
-							for(Band subBand : subBands.get(key) ){
-												
+						}
+						%>
+						rootsBand.put(bundleBand);
+						<%
+						for(Band localBand : localBands){
 							%>
-								bandMap.put("<%=subBand.getBandId()%>","<%=subBand.getBandName()%>"));
-								bandAry.put(["<%=key%>","<%=subBand.getBandId()%>"]);
-							<%		
-							}
-							%>
-							alert(bandAry[0][0] + "," + bandAry[0][1]);
-							//addBandToPage(bandAry);
+								bandMap.put("<%=localBand.getBandId()%>",
+										new band("<%=localBand.getBandId()%>","<%=localBand.getBandName()%>"));
 							<%
+						}
 					}
-				}
+					%>
+					addBandToPage(rootsBand, bandMap);
+					<%
+					
 			}
 		}
 		%>

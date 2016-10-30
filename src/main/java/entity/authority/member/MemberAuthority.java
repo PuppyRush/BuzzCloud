@@ -1,9 +1,11 @@
-package entity.authority;
+package entity.authority.member;
 
 import java.sql.Timestamp;
 import java.util.EnumMap;
 
-import entity.authority.enums.enumMemberAuthority;
+import entity.authority.Authority;
+import entity.authority.band.BandAuthority;
+import entity.authority.band.enumBandAuthority;
 
 public class MemberAuthority extends Authority{
 
@@ -23,5 +25,13 @@ public class MemberAuthority extends Authority{
 		this.authorityType = authorityType;
 	}
 
+
+	public MemberAuthority getMinimalAuthority(){
+		
+		
+		return new MemberAuthority(-1, new Timestamp(System.currentTimeMillis()), enumMemberAuthority.VIEWER);
+		
+	}
 	
+
 }

@@ -1,4 +1,4 @@
-package entity.authority.enums;
+package entity.authority.file;
 
 public enum enumFileAuthority {
 	CREATE,

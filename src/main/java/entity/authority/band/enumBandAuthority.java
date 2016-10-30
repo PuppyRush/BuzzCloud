@@ -1,4 +1,4 @@
-package entity.authority.enums;
+package entity.authority.band;
 
 public enum enumBandAuthority {
 	

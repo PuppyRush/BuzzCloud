@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-import entity.authority.enums.enumFileAuthority;
 import entity.EntityException;
-import entity.authority.enums.enumAuthorityState;
-import entity.authority.enums.enumBandAuthority;
-import entity.authority.enums.enumMemberAuthority;
+import entity.authority.band.BandAuthority;
+import entity.authority.band.enumBandAuthority;
+import entity.authority.file.FileAuthority;
+import entity.authority.file.enumFileAuthority;
+import entity.authority.member.MemberAuthority;
+import entity.authority.member.enumMemberAuthority;
 import entity.band.Band;
 import property.ConnectMysql;
 
@@ -28,8 +30,7 @@ public class AuthorityManager {
 	public static AuthorityManager getInstance() {
 		return Singleton.instance;
 	}
-
-	public FileAuthority getFileAuthoirty(int memberId, int bandId) {
+ 	public FileAuthority getFileAuthoirty(int memberId, int bandId) {
 
 		FileAuthority fAuth = null;
 

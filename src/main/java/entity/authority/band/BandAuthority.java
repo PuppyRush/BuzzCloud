@@ -1,9 +1,9 @@
-package entity.authority;
+package entity.authority.band;
 
 import java.sql.Timestamp;
 import java.util.EnumMap;
 
-import entity.authority.enums.enumBandAuthority;
+import entity.authority.Authority;
 
 public class BandAuthority extends Authority{
 
@@ -22,7 +22,15 @@ public class BandAuthority extends Authority{
 		this.authorityType = authorityType;
 	}
 
-	
+	public BandAuthority getMinimalAuthority(){
+		
+		EnumMap<enumBandAuthority,Boolean> auths = new EnumMap<>(enumBandAuthority.class);
+		for(enumBandAuthority _auth : enumBandAuthority.values())
+			auths.put(_auth, false);     
+		
+		return new BandAuthority(-1, new Timestamp(System.currentTimeMillis()), auths);
+		
+	}
 	
 	
 }

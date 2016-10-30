@@ -3,11 +3,11 @@ package entity.authority;
 import java.sql.Connection;
 import java.sql.Timestamp;
 
+import entity.authority.band.BandAuthority;
 import entity.interfaces.Entity;
 import property.ConnectMysql;
 
-public class Authority implements Entity{
-
+public abstract class Authority implements Entity{
 
 	private int authorityId;
 	private Timestamp grantedDate;
@@ -25,8 +25,7 @@ public class Authority implements Entity{
 		this.grantedDate = grantedDate;
 	}
 
-	public int getAuthorityId() {
-		return authorityId;
-	}
+	public abstract Entity getMinimalAuthority();
+	
 	
 }

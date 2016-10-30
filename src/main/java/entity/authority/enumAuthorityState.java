@@ -1,4 +1,4 @@
-package entity.authority.enums;
+package entity.authority;
 
 import entity.interfaces.EnumEntity;
 

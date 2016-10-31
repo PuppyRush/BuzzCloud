@@ -141,37 +141,37 @@
 			}
 	
 		if(isSuccessVerify){
-			
-				ArrayList<Band> bands = 	BandManager.getInstance().getMyAdministeredBands(member.getId());
-				if(bands.size()>0){
-					for(Band band : bands){
+		
+			ArrayList<Band> bands = BandManager.getInstance().getMyAdministeredBands(member.getId());
+			if(bands.size()>0){
+				for(Band band : bands){
+				
+					Tree<Band> tree = BandManager.getInstance().getSubBands(band.getBandId());
+					ArrayList<BundleBand> subBands = tree.getSubNodes();
+					ArrayList<Band> localBands = tree.getDatas();
 					
-						Tree<Band> tree = BandManager.getInstance().getSubBands(band.getBandId());
-						ArrayList<BundleBand> subBands = tree.getSubNodes();
-						ArrayList<Band> localBands = tree.getDatas();
-						
-						%>
-							var bundleBand = new Array( Number("<%=subBands.size()%>"));
+					%>
+						var bundleBand = new Array( Number("<%=subBands.size()%>"));
+					<%
+					for(int i=0 ; i < subBands.size() ; i++){
+						%>		
+							bundleBand[<%=i%>].fromBand = "<%=subBands.get(i).fromBand.getBandId()%>";
+							bundleBand[<%=i%>].toBand = "<%=subBands.get(i).toBand.getBandId()%>";
 						<%
-						for(int i=0 ; i < subBands.size() ; i++){
-							%>		
-								bundleBand[<%=i%>].fromBand = "<%=subBands.get(i).fromBand.getBandId()%>";
-								bundleBand[<%=i%>].toBand = "<%=subBands.get(i).toBand.getBandId()%>";
-							<%
-						}
-						%>
-						rootsBand.put(bundleBand);
-						<%
-						for(Band localBand : localBands){
-							%>
-								bandMap.put("<%=localBand.getBandId()%>",
-										new band("<%=localBand.getBandId()%>","<%=localBand.getBandName()%>"));
-							<%
-						}
 					}
 					%>
-					addBandToPage(rootsBand, bandMap);
+					rootsBand.put(bundleBand);
 					<%
+					for(Band localBand : localBands){
+						%>
+							bandMap.put("<%=localBand.getBandId()%>",
+									new band("<%=localBand.getBandId()%>","<%=localBand.getBandName()%>"));
+						<%
+					}
+				}
+				%>
+				addBandToPage(rootsBand, bandMap);
+				<%
 					
 			}
 		}

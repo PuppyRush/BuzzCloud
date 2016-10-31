@@ -35,8 +35,6 @@ public class VerifyPage {
 		try{				
 			
 			member = MemberController.getInstance().getMember(sId);
-			if(member.isLogout())
-				throw new EntityException(enumMemberState.NOT_LOGIN, enumPage.ENTRY);
 			
 			switch(fromPage){
 					
@@ -73,7 +71,26 @@ public class VerifyPage {
 						throw new EntityException(enumMemberState.NOT_LOGIN, enumPage.LOGIN);
 					else if(member.isLogout())
 						throw new EntityException(enumMemberState.LOGOUT, enumPage.LOGIN);
+			
+					break;
 					
+				case ISSUE:
+					if(!member.isJoin())
+						throw new EntityException(enumMemberState.NOT_JOIN, enumPage.JOIN);
+					else if(!member.isLogin())
+						throw new EntityException(enumMemberState.NOT_LOGIN, enumPage.LOGIN);
+					else if(member.isLogout())
+						throw new EntityException(enumMemberState.LOGOUT, enumPage.LOGIN);
+					break;
+					
+				case GROUP_MANAGER:
+					if(!member.isJoin())
+						throw new EntityException(enumMemberState.NOT_JOIN, enumPage.JOIN);
+					else if(!member.isLogin())
+						throw new EntityException(enumMemberState.NOT_LOGIN, enumPage.LOGIN);
+					else if(member.isLogout())
+						throw new EntityException(enumMemberState.LOGOUT, enumPage.LOGIN);
+					break;
 					
 				default:
 					

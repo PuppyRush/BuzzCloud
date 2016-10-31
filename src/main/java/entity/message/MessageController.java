@@ -24,4 +24,6 @@ public final class MessageController extends EntityControllerImpl<Message>{
 		return Singleton.instance;
 	}
 
+	
+	
 }

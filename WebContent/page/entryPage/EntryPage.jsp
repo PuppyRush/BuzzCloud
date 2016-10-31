@@ -205,8 +205,6 @@
 
 			try {
 					
-				
-				
 				//이미 로그인 했던 기록이 있다면 자동로그인 한다.   
 				if (session.getAttribute("alreadyLogon") != null
 						&& ((String) session.getAttribute("alreadyLogon")).equals("true")) {

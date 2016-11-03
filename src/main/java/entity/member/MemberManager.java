@@ -415,36 +415,67 @@ public final class MemberManager {
 
 	public  boolean isMember(int uId) throws SQLException{
 		
-		PreparedStatement _ps = null;
-		ResultSet _rs = null;
-		
-		_ps = conn.prepareStatement("select * from member where memberId = ?");
-		_ps.setInt(1, uId);
-		_rs = _ps.executeQuery();
-		
-		if(_rs.next())			
-			return true;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		boolean result = false;
+		try{
+			ps = conn.prepareStatement("select * from member where memberId = ?");
+			ps.setInt(1, uId);
+			rs = ps.executeQuery();
 			
-		else
-			return false;
+			if(rs.next())			
+				result = true;	
+			else
+				result =false;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			try {
+				ps.close();
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				result = false;
+			}
+		}
+		
+		return result;
 		
 	}
 	
 	public  boolean isMember(String email) throws SQLException{
 		
-		PreparedStatement _ps = null;
-		ResultSet _rs = null;
-		
-		_ps = conn.prepareStatement("select * from member where email = ?");
-		_ps.setString(1, email);
-		_rs = _ps.executeQuery();
-		
-		if(_rs.next())			
-			return true;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		boolean result = false;
+		try{
+			ps = conn.prepareStatement("select * from member where email = ?");
+			ps.setString(1, email);
+			rs = ps.executeQuery();
 			
-		else
-			return false;
-		
+			if(rs.next())			
+				result = true;
+				
+			else
+				result =false;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			try {
+				ps.close();
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				result = false;
+			}
+		}
+
+		return result;
 	}
 	
 	private  int emailToIdFromDB(String email) throws SQLException{

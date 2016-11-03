@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import org.mindrot.jbcrypt.BCrypt;
 
 import entity.EntityException;
+import entity.band.enumBand;
 import entity.interfaces.Entity;
 import entity.member.enums.enumMemberAbnormalState;
 import entity.member.enums.enumMemberStandard;
@@ -239,11 +240,11 @@ public final class Member implements Entity {
 			ps = conn.prepareStatement(
 					"insert into member ( email, nickname, password, registrationDate, registrationKind) values (?,?,?,?,?)",
 					PreparedStatement.RETURN_GENERATED_KEYS);
-
 			ps.setString(1,email);
 			ps.setString(2, nickname);
 			ps.setTimestamp(4, new Timestamp( System.currentTimeMillis()) );
 			ps.setString(5, registrationKind.toString());
+			
 			if( registrationKind.equals(enumMemberType.NOTHING)){
 
 				String _pw = BCrypt.hashpw( planePassword, BCrypt.gensalt(12));
@@ -253,33 +254,31 @@ public final class Member implements Entity {
 				ps.setString(3, "");
 			
 			ps.executeUpdate();
-
 			rs = ps.getGeneratedKeys();
 
 			if (rs.next()) {
 			    _idKey = rs.getInt(1);
 			}	
-			else{
-				
+			else{			
 				throw new SQLException("-");
 			}
 			
 			id = _idKey;
 			isJoin = true;
+
+			ps.close();
+			rs.close();
+
+			ps = conn.prepareStatement("insert into memberDetail(permissionCapactiy) values(?)");
+			ps.setInt(1, enumBand.DEFAULT_CAPACITY.toInteger());			
+			conn.commit();
 			
 			MemberController.getInstance().addMember(this, sId);
 			
-			ps.close();
-			rs.close();
-	
-			conn.commit();
-		}
-		catch(SQLException e){
+		}catch(SQLException e){
 			e.printStackTrace();
 		}
-		
-			
-	
+
 		return true;
 	}
 
@@ -380,9 +379,7 @@ public final class Member implements Entity {
 					_ps.setInt(2, 0);
 					_ps.setInt(3,_idKey);
 					_ps.executeUpdate();
-					_ps.close();
-									
-					
+
 					//잠금상태 해제 
 					//sleep인경우?
 					
@@ -398,9 +395,7 @@ public final class Member implements Entity {
 				
 				default:
 					throw new PageException(enumPageError.UNKNOWN_PARA_VALUE,enumPage.ERROR404);
-					
-			
-					
+	
 			}
 			
 			

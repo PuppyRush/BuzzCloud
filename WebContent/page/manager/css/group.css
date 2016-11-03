@@ -1,0 +1,39 @@
+h4{
+	
+	text-align:center;
+	
+}
+
+.cont{
+	
+}
+
+#groupMember{
+	width:150px;
+	
+	
+}
+
+#groupAuthority{
+	width:200px;
+}
+.container{
+		
+	text-align:center;
+}
+
+#selectGroup{
+	width:200px;
+
+}
+
+#searchMember{
+	width:150px;	
+}
+
+   .ui-autocomplete
+    {
+        max-height: 200px;
+        overflow-y: auto; /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }

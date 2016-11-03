@@ -1,30 +1,19 @@
 package entity.band;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
 import java.sql.Timestamp;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
+
 import java.util.EnumMap;
 
-import entity.EntityException;
-import entity.authority.Authority;
-import entity.authority.AuthorityManager;
 import entity.authority.band.BandAuthority;
 import entity.authority.band.enumBandAuthority;
 import entity.authority.file.FileAuthority;
-import entity.authority.file.enumFileAuthority;
 import entity.authority.member.MemberAuthority;
-import entity.authority.member.enumMemberAuthority;
 import entity.interfaces.Entity;
 import entity.member.Member;
-import entity.member.MemberManager;
-import entity.message.*;
 import property.ConnectMysql;
-import property.tree.Node;
 import property.tree.Tree;
 
 public final class Band implements Entity{
@@ -53,9 +42,10 @@ public final class Band implements Entity{
 			memberAuthority = memberAuth;
 			fileAuthority = fileAuth;
 		}
-		
 	}
 	
+	private int maxCapacity;
+	private int usingCapacity;
 	private boolean isFinal;
 	private boolean isRoot;
 	private int bandId;
@@ -68,7 +58,9 @@ public final class Band implements Entity{
 	
 
 	private Band(Builder b){ 
-		
+
+		maxCapacity = b.maxCapacity;
+		usingCapacity = b.usingCapacity;
 		bandId = b.bandId;
 		ownerId = b.ownerId;
 		bandName = b.bandName;
@@ -85,7 +77,8 @@ public final class Band implements Entity{
 
 		private boolean isFinal;
 		private boolean isRoot;
-				
+		private int maxCapacity;
+		private int usingCapacity;
 		private int bandId;
 		private int ownerId;
 		private String bandName;
@@ -124,7 +117,18 @@ public final class Band implements Entity{
 			this.isRoot = isRoot;
 			return this;
 		}
-	
+		
+		public Builder maxCapacity(int max){
+			this.maxCapacity = max;
+			return this;
+		}
+		
+		public Builder usingCapacity(int using){
+			this.usingCapacity = using;
+			return this;
+		}
+		
+
 		public Builder subBands(Tree<Band> subBands){
 			this.subBands = subBands;			
 			return this;
@@ -151,9 +155,6 @@ public final class Band implements Entity{
 		
 	}
 
-	public static Connection getConn() {
-		return conn;
-	}
 
 	public boolean isFinal() {
 		return isFinal;

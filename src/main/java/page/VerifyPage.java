@@ -54,13 +54,7 @@ public class VerifyPage {
 
 					break;
 					
-				case MANAGE_SERVER:
-				case MANAGE_MEMBER:
-			
-					if(!member.getEmail().equals(enumSystem.ADMIN.toString()))
-							throw new EntityException(enumMemberState.NOT_ADMIN, enumPage.LOGIN_MANAGER);
-								
-					break;
+
 					
 				case MAIN:
 				case ENTRYTOMAIN:

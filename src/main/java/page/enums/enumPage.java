@@ -25,18 +25,19 @@ public enum enumPage {
 	CHANGE_OLD_PWD("/page/member/ChangeOldPasswodjsp"),
 	
 	BROWSER("/page/fileBrowser/FileBrowser.jsp"),
-	
 	ISSUE("/page/issue/IssuePage.jsp"),
 	
-	GROUP_MANAGER("/page/groupManager/GroupManager.jsp"),
+	MY_ACCOUNT("/page/manager/MyAccount.jsp"),
+	GROUP_DASHBOARD("/page/manager/GroupDashboard.jsp"),
+	GROUP_MANAGER("/page/manager/Group.jsp"),
+	MEMBER_MANAGER("/page/manager/Member.jsp"),
 	
 	SETTINGS("/Settings.jsp"),
 	
 	MAIL("/buzzCloudMail.do"),
 	
-	LOGIN_MANAGER("/AdminPage/AdminLogin.jsp"),
-		MANAGE_MEMBER("/AdminPage/User.jsp"),
-		MANAGE_SERVER("AdminPage/Server.jsp");
+	LOGIN_MANAGER("/AdminPage/AdminLogin.jsp");
+		
 	
 	private String pageDirection;
 	

@@ -21,22 +21,26 @@
 		<link	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
 			rel="stylesheet"	integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"	crossorigin="anonymous">
 
+
+		
+<!-- Section CSS -->
+
+		<!-- custom CSS -->
+				<link rel="stylesheet" type="text/css"			href="/page/fileBrowser/css/filebrowser.css">
+				
+				
 	<!-- jQuery and jQuery UI (REQUIRED) -->
-				<script			src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
+		<script	 src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
 		<script type="text/javascript" charset="utf-8"			src="http://code.jquery.com/jquery-latest.js"></script>
 		<script type="text/javascript" charset="utf-8"			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
 
 
-		
-<!-- Section CSS -->
-		
-		<!-- custom CSS -->
-				<link rel="stylesheet" type="text/css"			href="/page/fileBrowser/css/filebrowser.css">
 				
-		
+
 		<!-- jQuery UI (REQUIRED) -->
 		<link rel="stylesheet" type="text/css"			href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
 		<script			src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>		
+		
 		<!-- context menu css  -->
     <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css"/>
 		    
@@ -46,26 +50,17 @@
 		<link rel="stylesheet" type="text/css" media="screen"			href="/include/elFinder-2.1.16/theme_win10/css/theme.css">
 		
 		<!-- Section JavaScript -->
-		<link rel="stylesheet" type="text/css"			href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/smoothness/jquery-ui.css">
+		<!-- <link rel="stylesheet" type="text/css"			href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/smoothness/jquery-ui.css"> -->
 		
-		<!-- elFinder JS (REQUIRED) -->
-		<script src="/include/elFinder-2.1.16/js/elfinder.full.js"></script>
-			<script type="text/javascript" src="/page/fileBrowser/js/fileBrowser.js"></script>
-		
-		<!-- Bootstrap Core JavaScript -->
-		<script 
-			src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
-		
-		<!-- custom JS  -->
-			<script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
 
-		<!-- context menu js  -->
-    <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.js" type="text/javascript"></script>
-    <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
-    <script src="https://swisnl.github.io/jQuery-contextMenu/js/main.js" type="text/javascript"></script>
-    <script type="text/javascript" src="/page/fileBrowser/js/contextmenu.js"></script>
+		<!-- Bootstrap Core JavaScript -->
+		<%-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js?<?=filemtime(\'./css/readizgen.css\')?"></script> --%>
 		
-		
+
+				<!-- fullPage css  -->
+			<link rel="stylesheet" type="text/css" href="/include/fullPage/jquery.fullPage.css" />
+			
+
 
 <!-- GoogleDocs Quicklook plugin for GoogleDrive Volume (OPTIONAL) -->
 <!--<script src="js/extras/quicklook.googledocs.js"></script>-->
@@ -85,8 +80,20 @@
 
 <body>
 
+		  
 
-<div id="elfinder"></div>
+	<div id="fullpage">
+		<div class="section active" id="section0">
+				<div id="elfinder"></div>
+			</div>	
+   	 
+	 		 <div class="section" id="section1">
+	 		 		asd
+	 		 </div>
+	   
+	</div>
+
+
 
 <div class="container">
 		<div class="row">
@@ -97,6 +104,8 @@
 		</div>
 	</div>
 
+
+	<div id="ohsnap">	</div>
 
 <form id="subGroupForm" method="POST" ACTION="viewSubGroup.do">
 	<input type="hidden" name="groupId" id="groupId">
@@ -113,6 +122,28 @@
 	<input type="hidden" name="isSelectUpper" id="isSelectUpper">
 	<input type="hidden" name="isSelectSub" id="isSelectsub">
 </form>
+
+		<!-- elFinder JS (REQUIRED) -->
+		<script src="/include/elFinder-2.1.16/js/elfinder.full.js"></script>
+			<script type="text/javascript" src="/page/fileBrowser/js/fileBrowser.js"></script>
+		
+
+		<!-- custom JS  -->
+			<script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
+
+		<!-- context menu js  -->
+    <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.js" type="text/javascript"></script>
+    <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
+    <script src="https://swisnl.github.io/jQuery-contextMenu/js/main.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/page/fileBrowser/js/contextmenu.js"></script>
+		
+
+			<!-- This following line is optional. Only necessary if you use the option css3:false and you want to use other easing effects rather than "linear", "swing" or "easeInOutCubic". -->
+		<!-- fullPage -->
+		<script type="text/javascript" src="/include/fullPage/vendors/jquery.easings.min.js"></script>
+		<script type="text/javascript" src="/include/fullPage/vendors/scrolloverflow.min.js"></script>
+		<script type="text/javascript" src="/include/fullPage/jquery.fullPage.js"></script>
+		
 
 
 <script>

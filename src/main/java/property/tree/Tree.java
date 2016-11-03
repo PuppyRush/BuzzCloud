@@ -202,7 +202,7 @@ public class Tree<E extends Entity> {
 	}
 
 	
-	public ArrayList<BundleBand> getSubNodes(){
+	public ArrayList<BundleBand> getSubRelationNodes(){
 		ArrayList<BundleBand> bands = getSubNodesRecursive(root);
 		return bands;
 	}

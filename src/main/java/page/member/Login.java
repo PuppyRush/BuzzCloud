@@ -139,7 +139,7 @@ public class Login implements commandAction {
 				case NAVER:
 				case GOOGLE:
 					
-					if(!MemberManager.getInstance().isMember(email))
+					if(MemberManager.getInstance().isMember(email))
 						tempMember.doLogin(sessionId);
 						if(tempMember.verify())
 							MemberController.getInstance().addMember(tempMember, sessionId);

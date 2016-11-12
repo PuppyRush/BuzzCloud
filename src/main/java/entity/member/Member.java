@@ -273,7 +273,6 @@ public final class Member implements Entity {
 			ps.setInt(1, enumBand.DEFAULT_CAPACITY.toInteger());			
 			conn.commit();
 			
-			MemberController.getInstance().addMember(this, sId);
 			
 		}catch(SQLException e){
 			e.printStackTrace();
@@ -305,6 +304,7 @@ public final class Member implements Entity {
 			ps.setString(1, email);
 			rs = ps.executeQuery();	
 			rs.next();
+			
 			String hashedpw =  rs.getString("password");
 			int _idKey = rs.getInt("memberId");
 			id = _idKey;
@@ -335,8 +335,7 @@ public final class Member implements Entity {
 						
 						isJoin = true;
 						isLogin = true;
-						MemberController.getInstance().addMember(this, sId);
-						
+			
 					}
 					//불일치
 					else{
@@ -346,13 +345,15 @@ public final class Member implements Entity {
 						_ps.setInt(1,_idKey);
 						_rs = _ps.executeQuery();
 						_rs.next();
-						int _failedLoginCount = _rs.getInt("failedLoginCount");
+						int _failedLoginCount = _rs.getInt(1);
 						_ps.close();
 										
 						_ps = conn.prepareStatement("update memberDetail set failedLoginCount = ? where memberId = ?");
-						_ps.setInt(1, _failedLoginCount+1);
-						_ps.setInt(2, _idKey);					
+						_ps.setInt(1, _failedLoginCount++);
+						_ps.setInt(2, _idKey);			
+						_ps.executeUpdate();
 						_ps.close();
+						
 						if(_failedLoginCount >= Integer.valueOf(enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString())){
 							_ps = conn.prepareStatement("update memberState set isAbnormal = 1 , failedLogin = 1 where memberId = ?");
 							_ps.setInt(1, _idKey);
@@ -388,8 +389,7 @@ public final class Member implements Entity {
 					
 					isJoin = true;
 					isLogin = true;
-					MemberController.getInstance().addMember(this, sId);
-					
+				
 					
 					break;
 				
@@ -411,72 +411,67 @@ public final class Member implements Entity {
 	public boolean doLoginManager(String sId) throws Throwable{
 		
 		
-		PreparedStatement _ps = null;
-		ResultSet _rs=null;
-		
-		
-		boolean _res=false;
+		PreparedStatement ps = null;
+		ResultSet rs=null;
+
 		try {	
-							
-			
+
 			if(!email.equals(enumSystem.ADMIN.toString()))
 				throw new EntityException(enumMemberState.NOT_ADMIN, enumPage.LOGIN_MANAGER);
 			
-			_ps = conn.prepareStatement("select password from member where email=? ");
-			_ps.setString(1,email);
-			_rs = _ps.executeQuery();	
+			ps = conn.prepareStatement("select password from member where email=? ");
+			ps.setString(1,email);
+			rs = ps.executeQuery();	
 			
-			_rs = _ps.executeQuery();
-			_rs.next();
-			String hashedpw =  _rs.getString("password");
-			_ps.close();
-			_rs.close();
+			rs = ps.executeQuery();
+			rs.next();
+			String hashedpw =  rs.getString("password");
+			ps.close();
+			rs.close();
 
-				
-			//비밀번호 일치.
+
 			if( BCrypt.checkpw( planePassword, hashedpw ) ){
 				
-				_res =  true;
-				
+
 				////// 마지막 로그인 날짜 갱신
-				_ps = conn.prepareStatement("update memberDetail set lastLoginDate = ?, failedLoginCount = ? where memberId = ?");
+				ps = conn.prepareStatement("update memberDetail set lastLoginDate = ?, failedLoginCount = ? where memberId = ?");
 				
 				
 				Timestamp t = new Timestamp(System.currentTimeMillis());
-				_ps.setTimestamp(1, t);
-				_ps.setInt(2, 0);
-				_ps.setInt(3, id);
-				_ps.executeUpdate();
-				_ps.close();
+				ps.setTimestamp(1, t);
+				ps.setInt(2, 0);
+				ps.setInt(3, id);
+				ps.executeUpdate();
+				ps.close();
 								
 				
 				//잠금상태 해제 
 				//sleep인경우?
 		
 				isLogin = true;
-				MemberController.getInstance().addMember(this, sId);
 				
 			}
-			//불일치
 			else{
-				_res = false;
+
+				ps = conn.prepareStatement("select failedLoginCount from memberDetail where memberId =?");
+				ps.setInt(1, id);
+				rs = ps.executeQuery();
+				rs.next();
 				
-				_ps = conn.prepareStatement("select failedLoginCount from memberDetail where memberId =?");
-				_ps.setInt(1, id);
-				_rs = _ps.executeQuery();
-				_rs.next();
-				int _failedLoginCount = _rs.getInt("failedLoginCount");
-				_ps.close();
+				int failedLoginCount = rs.getInt(1);
+				ps.close();
 								
-				_ps = conn.prepareStatement("update memberDetail set failedLoginCount = ? where memberId = ?");
-				_ps.setInt(1, _failedLoginCount+1);
-				_ps.setInt(2, id);					
-				_ps.close();
-				if(_failedLoginCount >= Integer.valueOf(enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString())){
-					_ps = conn.prepareStatement("update memberState set isAbnormal = 1 , failedLogin = 1 where memberId = ?");
-					_ps.setInt(1, id);
-					_ps.executeUpdate();
-					_ps.close();
+				ps = conn.prepareStatement("update memberDetail set failedLoginCount = ? where memberId = ?");
+				ps.setInt(1, failedLoginCount++);
+				ps.setInt(2, id);			
+				ps.executeUpdate();
+				ps.close();
+				
+				if(failedLoginCount >= Integer.valueOf(enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString())){
+					ps = conn.prepareStatement("update memberState set isAbnormal = 1 , failedLogin = 1 where memberId = ?");
+					ps.setInt(1, id);
+					ps.executeUpdate();
+					ps.close();
 				}
 
 				isLogin = false;
@@ -485,8 +480,6 @@ public final class Member implements Entity {
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
-		
-		
 		
 		return true;
 	}

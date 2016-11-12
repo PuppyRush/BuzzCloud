@@ -28,9 +28,13 @@ public class BandAuthority extends Authority{
 		for(enumBandAuthority _auth : enumBandAuthority.values())
 			auths.put(_auth, false);     
 		
+		
+		
 		return new BandAuthority(-1, new Timestamp(System.currentTimeMillis()), auths);
 		
 	}
+	
+	
 	
 	
 }

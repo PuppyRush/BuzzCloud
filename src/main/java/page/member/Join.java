@@ -59,7 +59,7 @@ public class Join implements commandAction {
 	
 			Member tempMember = new Member.Builder(email, sId).registrationKind(idType).planePassword(pw).build();
 			
-			if(MemberManager.getInstance().isMember(tempMember.getEmail()) ){
+			if(MemberDB.getInstance().isMember(tempMember.getEmail()) ){
 				
 				MemberManager.getInstance().requestCertificateJoin(tempMember);
 				

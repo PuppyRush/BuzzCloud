@@ -5,8 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import entity.ControllerException;
 import entity.EntityException;
@@ -14,17 +18,18 @@ import entity.authority.AuthorityManager;
 import entity.authority.band.BandAuthority;
 import entity.authority.band.enumBandAuthority;
 import entity.authority.file.FileAuthority;
+import entity.authority.file.enumFileAuthority;
 import entity.authority.member.MemberAuthority;
+import entity.authority.member.enumMemberAuthority;
 import entity.band.Band.AuthoritedMember;
 import entity.member.Member;
 import entity.member.MemberController;
-import entity.member.MemberManager;
-import page.enums.enumPage;
+import entity.member.MemberDB;
 import property.ConnectMysql;
 import property.tree.Node;
 import property.tree.Tree;
 
-public class BandManager {
+public final class BandManager {
 
 	protected Connection conn = ConnectMysql.getConnector();
 
@@ -264,13 +269,8 @@ public class BandManager {
 
 			while (rs.next()){
 				int memberId = rs.getInt(1);
-				Member member;
-				if( MemberController.getInstance().containsEntity(memberId))
-					member = MemberController.getInstance().getEntity(memberId); 
-				else{
-					member = MemberManager.getInstance().getMember(memberId);
-					MemberController.getInstance().addEntity(member.getId(), member);
-				}
+				Member member =  MemberController.getInstance().containsEntity(memberId) ?  MemberController.getInstance().getEntity(memberId) : MemberDB.getInstance().getMember(memberId);
+				
 				memberAry.add(member);
 			}
 
@@ -494,7 +494,7 @@ public class BandManager {
 			MemberAuthority mAuth = AuthorityManager.getInstance().getMemberAuthority(ownerId, bandId);
 			FileAuthority fAuth = AuthorityManager.getInstance().getFileAuthoirty(ownerId, bandId);
 
-			Member member = MemberManager.getInstance().getMember(ownerId);
+			Member member = MemberController.getInstance().containsEntity(ownerId) ? MemberController.getInstance().getEntity(ownerId) : MemberDB.getInstance().getMember(ownerId);
 			HashMap<Integer, AuthoritedMember> members = new HashMap<Integer, AuthoritedMember>();
 
 			members.put(member.getId(), new AuthoritedMember(member, mAuth, fAuth));
@@ -535,4 +535,134 @@ public class BandManager {
 
 	}
 
+	
+	public boolean makeBand(JSONObject obj){
+		
+		
+		
+		try{
+			
+			conn.setAutoCommit(false);
+		
+			String groupName = (String)obj.get("groupName");
+			String groupOwner = (String)obj.get("groupOwner");
+			String administrator = (String)obj.get("administrator");
+			int groupCapacity = Integer.valueOf( (String)obj.get("groupCapacity"));
+			String groupContain = (String)obj.get("groupContain");
+			int upperGroupId = ((Long)obj.get("upperGroup")).intValue();
+			
+			int ownerId = MemberDB.getInstance().getIdOfNickname(groupOwner);
+			int adminId = MemberDB.getInstance().getIdOfNickname(administrator);
+			int bandId = BandDB.getInstance().makeBand(groupName, ownerId, adminId);
+			
+			
+			
+			JSONArray memberAry = (JSONArray)obj.get("members");
+			ArrayList<Integer> memberIds = new ArrayList<Integer>();
+			for(int i=0 ; i < memberAry.size() ; i++){
+				Long id = (Long)memberAry.get(i);
+				memberIds.add( id.intValue() );
+			}
+			
+			BandDB.getInstance().makeBandDetail(bandId, groupCapacity, groupContain);	
+			BandDB.getInstance().makeBandMember(bandId, memberIds);
+			BandDB.getInstance().makeBandRelation(upperGroupId, bandId);
+			
+			JSONArray bandAuths = (JSONArray)obj.get("bandAuthority");
+			JSONArray fileAuths = (JSONArray)obj.get("fileAuthority");
+			
+			EnumMap<enumBandAuthority ,Boolean> bandAuthMap = new EnumMap<enumBandAuthority ,Boolean>(enumBandAuthority.class);
+			for(int i=0 ; i < bandAuths.size(); i++){
+				if(enumBandAuthority.valueOf((String)bandAuths.get(i)) != null)
+					bandAuthMap.put(enumBandAuthority.valueOf((String)bandAuths.get(i)), true);
+			}
+	
+			EnumMap<enumFileAuthority ,Boolean> fileAuthMap = new EnumMap<enumFileAuthority ,Boolean>(enumFileAuthority.class);
+			for(int i=0 ; i < fileAuths.size(); i++){
+				if(enumFileAuthority.valueOf((String)fileAuths.get(i)) != null)
+					fileAuthMap.put(enumFileAuthority.valueOf((String)fileAuths.get(i)), true);
+			}
+			
+			HashMap<Integer, AuthoritedMember> authoritedMap = new HashMap<Integer, AuthoritedMember>(); 
+			for(int i=0 ; i < memberIds.size() ; i++){
+				int memberId = memberIds.get(i);
+				
+				Member member = MemberController.getInstance().containsEntity(memberId) ? MemberController.getInstance().getEntity(memberId) : MemberDB.getInstance().getMember(memberId);
+	
+				FileAuthority fileAuth = AuthorityManager.getInstance().makeFileAuthoirty(member.getId(), bandId, fileAuthMap);
+				MemberAuthority memberAuth =null;
+				if(memberId == adminId)
+					memberAuth = AuthorityManager.getInstance().makeMemberAuthority(member.getId(), bandId, enumMemberAuthority.ADMIN);
+				else if(memberId == ownerId)
+					memberAuth = AuthorityManager.getInstance().makeMemberAuthority(member.getId(), bandId, enumMemberAuthority.OWNER);
+				else
+					memberAuth = AuthorityManager.getInstance().makeMemberAuthority(member.getId(), bandId, enumMemberAuthority.MEMBER);
+				
+				AuthoritedMember am = new Band.AuthoritedMember(member,memberAuth, fileAuth);
+				authoritedMap.put(member.getId(), am);
+			}
+			
+			BandAuthority bandAuth = AuthorityManager.getInstance().makeBandAuthority(bandId, bandAuthMap);
+			
+			Band.Builder bld = new Band.Builder();
+			bld.maxCapacity( Integer.valueOf( (String)obj.get("groupCapacity")) );
+			bld.upperBandId(upperGroupId);
+			bld.usingCapacity(0);
+			bld.members(authoritedMap);
+			bld.bandAuhority(bandAuth);
+			
+			boolean isFinal = bandAuthMap.containsKey(enumBandAuthority.FINAL) && bandAuthMap.get(enumBandAuthority.FINAL) ? true : false;
+			bld.isFinal(isFinal);
+			
+			boolean isRoot = bandAuthMap.containsKey(enumBandAuthority.ROOT) && bandAuthMap.get(enumBandAuthority.ROOT) ? true : false;
+			bld.isRoot(isRoot);
+			
+			bld.subBands(BandManager.getInstance().getSubBands(bandId));
+			Band band = bld.build();
+			
+			if(BandController.getInstance().containsEntity(bandId) == false)
+				BandController.getInstance().addEntity(bandId, band);
+		
+			conn.commit();
+			
+		}catch(ControllerException e){
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			return false;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			return false;
+		} catch (EntityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public void makeBand(Band.Builder newBand){
+		
+		
+		
+	}
+	
 }

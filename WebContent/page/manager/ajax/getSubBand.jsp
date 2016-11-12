@@ -25,7 +25,7 @@
 			
 			JSONObject jsonobj = new JSONObject();
 			Map<String, Integer> bandMap = new HashMap<String, Integer>();
-			bandMap.put("새로운 그룹", -1);
+			bandMap.put("NewGroup", -1);
 			try{
 				if(request.getParameter("memberId")==null)
 					throw new PageException(enumPageError.NO_PARAMATER);

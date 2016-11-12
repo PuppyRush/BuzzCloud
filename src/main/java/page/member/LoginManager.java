@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import entity.EntityException;
 import entity.member.Member;
 import entity.member.MemberController;
+import entity.member.MemberDB;
 import entity.member.MemberManager;
 import entity.member.enums.enumMemberState;
 import page.PageException;
@@ -36,18 +37,18 @@ public class LoginManager implements commandAction{
 	
 			email = (String)request.getParameter("email");
 			
-			if(MemberController.getInstance().containsObject(sessionId)){
+			if(MemberController.getInstance().containsEntity(sessionId)){
 				member = MemberController.getInstance().getMember(sessionId);
 				MemberController.getInstance().addMember(member,sessionId);
 			}
 			else
-				member = MemberManager.getInstance().getMember(email);
+				member = MemberDB.getInstance().getMember(email);
 			
 
-			if(!member.doLoginManager())
+			if(!member.doLoginManager(sessionId))
 				throw new EntityException(enumMemberState.NOT_EQUAL_PASSWORD, enumPage.LOGIN_MANAGER);
 			
-			returns.put("view", enumPage.MANAGE_MEMBER.toString());
+			//returns.put("view", enumPage.M.toString());
 			
 		}catch(EntityException e){
 			

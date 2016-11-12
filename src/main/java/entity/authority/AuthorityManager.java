@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import entity.EntityException;
 import entity.authority.band.BandAuthority;
@@ -179,4 +180,179 @@ public class AuthorityManager {
 		return mAuth;
 	}
 
+	public MemberAuthority makeMemberAuthority(int memberId, int bandId, enumMemberAuthority auth){
+		
+		MemberAuthority mAuth = null;
+		
+		try {
+			
+			PreparedStatement ps = conn.prepareStatement("insert into memberAuthority (memberId, bandId, memberType) values(?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+			ps.setInt(1, memberId);
+			ps.setInt(2, bandId);
+			ps.setInt(3, auth.toInteger());
+			ps.executeUpdate();
+			
+			ResultSet rs =  ps.getGeneratedKeys();
+			rs.next();
+			int authKey = rs.getInt(1);
+			
+			mAuth = new MemberAuthority(authKey, new Timestamp(System.currentTimeMillis()), auth);
+			
+			ps.close();
+			rs.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			mAuth = new MemberAuthority(-1,  new Timestamp(System.currentTimeMillis()), enumMemberAuthority.VIEWER);
+			e.printStackTrace();
+		}
+		
+		return mAuth;
+	}
+	
+	public BandAuthority makeBandAuthority(int bandId,  EnumMap<enumBandAuthority, Boolean> auths){
+		
+		BandAuthority bandAuth = null;
+		
+		try {
+			
+			PreparedStatement ps = conn.prepareStatement("insert into bandAuthority (bandId, isFinal, isRoot,"
+					+ "canJoinMember, canViewUpperBand , canViewSiblingBand, canViewSubBand, canMakeSubBand, canMakeSiblingBand ) values(?,?, ?,?,?, ?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+			ps.setInt(1, bandId);
+			
+			if( auths.containsKey(enumBandAuthority.FINAL) )
+				ps.setInt(2, auths.get(enumBandAuthority.FINAL) ? 1 : 0);
+			else
+				ps.setInt(2, 0);
+			
+			if( auths.containsKey(enumBandAuthority.ROOT) )
+				ps.setInt(3, auths.get(enumBandAuthority.ROOT) ? 1 : 0);
+			else
+				ps.setInt(3, 0);
+			
+			
+			if( auths.containsKey(enumBandAuthority.CAN_JOIN_MEMBER) )
+				ps.setInt(4, auths.get(enumBandAuthority.CAN_JOIN_MEMBER) ? 1 : 0);
+			else
+				ps.setInt(4, 0);
+			
+			
+			if( auths.containsKey(enumBandAuthority.CAN_VIEW_UPPER_BAND) )
+				ps.setInt(5, auths.get(enumBandAuthority.CAN_VIEW_UPPER_BAND) ? 1 : 0);
+			else
+				ps.setInt(5, 0);
+			
+			if( auths.containsKey(enumBandAuthority.CAN_VIEW_SIBILING_BAND) )
+				ps.setInt(6, auths.get(enumBandAuthority.CAN_VIEW_SIBILING_BAND) ? 1 : 0);
+			else
+				ps.setInt(6, 0);
+			
+			
+			
+			if( auths.containsKey(enumBandAuthority.CAN_VIEW_SUB_BAND) )
+				ps.setInt(7, auths.get(enumBandAuthority.CAN_VIEW_SUB_BAND) ? 1 : 0);
+			else
+				ps.setInt(7, 0);
+			
+			
+			if( auths.containsKey(enumBandAuthority.CAN_MAKE_SUB_BAND) )
+				ps.setInt(8, auths.get(enumBandAuthority.CAN_MAKE_SUB_BAND) ? 1 : 0);
+			else
+				ps.setInt(8, 0);
+			
+			
+			if( auths.containsKey(enumBandAuthority.CAN_MAKE_SIBLING_BAND) )
+				ps.setInt(9, auths.get(enumBandAuthority.CAN_MAKE_SIBLING_BAND) ? 1 : 0);
+			else
+				ps.setInt(9, 0);
+
+			ps.executeUpdate();
+			
+			ResultSet rs =  ps.getGeneratedKeys();
+			rs.next();
+			int authKey = rs.getInt(1);
+			
+			bandAuth = new BandAuthority(authKey, new Timestamp(System.currentTimeMillis()), auths);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			
+			EnumMap<enumBandAuthority, Boolean> a = new EnumMap<enumBandAuthority, Boolean>(enumBandAuthority.class);
+			a.put(enumBandAuthority.CAN_JOIN_MEMBER, true);
+			a.put(enumBandAuthority.CAN_MAKE_SIBLING_BAND, true);
+			a.put(enumBandAuthority.CAN_MAKE_SUB_BAND, true);
+			a.put(enumBandAuthority.CAN_VIEW_SUB_BAND, false);
+			a.put(enumBandAuthority.CAN_VIEW_UPPER_BAND, false);
+			a.put(enumBandAuthority.FINAL, false);
+			a.put(enumBandAuthority.ROOT, false);
+			
+			
+			bandAuth = new BandAuthority(-1,  new Timestamp(System.currentTimeMillis()),a);
+			e.printStackTrace();
+		}
+		
+		return bandAuth;
+		
+	}
+	
+	public FileAuthority makeFileAuthoirty(int memberId, int bandId,  EnumMap<enumFileAuthority, Boolean> auths){
+		
+
+		FileAuthority fAuth = null;
+		
+		try {
+			
+			PreparedStatement ps = conn.prepareStatement("insert into fileAuthority (bandId,memberId, canRemove, "
+					+ "canCreate, canDownload, canUpload) values(?,?,?, ?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+			ps.setInt(1, bandId);
+			ps.setInt(2, memberId);
+			
+			if( auths.containsKey(enumFileAuthority.REMOVE) )
+				ps.setInt(3, auths.get(enumFileAuthority.REMOVE) ? 1 : 0);
+			else
+				ps.setInt(3, 0);
+			
+			if( auths.containsKey(enumFileAuthority.CREATE) )
+				ps.setInt(4, auths.get(enumFileAuthority.CREATE) ? 1 : 0);
+			else
+				ps.setInt(4, 0);
+			
+			if( auths.containsKey(enumFileAuthority.DOWNLOAD) )
+				ps.setInt(5, auths.get(enumFileAuthority.DOWNLOAD) ? 1 : 0);
+			else
+				ps.setInt(5, 0);
+						
+			if( auths.containsKey(enumFileAuthority.UPLOAD) )
+				ps.setInt(6, auths.get(enumFileAuthority.UPLOAD) ? 1 : 0);
+			else
+				ps.setInt(6, 0);	
+	
+			ps.executeUpdate();
+			
+			ResultSet rs =  ps.getGeneratedKeys();
+			rs.next();
+			int authKey = rs.getInt(1);
+			
+			fAuth = new FileAuthority(authKey, new Timestamp(System.currentTimeMillis()), auths);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			
+			EnumMap<enumFileAuthority, Boolean> a = new EnumMap<enumFileAuthority, Boolean>(enumFileAuthority.class);
+			a.put(enumFileAuthority.CREATE, false);
+			a.put(enumFileAuthority.DOWNLOAD, false);
+			a.put(enumFileAuthority.REMOVE, false);
+			a.put(enumFileAuthority.UPLOAD, false);
+
+			fAuth = new FileAuthority(-1,  new Timestamp(System.currentTimeMillis()),a);
+			e.printStackTrace();
+		}
+		
+		return fAuth;
+		
+	}
+	
+
+
 }
+

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import entity.EntityException;
 import entity.member.Member;
 import entity.member.MemberController;
+import entity.member.MemberDB;
 import entity.member.MemberManager;
 import entity.member.enums.enumMemberAbnormalState;
 import entity.member.enums.enumMemberState;
@@ -63,17 +64,17 @@ public class Login implements commandAction {
 				case NOTHING:
 					
 					//가입여부 확인.
-					if(!MemberManager.getInstance().isMember(email))
+					if(!MemberDB.getInstance().isMember(email))
 						throw new EntityException("이메일이 존재하지 않습니다. 가입후 사용하세요. ", enumMemberState.NOT_JOIN, enumPage.JOIN);
 					
 					//로그인 여부 확인.				
-					if(MemberController.getInstance().containsObject(sessionId)){
+					if(MemberController.getInstance().containsEntity(sessionId)){
 						tempMember = MemberController.getInstance().getMember(sessionId);
 						if(tempMember.isLogin())
 							throw new EntityException( enumMemberState.ALREADY_LOGIN, enumPage.LOGIN);
 					}
 
-					EnumMap<enumMemberAbnormalState, Boolean> state = MemberManager.getInstance().getMemberAbnormalStates(tempMember.getId());
+					EnumMap<enumMemberAbnormalState, Boolean> state = MemberDB.getInstance().getMemberAbnormalStates(tempMember.getId());
 					//잠김상태인가?
 					if( state.containsValue(true)){
 						
@@ -139,7 +140,7 @@ public class Login implements commandAction {
 				case NAVER:
 				case GOOGLE:
 					
-					if(MemberManager.getInstance().isMember(email))
+					if(MemberDB.getInstance().isMember(email))
 						tempMember.doLogin(sessionId);
 						if(tempMember.verify())
 							MemberController.getInstance().addMember(tempMember, sessionId);

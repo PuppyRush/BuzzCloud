@@ -10,16 +10,16 @@
 	request.setCharacterEncoding("UTF-8");
 
 	Member member = null;
- 	boolean isSuccessVerify = false;
+ 	
 	HashMap<String,Object> results =  VerifyPage.Verify(session.getId(), enumPage.MAIN);
-	
-	if((boolean)results.get("isSuccessVerify")){
+	boolean isSuccessVerify = (boolean)results.get("isSuccessVerify");
+	if(isSuccessVerify){
 	
 		member = MemberController.getInstance().getMember(session.getId());
-		isSuccessVerify = true;		
-		
-	}else{
-		isSuccessVerify = false;
+
+	}
+	else{
+
 		enumPage to = (enumPage)results.get("to");
 		
 		request.setAttribute("message",  (String)results.get("message"));
@@ -108,10 +108,7 @@
     <script src="https://swisnl.github.io/jQuery-contextMenu/js/main.js" type="text/javascript"></script>
     <script type="text/javascript" src="/page/mainPage/js/contextMenu.js"></script>
 	
-		<!-- network js  -->
-		<script type="text/javascript" src="/include/network-1.5.0/network.js"></script>
-		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-		<script type="text/javascript" src="/page/mainPage/js/network.js"></script>
+
 			
 		<!-- ohsnap -->
 		<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>
@@ -120,9 +117,16 @@
 		<!-- custom js  -->
 		<script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
 	
+	<!-- network js  -->
+	<script type="text/javascript" src="/include/network-1.5.0/network.js"></script>
+	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="/page/mainPage/js/network.js"></script>
+	
+	
 
 <script>
 
+  var memberId = <%=member.getId()%>; 
 	var bands;
 	var rootsBand = new Array();
 
@@ -132,130 +136,63 @@
 		//메세지
 		var message;
 		var popup_color;
+	
 		<% 
-			if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
-				enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
+		if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
+			enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
 		%>
-			  message = "<%=(String)request.getAttribute("message")%>";
-			  popup_color = "<%=(String)kind.getString()%>";
-			  ohSnap(message,{color:popup_color});
-		<%
-			}
-	
-		if(isSuccessVerify){
-		
-			ArrayList<Band> bands = BandManager.getInstance().getAdministeredBandsOfRoot(member.getId());
-			if(bands.size()>0){
-				%>
-				rootsBand = new Array(<%=bands.size()%>);
-				
-				<%
-				for(int i=0 ; i < bands.size() ; i++){
-				
-					Tree<Band> tree = BandManager.getInstance().getSubBands(bands.get(i).getBandId());
-					ArrayList<BundleBand> subBands = tree.getSubRelationNodes();
-					ArrayList<Band> localBands = tree.getDatas();
-					
-					%>
-						bands = new Array(<%=localBands.size()%>);
-						var _bundleBand = new Array( <%=subBands.size()%>);
-					<%
-					for(int l=0 ; l < subBands.size() ; l++){
-						%>		
-						_bundleBand[<%=l%>] = new bundleBand();
-						_bundleBand[<%=l%>].fromBand = <%=subBands.get(l).fromBand.getBandId()%>;
-						_bundleBand[<%=l%>].toBand = <%=subBands.get(l).toBand.getBandId()%>;
-						
-						<%
-					}
-					%>
-					
-					rootsBand[<%=i%>] = _bundleBand;
-					
-					<%
-					for(int t=0 ; t < localBands.size() ; t++){
-						%>
-						bands[<%=t%>] = new band();
-						bands[<%=t%>].id = <%=localBands.get(t).getBandId()%>;
-						bands[<%=t%>].name = "<%=localBands.get(t).getBandName()%>";
-						
-						<%
-					}
-				}
-				%>
-				
-				<%
-					
-			}
+		  message = "<%=(String)request.getAttribute("message")%>";
+		  popup_color = "<%=(String)kind.getString()%>";
+		  ohSnap(message,{color:popup_color});
+	  <%
 		}
 		%>
-			
+		
+	
+   $.ajax({
+   url:'./ajax/getSubBand.jsp',
+   data : memberId,
+   dataType:'json',
+   success:function(data){
+   	rootsBand = new Array(data.length);
+    	var i=0;
+   	for (var key in data) {		   
+	  			rootsBand[i] = new bundleBand();
+	  			rootsBand[i].fromBand = key;
+	  			rootsBand[i].toBand = data[key];
+	  			i++;
+			 }
+          }
+      })
+      
+      
+   $.ajax({
+   url:'./ajax/getBands.jsp',
+   data : memberId,
+   dataType:'json',
+   success:function(data){
+   		alert("Asd");
+ 	 	 bands = new Array(data.length);
+    var i=0;
+    for (var key in data) {		
+				bands[i] = new band();
+				bands[i].id = key;
+				bands[i].name = data[key];
+	  		i++;
+			 }
+          }
+      })
 			
 	}
-			
-
-	var network = null;
-	var GROUP_IMG_PATH = "image/groupImage.jpg";
-
-	
-	google.load("visualization", "1");
-	
-	// Set callback to run when API is loaded
-	google.setOnLoadCallback(drawVisualization);
-	
-	// Called when the Visualization API is loaded.
-	function drawVisualization() {
-		// Create a datatable for the nodes.
-		var nodesTable = new google.visualization.DataTable();
-		nodesTable.addColumn('number', 'id');
-		nodesTable.addColumn('string', 'text');
-		nodesTable.addColumn('string', 'style');  // optional
-		for(i=0 ; i < bands.length ; i++){
-			var _band = new band();
-			_band = bands[i];
-			nodesTable.addRow([_band.id, _band.name,"circle"]);
-		}
-
-		
-		// create a datatable for the links between the nodes
-		var linksTable = new google.visualization.DataTable();
-		linksTable.addColumn('number', 'from');
-		linksTable.addColumn('number', 'to');
-		linksTable.addColumn('number', 'width');  // optional
-		for(i=0 ; i < rootsBand.length ; i++){
-			localBandAry = rootsBand[i];
-			for(l=0 ; l < localBandAry.length ; l++){
-				linksTable.addRow( [localBandAry[l].fromBand, localBandAry[l].toBand , 1] );							
-			}
-		}
-		
-		// specify options
-		
-		var options = {
-	
-		  'width':  "100%",
-		  'height': "100%",
-		 'backgroundColor' : "#9ec5d1"					  
-			 
-		};
-	
-		// Instantiate our network object.
-		network = new links.Network(document.getElementById("mynetwork"));
-		google.visualization.events.addListener(network, 'select', onselect);
-		
-		// Draw our network with the created data and options
-				network.draw(nodesTable, linksTable, options);
-				
-	}
-
-
-	
 	
 	////member가져오기
 
 
 </script>
 
+			
+
+	
 
 </body>
 </html>

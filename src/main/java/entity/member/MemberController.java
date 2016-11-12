@@ -30,7 +30,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		return Singleton.instance;
 	}
 	
-	public boolean containsObject(String sId){
+	public boolean containsEntity(String sId){
 		
 		if(sessionIdMap.containsKey(sId))
 		{
@@ -91,6 +91,9 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		if(member==null)
 			throw new NullPointerException();
 		
+		if(containsEntity(member.getId()) == false )
+			addEntity(member.getId(), member);
+		
 		entityMap.put(member.getId(), member);
 		sessionIdMap.put(sId, member.getId());
 		
@@ -103,6 +106,11 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		if(member==null)
 			throw new NullPointerException();
 
+		if(containsEntity(member.getId()) == false )
+			addEntity(member.getId(), member);
+		
+		
+		addEntity(member.getId(), member);
 		entityMap.put(member.getId(), member);
 		sessionIdMap.put(sId, member.getId());
 		
@@ -125,7 +133,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 	
 	public void removeMember(String sId) throws ControllerException{
 		
-		if(containsObject(sId)){
+		if(containsEntity(sId)){
 			int userId = sessionIdMap.get(sId);
 			if(containsEntity(userId)){
 				entityMap.remove(userId);

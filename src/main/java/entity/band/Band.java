@@ -87,6 +87,11 @@ public final class Band implements Entity{
 		private Tree<Band> subBands;
 		private HashMap<Integer,AuthoritedMember> members; 
 
+		public Builder(){
+			
+			
+		}
+		
 		public Builder(int bandId,int ownerId, String bandName){ 
 			
 

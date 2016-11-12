@@ -45,7 +45,7 @@ public class Logout implements commandAction {
 			String sessionId = (String)request.getParameter("sessionId");
 			
 			
-			if(!MemberController.getInstance().containsObject(sessionId))
+			if(!MemberController.getInstance().containsEntity(sessionId))
 				throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
 			
 			member = MemberController.getInstance().getMember(sessionId);

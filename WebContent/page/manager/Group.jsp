@@ -64,15 +64,8 @@
     <link href="/page/manager/css/table.css" rel="stylesheet">
 
     <!--  autocomplete -->
-		<link rel="stylesheet" type="text/css" href="/autocomplete/jquery/jquery.autocomplete.css" />
+		<link rel="stylesheet" type="text/css" href="/include/autocomplete/jquery/jquery.autocomplete.css" />
 		    
-
-    
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-      }
-    </style>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -112,7 +105,7 @@
  	<form action="/makeGroup.do"  method="POST" id="makeGroupForm" name="makeGroupForm">
  	 <div class="container">
 			<div class="row">
-				<div class="col-sm-3 col-lg-3">
+				<div class="col-sm-12 col-lg-12">
 					<h4><strong>새로운 그룹 정보</strong></h4>
 						<div class="cont">    
            	<input type="text" id="groupName" name="groupName" placeholder="그룹 명">
@@ -123,45 +116,59 @@
            	    <textarea id="groupContain" name="groupContain" placeholder="Message" rows="5"></textarea>
            	</div>
 						</div>
+				</div>
 			</div>
 			
-			<div class="col-sm-2 col-lg-2">		
-				<h4><strong><label>그룹원</label></strong></h4>
-					<div class="container">
-						      				
- 					  	 <select  class="form-control" id="groupMember" name="groupMember" size="5" multiple>
- 					  	 </select>	  					
- 					  	 <br>
-        			<input type="text" id="searchMember" name="searchMember" placeholder="Name">
-     			  	   
-        
-					</div>
-			</div>
-			
-			
-		<div class="col-sm-3 col-lg-3">	
-				<h4><strong><label>그룹 권한</label></strong></h4>
-					<div class="container">
-								
-						   <select class="form-control" id="groupAuthority" name="groupAuthority" size="5" multiple>
-				 
-						   </select>
-			
-			   </div>
-			</div>
-		
-			
-				<div class="col-sm-3 col-lg-3">	
-					<h4><strong><label>선택할 그룹</label></strong></h4>
+			<div class="row">
+				
+				<div class="col-sm-3 col-lg-3">		
+					<h4><strong><label>그룹원</label></strong></h4>
+						<div class="container">
+							      				
+	 					  	 <select  class="form-control" id="groupMember" name="groupMember" size="4">
+	 					  	 </select>	  					
+	 					  	 <br>
+	        			<input type="text" id="searchMember" name="searchMember" placeholder="Name">
+	     			  	   
+	        
+						</div>
+				</div>
+				
+				
+			<div class="col-sm-3 col-lg-3">	
+					<h4><strong><label>그룹 권한</label></strong></h4>
 						<div class="container">
 									
-							   <select class="form-control" id="selectGroup" name="selectGroup" size="6">
-					 
+							   <select class="form-control" id="groupAuthority" name="groupAuthority" size="5" multiple>	 
 							   </select>
 				
 				   </div>
 				</div>
+	
+				
+	
+					<div class="col-sm-3 col-lg-3">	
+						<h4><strong><label>선택할 그룹</label></strong></h4>
+							<div class="container">
+										
+								   <select class="form-control" id="selectGroup" name="selectGroup" size="4"> 
+								   </select>
+					
+					   </div>
+					</div>
+						
+							<div class="col-sm-3 col-lg-3">	
+						<h4><strong><label>파일 권한 </label></strong></h4>
+							<div class="container">
+										
+								   <select class="form-control" id="fileAuthority" name="fileAuthority" size="4" multiple>
+								   </select>
+					
+					   </div>
+					</div>
+						
 			</div>
+	
 		
 		
 	 	<div class="row">
@@ -169,6 +176,7 @@
 				<input type="button" id="makeSubmit" name="makeSubmit" value="그룹 만들기"  >
 			</div>
 		</div>
+		
 	</div>
 </form>
 
@@ -306,13 +314,17 @@
      -->
   
 
-		<!-- autocomplete  -->
-		
+
 		<script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>
 		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript" src="/page/manager/js/group.js"></script>
     
-
+	   		<!-- autocomplete  -->
+		<script type="text/javascript" src="/include/autocomplete/jquery/lib/jquery.js"></script>
+	<script type='text/javascript' src='/include/autocomplete/jquery/lib/jquery.bgiframe.min.js'></script>
+	<script type='text/javascript' src='/include/autocomplete/jquery/lib/jquery.ajaxQueue.js'></script>
+    <script type="text/javascript" src="/include/autocomplete/jquery/jquery.autocomplete.js"></script>
+    
 
 <script>
 
@@ -324,11 +336,11 @@ window.onload=function(){
 		$("#administrator").val("<%=member.getNickname()%>");
 
 	 $.ajax({
-	    url:'./ajax/getGroupMembers.jsp',
+	    url:'./ajax/getBandMembers.jsp',
 	    data: { memberId: <%=member.getId()%>},
 	    dataType:'json',
 	    success:function(data){
-	  	  groupMembers = data;
+	  	  bandMembers = data;
 	 	    for (var key in data) {		  
 				   $("#groupMember").append('<option>'+key);	   				   		 	
 	 			 }
@@ -336,11 +348,11 @@ window.onload=function(){
        })
        
      $.ajax({
-	    url:'./ajax/getSubGroups.jsp',
+	    url:'./ajax/getSubBand.jsp',
 	    data: { memberId: <%=member.getId()%>},
 	    dataType:'json',
 	    success:function(data){
-	  	  groups = data;
+	  	  bands = data;
 	 	    for (var key in data) {		   
 	  		  $("#selectGroup").append('<option>'+key);	   		 	
 	 			 }
@@ -360,7 +372,6 @@ window.onload=function(){
        
    $.ajax({
 	    url:'./ajax/getBandAuthority.jsp',
-	    data: { memberId: <%=member.getId()%>},
 	    dataType:'json',
 	    success:function(data){
 		    for (var key in data) {		   
@@ -369,6 +380,15 @@ window.onload=function(){
           }
       })
       
+      $.ajax({
+	    url:'./ajax/getFileAuthority.jsp',
+	    dataType:'json',
+	    success:function(data){
+		    for (var key in data) {		   
+			  		$("#fileAuthority").append('<option>'+key);	   		 	
+				 }
+          }
+      })
 }
 
 </script>

@@ -2,19 +2,23 @@ package entity.authority.member;
 
 public enum enumMemberAuthority {
 
-	SUPER_OWNER("1"),
-	OWNER("2"),
-	MEMBER("3"),
-	VIEWER("4");
+	OWNER(1),
+	ADMIN(2),
+	MEMBER(3),
+	VIEWER(4);
 	
-	private String str;
-	
-	private enumMemberAuthority(String str){
-		this.str = str;
+	private int number;
+
+	private enumMemberAuthority(int num){
+		this.number = num;
 	}
 	
 	@Override
 	public String toString(){
-		return str;
+		return String.valueOf(number);
+	}
+	
+	public int toInteger(){
+		return number;
 	}
 }

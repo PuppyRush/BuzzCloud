@@ -25,7 +25,5 @@ public abstract class Authority implements Entity{
 		this.grantedDate = grantedDate;
 	}
 
-	public abstract Entity getMinimalAuthority();
-	
 	
 }

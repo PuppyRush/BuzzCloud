@@ -7,7 +7,7 @@ import entity.authority.Authority;
 import entity.authority.band.BandAuthority;
 import entity.authority.band.enumBandAuthority;
 
-public class MemberAuthority extends Authority{
+public final class MemberAuthority extends Authority{
 
 	private enumMemberAuthority authorityType;
 
@@ -26,12 +26,6 @@ public class MemberAuthority extends Authority{
 	}
 
 
-	public MemberAuthority getMinimalAuthority(){
-		
-		
-		return new MemberAuthority(-1, new Timestamp(System.currentTimeMillis()), enumMemberAuthority.VIEWER);
-		
-	}
 	
 
 }

@@ -59,13 +59,7 @@
 			<!-- context menu css  -->
     <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css"/>
 		    
-
-			<script type="text/javascript" charset="utf-8" src="http://code.jquery.com/jquery-latest.js"></script>
-			<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
-			
-			<!-- Bootstrap Core JavaScript -->
-			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
-
+		
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -93,13 +87,24 @@
 
 	<div id="ohsnap"></div>
 
-	<form id="groupForm" method="GET" ACTION="/viewFileBrowser.do">
-		<input type="hidden" name="groupId" id="groupId">
+	<form id="bandForm" method="GET" ACTION="/viewFileBrowser.do">
+		<input type="hidden" name="bandId" id="bandId">
 	</form>
 	
 	<form id="managerForm" method="POST" ACTION="/manager.do">
 		<input type="hidden" name="toPage" id="toPage">
 	</form>
+
+<form id="logoutForm" method="POST" ACTION="/logout.do">
+	</form>
+
+
+			<script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>			
+			<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
+
+
+			<!-- Bootstrap Core JavaScript -->
+			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 
 
 	 		<!-- context menu js  -->
@@ -117,11 +122,7 @@
 		<!-- custom js  -->
 		<script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
 	
-	<!-- network js  -->
-	<script type="text/javascript" src="/include/network-1.5.0/network.js"></script>
-	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-	<script type="text/javascript" src="/page/mainPage/js/network.js"></script>
-	
+
 	
 
 <script>
@@ -149,48 +150,23 @@
 		%>
 		
 	
-   $.ajax({
-   url:'./ajax/getSubBand.jsp',
-   data : memberId,
-   dataType:'json',
-   success:function(data){
-   	rootsBand = new Array(data.length);
-    	var i=0;
-   	for (var key in data) {		   
-	  			rootsBand[i] = new bundleBand();
-	  			rootsBand[i].fromBand = key;
-	  			rootsBand[i].toBand = data[key];
-	  			i++;
-			 }
-          }
-      })
-      
-      
-   $.ajax({
-   url:'./ajax/getBands.jsp',
-   data : memberId,
-   dataType:'json',
-   success:function(data){
-   		alert("Asd");
- 	 	 bands = new Array(data.length);
-    var i=0;
-    for (var key in data) {		
-				bands[i] = new band();
-				bands[i].id = key;
-				bands[i].name = data[key];
-	  		i++;
-			 }
-          }
-      })
 			
+
+ 
 	}
-	
 	////member가져오기
 
 
+	
+	
 </script>
 
-			
+				
+	<!-- network js  -->
+	<script type="text/javascript" src="/include/network-1.5.0/network.js"></script>
+	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="/page/mainPage/js/network.js"></script>
+	
 
 	
 

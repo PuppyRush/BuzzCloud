@@ -48,7 +48,10 @@
     <link href="/page/manager/css/font-style.css" rel="stylesheet">
     <link href="/page/manager/css/register.css" rel="stylesheet">
     <link href="/page/manager/css/myaccount.css" rel="stylesheet">
-	
+				<!-- ohsnap css  -->
+			<link href="/include/notificator/ohsnap.css" rel="stylesheet">
+		
+
 
 	<script type="text/javascript" src="/page/manager/js/jquery.js"></script>    
     <script type="text/javascript" src="/page/manager/bootstrap/js/bootstrap.min.js"></script>
@@ -69,6 +72,9 @@
   	<link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
 	</head>
   <body>
+
+	<div id="ohsnap">	</div>
+
 
   	<!-- NAVIGATION MENU -->
 
@@ -103,7 +109,7 @@
         			<div id="register-info">
         				<div class="cont2">
         					<div class="thumbnail">
-											<img src="images/face.jpg" alt="Marcel Newman" class="img-circle">
+											<img src="" id="memberImage" name="memberImage" alt="Marcel Newman" class="img-rectagle">
 											 <div class="footer">
 											 		<br>
 									 				<form id="upload-form" method="post" action="registerMemberFace.do"	enctype="multipart/form-data">
@@ -111,13 +117,13 @@
 				          		  </form>
 			  		        </div>
 							</div><!-- /thumbnail -->
-							<h2>Marcel Newman</h2>
+							<h2 id="fullname">Marcel Newman</h2>
         				</div>
         				<div class="row">
-        					<div class="col-lg-3">
+        					<div class="col-lg-5">
         						<div class="cont3">
-        							<p><ok>Username:</ok> BASICOH</p>
-        							<p><ok>Mail:</ok> hola@basicoh.com</p>
+        							<p id="nickname"><ok>Nickname:</ok> BASICOH</p>
+        							<p id="email"><ok>Mail:</ok> hola@basicoh.com</p>
         						</div>
         					</div>
         
@@ -142,27 +148,27 @@
 
         	<div class="col-sm-6 col-lg-6">
         		<div id="register-wraper">
-        		    <form id="register-form" class="form">
+        		    <form id="register-form" class="profileForm">
         		        <legend>User Profile</legend>
         		    
         		    	    <div class="body">
         		        	<!-- first name -->
 		    		        		<label for="name">First name</label>
-		    		        		<input name="name" class="input-huge" type="text">
+		    		        		<input name="fistname"id="firstname"  class="input-huge" type="text">
 		        		        	<!-- last name -->
 		    		        		<label for="surname">Last name</label>
-		    		        		<input name="surname" class="input-huge" type="text">
+		    		        		<input name="lastname" id="lastname" class="input-huge" type="text">
         		        	<!-- username -->
         		        	<label>Nickname</label>
-        		        	<input class="input-huge" type="text">
+        		        	<input name="nickname" id="nickname" class="input-huge" type="text">
         		        	<!-- email -->
         		        	<label>E-mail</label>
-        		        	<input class="input-huge" type="text" readonly="readonly">
+        		        	<input name="email" id="email" class="input-huge" type="text" readonly="readonly">
         		        
         		        </div>
         		    
         		        <div class="footer">     		           
-      		            <button type="submit" class="btn btn-success">변경하기</button>
+      		            <button type="button" id="submitProfile" class="btn btn-success">변경하기</button>
         		        </div>
         		    </form>
         		</div>
@@ -183,4 +189,33 @@
       		</div><!-- /row -->
       	</div><!-- /container -->		
 	</div><!-- /footerwrap -->  
-</body></html>
+	
+
+	
+	<script>
+	
+	var memberId = <%=member.getId()%>;
+
+	window.onload=function(){
+	
+	       
+	}
+	
+	
+	</script>
+		
+				
+
+  	<!-- ohsnap -->
+		<script type="text/javascript" charset="utf-8"	src="/include/notificator/ohsnap.js"	></script>
+		
+		<script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
+	<script type="text/javascript" src="/page/manager/js/myaccount.js"></script>
+	
+</body>
+
+
+
+
+</html>

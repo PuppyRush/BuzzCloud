@@ -4,13 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import entity.ControllerException;
-import entity.enumController;
-import entity.authority.band.BandAuthority;
-import entity.authority.file.FileAuthority;
-import entity.authority.member.MemberAuthority;
-import entity.band.BandController;
 import entity.impl.EntityControllerImpl;
-import entity.interfaces.Entity;
 
 public class AuthorityController extends EntityControllerImpl<Authority>{
 
@@ -21,6 +15,8 @@ public class AuthorityController extends EntityControllerImpl<Authority>{
 	
 	private AuthorityController(){
 		
+		authorityMap = new HashMap<Class<?>, HashMap<Integer,Integer>>();
+		AuthorityClassAry = new ArrayList<Class<?>>();
 		Class<?> clazzs [] =  Authority.class.getClasses();
 		
 		for(int i=0 ; i < clazzs.length ; i++){

@@ -28,18 +28,12 @@
 		<!-- custom CSS -->
 				<link rel="stylesheet" type="text/css"			href="/page/fileBrowser/css/filebrowser.css">
 				
-				
-	<!-- jQuery and jQuery UI (REQUIRED) -->
-		<script	 src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
-		<script type="text/javascript" charset="utf-8"			src="http://code.jquery.com/jquery-latest.js"></script>
-		<script type="text/javascript" charset="utf-8"			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
-
-
+		
 				
 
 		<!-- jQuery UI (REQUIRED) -->
 		<link rel="stylesheet" type="text/css"			href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
-		<script			src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>		
+				
 		
 		<!-- context menu css  -->
     <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css"/>
@@ -122,6 +116,13 @@
 	<input type="hidden" name="isSelectUpper" id="isSelectUpper">
 	<input type="hidden" name="isSelectSub" id="isSelectsub">
 </form>
+
+	<!-- jQuery and jQuery UI (REQUIRED) -->
+	<script type="text/javascript" charset="utf-8"			src="http://code.jquery.com/jquery-latest.js"></script>
+		<script	 src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
+		<script type="text/javascript" charset="utf-8"			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
+
+
 
 		<!-- elFinder JS (REQUIRED) -->
 		<script src="/include/elFinder-2.1.16/js/elfinder.full.js"></script>

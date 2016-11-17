@@ -5,13 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -42,8 +37,6 @@ import java.util.EnumMap;
  */
 public final class Member implements Entity {
 
-
-	
 	private static Connection conn = ConnectMysql.getConnector();
 	
 	/**
@@ -71,7 +64,7 @@ public final class Member implements Entity {
 			abnormalState = new EnumMap<enumMemberAbnormalState, Boolean>(enumMemberAbnormalState.class);
 		}
 		
-		public Builder(String email, String sId){
+		public Builder(String email){
 			this.id = -1;
 			this.email = email;
 		
@@ -133,9 +126,7 @@ public final class Member implements Entity {
 		registrationKind=bld.registrationKind;
 		email=bld.email;
 		regDate =  new Timestamp(System.currentTimeMillis());
-		
-	
-		
+				
 	}
 	
 	
@@ -172,6 +163,16 @@ public final class Member implements Entity {
 	
 	public int getId() {
 		return id;
+	}
+	
+	public void setNickname(String name){
+		if(name==null)
+			throw new NullPointerException();
+		
+		if(name.equals("") || name.length() < enumMemberStandard.NAME_LENGTH.toInt() )
+			throw new IllegalArgumentException("이름의 길이가 적절하지 않습니다. : " + name);
+		
+		nickname = name;
 	}
 	
 	public String getNickname() {
@@ -226,7 +227,7 @@ public final class Member implements Entity {
 	 * @throws Throwable 
 	 */
 	@SuppressWarnings("resource")
-	public boolean doJoin(String sId) throws Throwable {
+	public boolean doJoin() throws Throwable {
 		
 		conn.setAutoCommit(false);
 		ResultSet rs = null;
@@ -288,7 +289,7 @@ public final class Member implements Entity {
 	 * @return 로그인 무사히 성사됐는지 여부를 반환
 	 * @throws  
 	 */
-	public boolean doLogin(String sId) throws Exception {
+	public boolean doLogin() throws Exception {
 		
 		PreparedStatement _ps =null;
 		ResultSet _rs = null;
@@ -408,7 +409,7 @@ public final class Member implements Entity {
 		return res;
 	}
 
-	public boolean doLoginManager(String sId) throws Throwable{
+	public boolean doLoginManager() throws Throwable{
 		
 		
 		PreparedStatement ps = null;
@@ -489,14 +490,15 @@ public final class Member implements Entity {
 	 * @param member
 	 * @throws Throwable 
 	 */
-	public void doLogout(String sId) throws Throwable {
+	public void doLogout() throws Throwable {
 			
-		PreparedStatement _ps = conn.prepareStatement("update memberState set lastLogoutDate = ? where memberId = ?");
+		PreparedStatement _ps = conn.prepareStatement("update memberDetail set lastLogoutDate = ? where memberId = ?");
 		_ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()) ) ;
 		_ps.setInt(2,  id);
 		_ps.executeUpdate();
 	
-		MemberController.getInstance().removeEntity(this.getId());
+		isLogout = true;
+		isLogin = false;
 	}
 	
 	public void doWithdraw() {
@@ -518,5 +520,9 @@ public final class Member implements Entity {
 		
 		return true;
 		
+	}
+
+	public void setPlanePassword(String planePassword) {
+		this.planePassword = planePassword;
 	}
 }

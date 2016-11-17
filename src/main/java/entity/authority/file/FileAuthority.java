@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.EnumMap;
 
 import entity.authority.Authority;
@@ -24,6 +25,20 @@ public class FileAuthority extends Authority{
 		return authorityType;
 	}
 
+
+	public ArrayList<enumFileAuthority> toArray(){
+		
+		ArrayList<enumFileAuthority> ary= new ArrayList<enumFileAuthority>();
+			
+		for(enumFileAuthority auth : authorityType.keySet()){
+			if(authorityType.get(auth) )
+				ary.add(auth);
+		}
+			
+		return ary;
+		
+	}
+	
 	public void setAuthorityType(EnumMap<enumFileAuthority, Boolean> authorityType) {
 		this.authorityType = authorityType;
 	}

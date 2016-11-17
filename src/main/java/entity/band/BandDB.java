@@ -1,11 +1,19 @@
 package entity.band;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.UUID;
+
+import org.apache.tomcat.jni.Directory;
+
+import com.mysql.jdbc.ResultSetMetaData;
 
 import entity.EntityException;
 import entity.enumEntityState;
@@ -13,7 +21,6 @@ import property.ConnectMysql;
 import property.enums.enumSystem;
 
 public class BandDB {
-
 
 	protected Connection conn = ConnectMysql.getConnector();
 
@@ -27,6 +34,7 @@ public class BandDB {
 
 	public int makeBand(String name, int owner, int admin){
 		
+	
 		int key = -1;
 		
 		try{
@@ -53,10 +61,18 @@ public class BandDB {
 		return key;
 	}
 	
-	public void makeBandDetail(int bandId, int maxCapacity, String contents){
+	/**
+	 * 
+	 * @param bandId
+	 * @param maxCapacity
+	 * @param contents
+	 * @return	driverPath를 반환함.
+	 */
+	public String makeBandDetail(int bandId, int maxCapacity, String contents){
 		
-		String driverPath = enumSystem.DEFAULT_PATH + UUID.randomUUID().toString()+"/";
-	
+		String driverFolderPath = enumSystem.DEFAULT_DIRVER_PATH + UUID.randomUUID().toString()+"/";
+		makeDirverFolder(driverFolderPath);
+		
 		try {
 			conn.setAutoCommit(false);
 			
@@ -64,7 +80,7 @@ public class BandDB {
 			PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 			ps.setInt(1, bandId);
 			ps.setInt(2, maxCapacity);
-			ps.setString(3, driverPath);
+			ps.setString(3, driverFolderPath);
 			ps.setString(4, contents);
 			ps.executeUpdate();
 			
@@ -75,13 +91,34 @@ public class BandDB {
 			e.printStackTrace();
 		}
 		
+		return driverFolderPath;
+	}
+			 
+	private void makeDirverFolder(String folderName){
+		
+		File file = new File(folderName);
+		
+		do{
+			if(file.exists())
+				folderName =  enumSystem.DEFAULT_DIRVER_PATH + UUID.randomUUID().toString()+"/";
+			else{
+				file.mkdirs();
+				break;
+			}
+				
+			
+			
+		}while(true);
+		
+		
 	}
 	
-	public void makeBandRelation(int fromId, int toId){
+ 	public void makeBandRelation(int fromId, int toId){
 		
 		try {
 			conn.setAutoCommit(false);
 			PreparedStatement ps = conn.prepareStatement("insert into bandRelation (fromBand, toBand) values(?,?)");
+		
 			ps.setInt(1, fromId);
 			ps.setInt(2, toId);
 			ps.executeUpdate();
@@ -112,6 +149,28 @@ public class BandDB {
 			e.printStackTrace();
 		}
 	}
+
+	public String getBandNameOf(int bandId){
+		
+		String name=null;
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement("select name from band where bandId = ?");
+			ps.setInt(1, bandId);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			
+			name = rs.getString(1);
+			
+			ps.close();
+			rs.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return name;
+	}
 	
 	public int getIdOfName(String bandName, int upperBandId){
 		
@@ -136,7 +195,7 @@ public class BandDB {
 				throw new IllegalArgumentException("잘못된 bandId 매개변수입니다 :" + upperBandId);
 			
 			for(int id : ids){
-				ps = conn.prepareStatement("select bandName,bandId from band where bandId = ?");
+				ps = conn.prepareStatement("select name,bandId from band where bandId = ?");
 				ps.setLong(1, id);
 				rs = ps.executeQuery();
 				rs.next();

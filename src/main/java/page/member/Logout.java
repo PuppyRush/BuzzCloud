@@ -39,10 +39,8 @@ public class Logout implements commandAction {
 		
 		try{
 						
-			if(request.getParameter("sessionId")==null)				
-				throw new PageException(enumPageError.UNKNOWN_PARAMATER, enumPage.ERROR404);
-			
-			String sessionId = (String)request.getParameter("sessionId");
+		
+			String sessionId = request.getRequestedSessionId();
 			
 			
 			if(!MemberController.getInstance().containsEntity(sessionId))
@@ -53,7 +51,7 @@ public class Logout implements commandAction {
 			if(!member.isLogin())
 				throw new EntityException("로그인 한 유저가 아닙니다.", enumMemberState.NOT_LOGIN, enumPage.ENTRY);
 			
-			member.doLogout(sessionId);
+			member.doLogout();
 			
 			returns.put("view", enumPage.ENTRY.toString());	
 			returns.put("doLogout", true);

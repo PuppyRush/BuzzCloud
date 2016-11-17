@@ -43,7 +43,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		return false;
 	}
 	
-	public Member getMember(String sId) throws SQLException, ControllerException{
+	public Member getMember(String sId) throws ControllerException{
 		
 		if(sId==null)
 			throw new NullPointerException();
@@ -53,7 +53,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 			if(entityMap.containsKey(userId)){
 				return entityMap.get(userId);
 			}
-		}
+		}			
 		
 		throw new ControllerException("비 정상적인 접근입니다.",enumController.NOT_EXIST_MEMBER_FROM_MAP);
 		
@@ -84,6 +84,24 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		return new Member.Builder(_rs.getInt("userId"), email).registrationKind(enumMemberType.valueOf(_rs.getString("registrationKind"))  )
 				.nickname(_rs.getString("nickname")).build();
 		
+	}
+	
+	public Member newMember(String sessionId, String email) throws ControllerException{
+		Member member = null;
+		if(MemberController.getInstance().containsEntity(sessionId)){
+			member = MemberController.getInstance().getMember(sessionId);
+						
+		}
+		else{
+			member = MemberDB.getInstance().getMember(email);						
+			MemberController.getInstance().addMember(member, sessionId);
+			 
+		}
+		
+		if(member==null)
+			throw new NullPointerException();
+		
+		return member;
 	}
 	
 	public void addMember(Member member,String sId) throws ControllerException{

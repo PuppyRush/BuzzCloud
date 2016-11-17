@@ -9,6 +9,11 @@ $(document).ready(function() {
 
 			callback : function(key, options) {
 
+				if(key.match("logout")){
+			 		$("#logoutForm").submit();
+			 		return;
+				}
+			
 		  	$("#managerForm #toPage").val(key);
 		  	$("#managerForm").submit();
 
@@ -30,7 +35,10 @@ $(document).ready(function() {
 					"name" : "그룹원 관리",
 					"icon" : "edit"
 				},
-
+				"sep1" : "-----------",
+				"logout" : {
+					"name" : "로그아웃"
+				},
 
 			}
 		})

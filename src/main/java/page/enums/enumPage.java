@@ -4,7 +4,7 @@ import property.enums.enumSystem;
 
 public enum enumPage {
 
-	ROOT("http://114.129.211.123:"+enumSystem.PORT.toString()+"/"),
+	ROOT("http://114.129.212.30:"+enumSystem.PORT.toString()),
 	
 	ERROR404("/error/404error.jsp"),
 	ERROR403("/error/403error.jsp"),

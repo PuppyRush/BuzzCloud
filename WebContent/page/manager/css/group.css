@@ -9,21 +9,31 @@ h4{
 }
 
 .cont{
-	
+	margin:auto;
+	text-align:center;
+
+	padding : 10px;
+	width:400px;
 }
+
+
 
 #groupMember{
-	width:200px;
+	width:20%;
 	
 	
-}
-
-#groupAuthority{
-	width:300px;
 }
 
 #fileAuthority{
-	width:100px;
+	width:20%;
+}
+
+#bandAuthority{
+	width:20%;
+}
+
+#selectGroup{
+	width:20%;
 }
 
 .container{
@@ -31,13 +41,16 @@ h4{
 	text-align:center;
 }
 
-#selectGroup{
-	width:200px;
-
-}
-
 #searchMember{
 	width:150px;	
+}
+
+
+
+#removeMember{
+	
+	width:50px;	
+	background-color:#ff4d00;
 }
 
    .ui-autocomplete

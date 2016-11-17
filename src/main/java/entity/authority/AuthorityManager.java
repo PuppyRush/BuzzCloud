@@ -151,14 +151,15 @@ public class AuthorityManager {
 			ResultSet rs = ps.executeQuery();
 			rs.next();
 			
-			String memberTypeString = String.valueOf(rs.getInt("memberType"));
+			int memberTypeValue= rs.getInt("memberType");
 			enumMemberAuthority memberType = enumMemberAuthority.VIEWER;
 			
 			boolean isExist = false;
 			for(enumMemberAuthority auths : enumMemberAuthority.values())
-				if(auths.toString().equals( memberTypeString )){
+				if(auths.toInteger() == memberTypeValue ){
 					isExist = true;
 					memberType = auths;
+					break;
 				}
 			if(!isExist)
 				throw new EntityException(enumAuthorityState.NOT_EXIST_AUTHORITY);
@@ -351,7 +352,6 @@ public class AuthorityManager {
 		return fAuth;
 		
 	}
-	
 
 
 }

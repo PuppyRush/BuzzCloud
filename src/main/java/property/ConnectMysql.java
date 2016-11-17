@@ -2,7 +2,7 @@ package property;
 
 import java.sql.*;
 
-import property.enums.enumMysql;
+import dbAccess.enumMysql;
 
 
 public class ConnectMysql {

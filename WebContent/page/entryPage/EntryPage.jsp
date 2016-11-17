@@ -1,4 +1,4 @@
-<%@page import="page.enums.enumPage, page.* , java.util.HashMap" %>
+<%@page import="page.enums.*, page.* , java.util.HashMap" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -61,9 +61,9 @@
 					</div>
 					<div class="modal-body">
 
-						<form class="form col-md-12 center-block" id="innerJoinForm"	method="POST" ACTION="join.do">
+						<form class="form col-md-12 center-block" id="innerJoinForm"	>
 										<div class="form-group">
-											<input type="text" name="email" id="email" class="form-control input-lg"					placeholder="Email">
+											<input type="text" name="email" id="email" class="form-control input-lg"	placeholder="Email">
 										</div>
 										<div class="form-group">
 											<input type="text" name="nickname" id="nickname" class="form-control input-lg"			placeholder="Nickname">
@@ -75,7 +75,7 @@
 											<input type="password" name="password2"	id="password2"		class="form-control input-lg" placeholder="Rewrite Password">
 										</div>
 										<div class="form-group">
-											<button class="btn btn-primary btn-lg btn-block" id="submit" type="button"	>가입하기 </button>
+											<button class="btn btn-primary btn-lg btn-block" id="joinButton" type="button"	>가입하기 </button>
 										
 										</div>
 			
@@ -134,16 +134,16 @@
 	</div>
 	<!-- Navigation -->
 
-	<nav class="navbar navbar-inverse navbar-fixed-bottom"
-		role="navigation">
+	<nav class="navbar navbar-inverse navbar-fixed-bottom"	role="navigation">
 		<div class="container">
 			<!-- Brand and toggle get grouped for better mobile display -->
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse"
 					data-target="#bs-example-navbar-collapse-1">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
+					<span class="sr-only">Toggle navigation</span> 
+					<span	class="icon-bar"></span> 
+					<span class="icon-bar"></span> 
+					<span	class="icon-bar"></span>
 				</button>
 				<a class="navbar-brand" href="#">BuzzCloud</a>
 			</div>
@@ -182,6 +182,9 @@
 
 	<div id="ohsnap"></div>
 
+	<form id="alreadyLoginForm" method="GET" action="/alreadyLogin.do">
+	</form>  
+
 	<!--  static library -->
 
 	<script type="text/javascript" charset="utf-8"		src="http://code.jquery.com/jquery-latest.js"></script>
@@ -194,50 +197,48 @@
 	<!-- custom library  -->
 
 	<script type="text/javascript" charset="utf-8"		src="/commanJs/clientSideLibrary.js"></script>
-	<script type="text/javascript" charset="utf-8" src="/page/entryPage/js/entryPageJs.js"></script>
+	<script type="text/javascript" charset="utf-8" src="/page/entryPage/js/entryPage.js"></script>
 	
-	<script type="text/javascript">
+
+
+<script>
+
+	window.onload=function(){
+	
+		//메세지
+		var message;
+		var popup_color;
+		<% 
+			if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
+				enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
+		%>
+			  message = "<%=(String)request.getAttribute("message")%>";
+			  popup_color = "<%=(String)kind.getString()%>";
+			  ohSnap(message,{color:popup_color});
+		<%
+			}
+		%>
 		
-				
-				window.onload=function(){
-				
-					<%/*  logonBean으로 부터 넘어온 값을 읽어 로그인 성공이 된 경우 로그인유지를 위해 세션에 별도의 값을 저장한다. */
-
-			try {
-					
-				//이미 로그인 했던 기록이 있다면 자동로그인 한다.   
-				if (session.getAttribute("alreadyLogon") != null
-						&& ((String) session.getAttribute("alreadyLogon")).equals("true")) {
-					response.sendRedirect("/main.do");
-				}
-				//Oauth 콜백을 처리 후 가입결과를 반환받아 성공하였다면 로그인처리한다.
-				else if (request.getAttribute("oauthJoin") != null || request.getAttribute("innerJoin") != null) {%>
-									alert( <%=(String) request.getAttribute("message")%> );
-								<%session.setAttribute("alreadyLogon", "true");
-					response.sendRedirect("/main.do");
-
-				} else if (request.getAttribute("innerLogon") != null) {
-					if (((String) request.getAttribute("innerLogon")).equals("true")) {%>
-									alert( "add" );
-							<%session.setAttribute("alreadyLogon", "true");
-						response.sendRedirect("/main.do");
-					} else if (((String) request.getAttribute("innerLogon")).equals("false")) {%>
-											alert( <%=(String) request.getAttribute("message")%> );
-									<%}
-				}
-
-				else {%>
-
-					
-					<%} //else
-			} //try
-			catch (Exception e) {
-				e.printStackTrace();
-			}%>
-				}
-			
-		</script>
-
+		
+		
+		   $.ajax({
+				   type:"POST",
+				   dataType:"json",
+				   url:'/member/ajax/alreadyLogin.jsp',
+				   success:function(data){
+				   					   	
+		   			if(data["alreadyLogin"]){
+		   				$("#alreadyLoginForm").submit();	   					
+		   				}
+				   	
+			          }
+			      });
+		
+		
+	}
+	
+</script>
+	
 
 
 

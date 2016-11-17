@@ -45,7 +45,7 @@ public class LoginManager implements commandAction{
 				member = MemberDB.getInstance().getMember(email);
 			
 
-			if(!member.doLoginManager(sessionId))
+			if(!member.doLoginManager())
 				throw new EntityException(enumMemberState.NOT_EQUAL_PASSWORD, enumPage.LOGIN_MANAGER);
 			
 			//returns.put("view", enumPage.M.toString());

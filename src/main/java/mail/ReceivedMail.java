@@ -12,9 +12,7 @@ import page.enums.enumPage;
 import page.enums.enumPageError;
 import property.commandAction;
 
-public class ReceivedMail {
-
-	public class VerifyRegistration implements commandAction {
+public class ReceivedMail implements commandAction{
 
 		@Override
 		public HashMap<String, Object> requestPro(HttpServletRequest request, HttpServletResponse response)
@@ -44,7 +42,7 @@ public class ReceivedMail {
 					
 					case JOIN:
 						
-						if(request.getParameter("sId")==null || request.getParameter("email")==null || request.getParameter("number")==null)		
+						if(request.getParameter("email")==null || request.getParameter("number")==null)		
 							throw new PageException(enumPageError.NO_PARAMATER, enumPage.ERROR404);
 						
 						String email = (String)request.getParameter("email");
@@ -86,8 +84,6 @@ public class ReceivedMail {
 			
 			
 		}
-		
-	}
 	
 	
 }

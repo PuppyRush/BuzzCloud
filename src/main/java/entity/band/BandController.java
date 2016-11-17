@@ -1,27 +1,11 @@
 package entity.band;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.HashMap;
 
-import entity.member.Member;
-import entity.member.MemberController;
-import entity.member.MemberManager;
+
+
 import entity.ControllerException;
 import entity.EntityException;
-import entity.authority.AuthorityManager;
-import entity.authority.band.BandAuthority;
-import entity.authority.band.enumBandAuthority;
-import entity.authority.file.FileAuthority;
-import entity.authority.member.MemberAuthority;
-import entity.band.Band.AuthoritedMember;
 import entity.impl.EntityControllerImpl;
-import property.ConnectMysql;
-import property.tree.Node;
-import property.tree.Tree;
 
 public final class BandController extends EntityControllerImpl<Band>{
 
@@ -35,6 +19,31 @@ public final class BandController extends EntityControllerImpl<Band>{
 		return Singleton.instance;
 	}
 
+	
+	public Band newBand(int bandId){
+		Band band = null;
+		try{
+			if(containsEntity(bandId))
+				band = getEntity(bandId);
+		
+			else{
+				band = BandManager.getInstance().getBand(bandId);						
+				addEntity(bandId,band);
+				 
+			}
+		}catch(ControllerException e){
+			e.printStackTrace();
+		} catch (EntityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(band==null)
+			throw new NullPointerException();
+		
+		return band;
+	}
+	
 
 
 }

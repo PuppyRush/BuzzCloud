@@ -40,6 +40,7 @@ import property.commandAction;
 					r.put("view", enumPage.MEMBER_MANAGER.toString());
 					break;
 					
+									
 				default:
 					throw new PageException(enumPageError.UNKNOWN_PARA_VALUE);
 					

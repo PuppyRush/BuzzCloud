@@ -42,12 +42,35 @@ public final class Band implements Entity{
 			memberAuthority = memberAuth;
 			fileAuthority = fileAuth;
 		}
+
+		public Member getMember() {
+			return member;
+		}
+
+		public void setMember(Member member) {
+			this.member = member;
+		}
+
+		public MemberAuthority getMemberAuthority() {
+			return memberAuthority;
+		}
+
+		public void setMemberAuthority(MemberAuthority memberAuthority) {
+			this.memberAuthority = memberAuthority;
+		}
+
+		public FileAuthority getFileAuthority() {
+			return fileAuthority;
+		}
+
+		public void setFileAuthority(FileAuthority fileAuthority) {
+			this.fileAuthority = fileAuthority;
+		}
 	}
 	
+	private String driverPath;
 	private int maxCapacity;
 	private int usingCapacity;
-	private boolean isFinal;
-	private boolean isRoot;
 	private int bandId;
 	private int ownerId;
 	private String bandName;
@@ -67,16 +90,13 @@ public final class Band implements Entity{
 		upperBandId = b.upperBandId;
 		subBands = b.subBands;
 		members = b.members;		
-		isFinal =b.isFinal;
-		isRoot = b.isRoot;
-		
+		driverPath = b.driverPath;
+	
 	}
 	
 	public static class Builder{
 	
-
-		private boolean isFinal;
-		private boolean isRoot;
+		private String driverPath;
 		private int maxCapacity;
 		private int usingCapacity;
 		private int bandId;
@@ -98,9 +118,7 @@ public final class Band implements Entity{
 			this.bandId = bandId;
 			this.ownerId = ownerId;
 			this.bandName = bandName;
-			
-			this.isFinal = false;
-			this.isRoot = false;
+
 			members = new HashMap<>();
 		
 			EnumMap<enumBandAuthority, Boolean> auth = new EnumMap<>(enumBandAuthority.class);
@@ -113,16 +131,6 @@ public final class Band implements Entity{
 			
 		}		
 
-		public Builder isFinal(boolean isFinal){
-			this.isFinal = isFinal;
-			return this;
-		}
-				
-		public Builder isRoot(boolean isRoot){
-			this.isRoot = isRoot;
-			return this;
-		}
-		
 		public Builder maxCapacity(int max){
 			this.maxCapacity = max;
 			return this;
@@ -138,9 +146,14 @@ public final class Band implements Entity{
 			this.subBands = subBands;			
 			return this;
 		}
-		
+
 		public Builder upperBandId(int upperBandId){
 			this.upperBandId = upperBandId; 
+			return this;
+		}
+
+		public Builder driverPath(String path){
+			this.driverPath = path; 
 			return this;
 		}
 		
@@ -160,14 +173,6 @@ public final class Band implements Entity{
 		
 	}
 
-
-	public boolean isFinal() {
-		return isFinal;
-	}
-
-	public boolean isRoot() {
-		return isRoot;
-	}
 
 	public int getBandId() {
 		return bandId;
@@ -195,6 +200,46 @@ public final class Band implements Entity{
 
 	public HashMap<Integer, AuthoritedMember> getMembers() {
 		return members;
+	}
+
+	public void setMaxCapacity(int maxCapacity) {
+		this.maxCapacity = maxCapacity;
+	}
+
+	public void setUsingCapacity(int usingCapacity) {
+		this.usingCapacity = usingCapacity;
+	}
+
+	public void setOwnerId(int ownerId) {
+		this.ownerId = ownerId;
+	}
+
+	public void setBandName(String bandName) {
+		this.bandName = bandName;
+	}
+
+	public void setBandAuthority(BandAuthority bandAuthority) {
+		this.bandAuthority = bandAuthority;
+	}
+
+	public void setUpperBandId(int upperBandId) {
+		this.upperBandId = upperBandId;
+	}
+
+	public void setSubBands(Tree<Band> subBands) {
+		this.subBands = subBands;
+	}
+
+	public void setMembers(HashMap<Integer, AuthoritedMember> members) {
+		this.members = members;
+	}
+
+	public String getDriverPath() {
+		return driverPath;
+	}
+
+	public void setDriverPath(String driverPath) {
+		this.driverPath = driverPath;
 	}
 	
 }

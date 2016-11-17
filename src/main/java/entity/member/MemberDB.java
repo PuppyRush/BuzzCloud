@@ -4,10 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.mindrot.jbcrypt.BCrypt;
+
+import com.mysql.jdbc.ResultSetMetaData;
 
 import entity.EntityException;
 import entity.enumEntityState;
@@ -149,7 +155,7 @@ public class MemberDB {
 		return member;
 	}
 		
-	public  boolean isMember(int uId) throws SQLException{
+	public  boolean isJoin(int uId) throws SQLException{
 		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -182,7 +188,7 @@ public class MemberDB {
 		
 	}
 	
-	public  boolean isMember(String email) throws SQLException{
+	public  boolean isJoin(String email) throws SQLException{
 		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -216,24 +222,72 @@ public class MemberDB {
 	
 	public int getIdOfNickname(String nickname) throws SQLException{
 		
-		PreparedStatement ps = conn.prepareStatement(" select memberId from member where nickname = ? ");
-		ps.setString(1,nickname);
-		ResultSet rs = ps.executeQuery();
-		rs.next();
-		return rs.getInt(1);		
+		int id= -1;
+		PreparedStatement ps;
+		try {
+			ps = conn.prepareStatement(" select memberId from member where nickname = ? ");
+			ps.setString(1,nickname);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			id = rs.getInt("memberId");		
+			
+			ps.close();
+			rs.close();
+					
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		return id;
 		
 	}
 
-	public int getIdOfEmail(String email) throws SQLException{
+	public int getIdOfEmail(String email){
 		
-		PreparedStatement ps = conn.prepareStatement(" select memberId from member where email = ? ");
-		ps.setString(1,email);
-		ResultSet rs = ps.executeQuery();
-		rs.next();
-		return rs.getInt("memberId");		
-		
+		int id= -1;
+		PreparedStatement ps;
+		try {
+			ps = conn.prepareStatement(" select memberId from member where email = ? ");
+			ps.setString(1,email);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			id = rs.getInt("memberId");		
+			
+			ps.close();
+			rs.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		return id;
 	}
 
+	public String getNicknameOfId(int id){
+		
+		String nickname = "";
+		PreparedStatement ps;
+		try {
+			ps = conn.prepareStatement(" select nickname from member where memberId = ? ");
+			ps.setInt(1,id);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			nickname = rs.getString("nickname");		
+			
+			rs.close();
+			ps.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return nickname;
+		
+	}
+	
 	public  boolean changePassword(Member member, String newPassword) throws Throwable{
 		
 		PreparedStatement _sp = conn.prepareStatement("update member set password = ? where memberId = ?");
@@ -368,12 +422,12 @@ public class MemberDB {
 			if(!rs.next())
 				throw new EntityException(enumMemberState.NOT_JOIN, enumPage.JOIN);
 						
-			if(rs.getInt("certificationJoin")==1){
+			if(rs.getInt("joinCertification")==1){
 				
 				ps.close();
 				rs.close();
 				
-				ps = conn.prepareStatement("select * from mail where memberId = ?, certificationKind = ?");
+				ps = conn.prepareStatement("select * from mail where memberId = ? and certificationKind = ?");
 				ps.setInt(1, uId);
 				ps.setInt(2, Integer.valueOf(enumMailType.JOIN.toString()));
 				rs = ps.executeQuery();
@@ -398,3 +452,4 @@ public class MemberDB {
 	}
 	
 }
+

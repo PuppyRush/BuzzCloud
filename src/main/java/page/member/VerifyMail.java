@@ -37,7 +37,7 @@ public class VerifyMail implements commandAction {
 		String email = (String) request.getParameter("mail");
 
 		try{
-			if(!MemberDB.getInstance().isMember(email))
+			if(!MemberDB.getInstance().isJoin(email))
 				throw new EntityException("일치하는 메일이 존재하지 않습니다.", enumMemberState.NOT_JOIN, enumPage.JOIN);
 			
 			returns.put("view", enumPage.ENTRY.toString());

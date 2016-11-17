@@ -42,7 +42,7 @@ public class LostPassword implements commandAction {
 			String sId = request.getRequestedSessionId();
 			String email = (String)request.getParameter("email");
 			
-			if(!MemberDB.getInstance().isMember( email ))
+			if(!MemberDB.getInstance().isJoin( email ))
 				throw new EntityException("입려하신 메일과 일치하는 메일이 없습니다.",enumMemberState.NOT_JOIN, enumPage.LOST_PASSWORD);
 									
 			if(MemberManager.getInstance().isSendedmail(email, enumMailType.LOST_PASSWORD)){

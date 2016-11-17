@@ -5,15 +5,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import dbAccess.DBManager;
 import entity.ControllerException;
 import entity.EntityException;
+import entity.authority.AuthorityController;
 import entity.authority.AuthorityManager;
 import entity.authority.band.BandAuthority;
 import entity.authority.band.enumBandAuthority;
@@ -479,7 +483,6 @@ public final class BandManager {
 			ps.setInt(1, bandId);
 			ResultSet rs = ps.executeQuery();
 			
-			
 			rs.next();
 
 			ownerId = rs.getInt("owner");
@@ -499,27 +502,20 @@ public final class BandManager {
 
 			members.put(member.getId(), new AuthoritedMember(member, mAuth, fAuth));
 
-			boolean isFinal = false, isRoot = false;
-			if (bandAuthority.getAuthorityType().get(enumBandAuthority.FINAL))
-				isFinal = true;
-
-			if (bandAuthority.getAuthorityType().get(enumBandAuthority.ROOT))
-				isRoot = true;
-
 			ps.close();
 			rs.close();
 			
-			ps = conn.prepareStatement("select usingCapacity, maxCapacity from bandDetail where bandId = ? ");
+			ps = conn.prepareStatement("select usingCapacity, maxCapacity, driverPath from bandDetail where bandId = ? ");
 			ps.setInt(1, bandId);
 			rs = ps.executeQuery();
 			rs.next();
 			
 			int maxCapacity = rs.getInt("maxCapacity");
 			int usingCapacity = rs.getInt("usingCapacity");
+			String driverPath = rs.getString("driverPath");
 			
-			band = new Band.Builder(bandId, ownerId, bandName).bandAuhority(bandAuthority).isFinal(isFinal)
-					.isRoot(isRoot).members(members).upperBandId(upperBandId).maxCapacity(maxCapacity)
-					.usingCapacity(usingCapacity).build();
+			band = new Band.Builder(bandId, ownerId, bandName).bandAuhority(bandAuthority).members(members).upperBandId(upperBandId).maxCapacity(maxCapacity)
+					.usingCapacity(usingCapacity).driverPath(driverPath).build();
 
 			if (BandController.getInstance().containsEntity(bandId) == false)
 				BandController.getInstance().addEntity(bandId, band);
@@ -536,35 +532,150 @@ public final class BandManager {
 	}
 
 	
-	public boolean makeBand(JSONObject obj){
+	public boolean updateBand(JSONObject obj){
 		
-		
-		
+		HashMap<String, Object> where = new HashMap<String, Object>();
+		HashMap<String, Object> set = new HashMap<String, Object>();
+	
 		try{
-			
-			conn.setAutoCommit(false);
 		
-			String groupName = (String)obj.get("groupName");
-			String groupOwner = (String)obj.get("groupOwner");
-			String administrator = (String)obj.get("administrator");
-			int groupCapacity = Integer.valueOf( (String)obj.get("groupCapacity"));
-			String groupContain = (String)obj.get("groupContain");
-			int upperGroupId = ((Long)obj.get("upperGroup")).intValue();
+			String bandName = (String)obj.get("bandName");
+			int upperBandId = ((Long)obj.get("upperBandId")).intValue();
+			int ownerId = MemberDB.getInstance().getIdOfNickname((String)obj.get("bandOwner"));
+			int bandId = BandDB.getInstance().getIdOfName(bandName, upperBandId);
+			if(upperBandId == -1)
+				upperBandId = bandId;
+		
 			
-			int ownerId = MemberDB.getInstance().getIdOfNickname(groupOwner);
-			int adminId = MemberDB.getInstance().getIdOfNickname(administrator);
-			int bandId = BandDB.getInstance().makeBand(groupName, ownerId, adminId);
+			if(obj.get("bandName")!=null)
+				set.put("name", (String)obj.get("bandName"));		
+			
+			if(obj.get("bandOwner")!=null)
+				set.put("owner", ownerId);
+		
+			where.put("bandId", bandId);			
+			DBManager.getInstance().updateColumn("band", set, where);
+						
+			where.clear();
+			set.clear();
 			
 			
+			if(obj.get("bandCapacity")!=null)
+				set.put("maxCapacity", Integer.valueOf((String)obj.get("bandCapacity")));
 			
+			if(obj.get("bandContain")!=null)
+				set.put("contents", (String)obj.get("bandContain"));
+			
+			where.put("bandId", bandId);
+			DBManager.getInstance().updateColumn("bandDetail", set, where);
+			
+			where.clear();
+			set.clear();
+			
+
 			JSONArray memberAry = (JSONArray)obj.get("members");
 			ArrayList<Integer> memberIds = new ArrayList<Integer>();
 			for(int i=0 ; i < memberAry.size() ; i++){
 				Long id = (Long)memberAry.get(i);
 				memberIds.add( id.intValue() );
 			}
+			addNewBandMembers(bandId, memberIds);
 			
-			BandDB.getInstance().makeBandDetail(bandId, groupCapacity, groupContain);	
+			
+			JSONArray bandAuths = (JSONArray)obj.get("bandAuthority");
+			JSONArray fileAuths = (JSONArray)obj.get("fileAuthority");
+						
+			for(int i=0 ; i < bandAuths.size(); i++){
+				enumBandAuthority auth = enumBandAuthority.valueOf( (String)bandAuths.get(i));
+				set.put(auth.toString(), 1);
+			}
+			where.put("bandId", bandId);
+			DBManager.getInstance().updateColumn("bandAuthority", set, where);
+			
+			where.clear();
+			set.clear();
+			
+			
+			EnumMap<enumFileAuthority ,Boolean> fileAuthMap = new EnumMap<enumFileAuthority ,Boolean>(enumFileAuthority.class);
+			for(int i=0 ; i < fileAuths.size(); i++){
+				enumFileAuthority auth = enumFileAuthority.valueOf( (String)fileAuths.get(i));
+				set.put(auth.toString(), 1);
+				fileAuthMap.put(auth, true);
+			}
+			where.put("bandId", bandId);
+			DBManager.getInstance().updateColumn("fileAuthority", set, where);
+			
+			where.clear();
+			set.clear();
+		
+			
+			Band band;
+			if( BandController.getInstance().containsEntity(bandId))
+				band =  BandController.getInstance().getEntity(bandId);
+			else{
+				band = BandManager.getInstance().getBand(bandId);
+				BandController.getInstance().addEntity(bandId, band);
+			}
+			
+			BandAuthority bandAuthority = AuthorityManager.getInstance().getBandAuthority(bandId);
+			if(AuthorityController.getInstance().containsEntity(bandAuthority.getAuthorityId()) == false)
+				AuthorityController.getInstance().addEntity(bandAuthority.getAuthorityId(), bandAuthority);
+			band.setBandAuthority(bandAuthority);
+			
+			for(Integer memberId :  band.getMembers().keySet()){				
+				AuthoritedMember am = band.getMembers().get(memberId);
+				am.getFileAuthority().setAuthorityType(fileAuthMap);		
+			}
+			
+		}catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			return false;
+		} catch (ControllerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (EntityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return true;
+	}
+	
+
+	public boolean makeBand(JSONObject obj){
+		
+	
+		try{
+			
+			conn.setAutoCommit(false);
+		
+			String groupName = (String)obj.get("bandName");
+			String groupOwner = (String)obj.get("bandOwner");
+			String administrator = (String)obj.get("administrator");
+		
+			int groupCapacity = 	 ((Long)obj.get("bandCapacity")).intValue();
+			String groupContain = (String)obj.get("bandContain");
+			int upperGroupId = ((Long)obj.get("upperBand")).intValue();
+			
+			int ownerId = MemberDB.getInstance().getIdOfNickname(groupOwner);
+			int adminId = MemberDB.getInstance().getIdOfNickname(administrator);
+			int bandId = BandDB.getInstance().makeBand(groupName, ownerId, adminId);
+			
+			if(upperGroupId == -1)
+				upperGroupId = bandId;
+
+			
+			JSONArray memberJsonAry = (JSONArray)obj.get("members");
+			ArrayList<Integer> memberIds = new ArrayList<Integer>();
+			for(int i=0 ; i < memberJsonAry.size() ; i++){
+				Long id = (Long)memberJsonAry.get(i);
+				memberIds.add( id.intValue() );
+			}		
+			
+			
+			String driverPath =  BandDB.getInstance().makeBandDetail(bandId, groupCapacity, groupContain);	
 			BandDB.getInstance().makeBandMember(bandId, memberIds);
 			BandDB.getInstance().makeBandRelation(upperGroupId, bandId);
 			
@@ -572,7 +683,9 @@ public final class BandManager {
 			JSONArray fileAuths = (JSONArray)obj.get("fileAuthority");
 			
 			EnumMap<enumBandAuthority ,Boolean> bandAuthMap = new EnumMap<enumBandAuthority ,Boolean>(enumBandAuthority.class);
+						
 			for(int i=0 ; i < bandAuths.size(); i++){
+				
 				if(enumBandAuthority.valueOf((String)bandAuths.get(i)) != null)
 					bandAuthMap.put(enumBandAuthority.valueOf((String)bandAuths.get(i)), true);
 			}
@@ -588,8 +701,9 @@ public final class BandManager {
 				int memberId = memberIds.get(i);
 				
 				Member member = MemberController.getInstance().containsEntity(memberId) ? MemberController.getInstance().getEntity(memberId) : MemberDB.getInstance().getMember(memberId);
-	
+					
 				FileAuthority fileAuth = AuthorityManager.getInstance().makeFileAuthoirty(member.getId(), bandId, fileAuthMap);
+	
 				MemberAuthority memberAuth =null;
 				if(memberId == adminId)
 					memberAuth = AuthorityManager.getInstance().makeMemberAuthority(member.getId(), bandId, enumMemberAuthority.ADMIN);
@@ -600,22 +714,21 @@ public final class BandManager {
 				
 				AuthoritedMember am = new Band.AuthoritedMember(member,memberAuth, fileAuth);
 				authoritedMap.put(member.getId(), am);
+					
+				AuthorityController.getInstance().addEntity(fileAuth.getAuthorityId(), fileAuth);
+				AuthorityController.getInstance().addEntity(memberAuth.getAuthorityId(), memberAuth);		
 			}
 			
 			BandAuthority bandAuth = AuthorityManager.getInstance().makeBandAuthority(bandId, bandAuthMap);
+			AuthorityController.getInstance().addEntity(bandAuth.getAuthorityId(), bandAuth);
 			
 			Band.Builder bld = new Band.Builder();
-			bld.maxCapacity( Integer.valueOf( (String)obj.get("groupCapacity")) );
+			bld.maxCapacity( groupCapacity );
 			bld.upperBandId(upperGroupId);
 			bld.usingCapacity(0);
 			bld.members(authoritedMap);
 			bld.bandAuhority(bandAuth);
-			
-			boolean isFinal = bandAuthMap.containsKey(enumBandAuthority.FINAL) && bandAuthMap.get(enumBandAuthority.FINAL) ? true : false;
-			bld.isFinal(isFinal);
-			
-			boolean isRoot = bandAuthMap.containsKey(enumBandAuthority.ROOT) && bandAuthMap.get(enumBandAuthority.ROOT) ? true : false;
-			bld.isRoot(isRoot);
+			bld.driverPath(driverPath);
 			
 			bld.subBands(BandManager.getInstance().getSubBands(bandId));
 			Band band = bld.build();
@@ -654,15 +767,51 @@ public final class BandManager {
 				e1.printStackTrace();
 			}
 			return false;
-		}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			return false;
+		} 
 		
 		return true;
 	}
 	
-	public void makeBand(Band.Builder newBand){
+	public void addNewBandMembers(int bandId, ArrayList<Integer> members){
 		
+		HashMap<String, Object> where = new HashMap<String, Object>();
+		ArrayList<Integer> exMembers = new ArrayList<Integer>();
 		
+		where.put("bandId", bandId);
+		ArrayList<HashMap<String,Object>> memberAry = DBManager.getInstance().getColumnsOfAll("bandMember", where);
 		
+		for(HashMap<String,Object> member : memberAry)
+			exMembers.add( (Integer)member.get("memberId"));
+		
+		members = (ArrayList<Integer>) CollectionUtils.subtract(members,exMembers);
+		
+		for(Integer newMemberId : members){
+			
+			PreparedStatement ps;
+			try {
+				
+				ps = conn.prepareStatement("insert into bandMember (bandId, memberId) values (?,?)");
+				ps.setInt(1, bandId);
+				ps.setInt(2, newMemberId);
+				ps.executeUpdate();
+				
+				ps.close();				
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+						
+		}
 	}
-	
 }

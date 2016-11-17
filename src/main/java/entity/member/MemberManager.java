@@ -154,52 +154,64 @@ public final class MemberManager {
 	 */
 	public  boolean resolveCertificateJoin(String sId, String email, String hashedUUID) throws Exception {
 		
-		PreparedStatement _ps = null;
-		ResultSet _rs = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 		
-		if(!MemberDB.getInstance().isMember(sId))
+		if(MemberDB.getInstance().isJoin(email) == false)
 			throw new EntityException(enumMemberState.NOT_JOIN, enumPage.ERROR404);
 		
 		try{
 			
 			conn.setAutoCommit(false);
 			
-			Member member = MemberController.getInstance().getMember(sId);
+			Member member;
+			if(MemberController.getInstance().containsEntity(sId))
+				member = MemberController.getInstance().getMember(sId);
+			else{
+				member = MemberDB.getInstance().getMember(email);
+				MemberController.getInstance().addMember(member, sId);
+			}
 			 
 			int _id = member.getId();
 			
-			 _ps= conn.prepareStatement("select certificationNumber from joinCertification where memberId = ? and certificationType = ? ");
-			_ps.setInt(1, _id);
-			_ps.setInt(2, Integer.parseInt(enumMailType.JOIN.toString()) );
-			_rs = _ps.executeQuery();
+			ps= conn.prepareStatement("select certificationNumber from mail where memberId = ? and certificationKind = ? ");
+			ps.setInt(1, _id);
+			ps.setInt(2, Integer.parseInt(enumMailType.JOIN.toString()) );
+			rs = ps.executeQuery();
 			
-			if(!_rs.next())
+			if(rs.next()==false)
 				throw new SQLException(email+","+_id+"joinCertification테이블에 id가 둘 이상 존재하거나 한개도 존재하지 않습니다.");
 			 			
-			String planeUUID = _rs.getString(1);
+			String planeUUID = rs.getString(1);
 			
+			ps.close();
+			rs.close();
+						
 			if(BCrypt.checkpw( planeUUID, hashedUUID )){
 				
-				_ps = conn.prepareStatement("delete from joinCertification where memberId = ? and certificationType = ? ");
-				_ps.setInt(1, _id);
-				_ps.setInt(2, Integer.parseInt(enumMailType.JOIN.toString()));
-				_ps.executeUpdate();
+				ps = conn.prepareStatement("delete from mail where memberId = ? and certificationKind = ? ");
+				ps.setInt(1, _id);
+				ps.setInt(2, Integer.parseInt(enumMailType.JOIN.toString()));
+				ps.executeUpdate();
 				
-				_ps = conn.prepareStatement("update memberState set joinCertification = 0 where memberId = ?");
-				_ps.setInt(1, _id);
-				_ps.executeUpdate();
+				ps = conn.prepareStatement("update memberState set joinCertification = 0 where memberId = ?");
+				ps.setInt(1, _id);
+				ps.executeUpdate();
 
 				
 				////////userDetail table
 				
 				Timestamp date = new Timestamp(System.currentTimeMillis());
-				_ps = conn.prepareStatement("update memberDetail set lastModifiedPasswordDate =? , lastLogoutDate = ? where memberId = ?");				
-				_ps.setInt(3,_id);
-				_ps.setTimestamp(1, date);
-				_ps.setTimestamp(2, date);
+				ps = conn.prepareStatement("update memberDetail set lastModifiedPasswordDate =? , lastLogoutDate = ? where memberId = ?");				
+				ps.setInt(3,_id);
+				ps.setTimestamp(1, date);
+				ps.setTimestamp(2, date);
 				
-				_ps.executeUpdate();
+				ps.executeUpdate();
 					
+				ps.close();
+				rs.close();
+				
 				PostMan.sendWelcomeMail(member.getNickname(), member.getEmail());
 				
 				conn.commit();
@@ -228,7 +240,7 @@ public final class MemberManager {
 			
 			if(MemberDB.getInstance().isCertificatingJoin(member.getId())){
 				
-				ps = conn.prepareStatement("delete from mail where memberId = ? and certificationType = ?");
+				ps = conn.prepareStatement("delete from mail where memberId = ? and certificationKind = ?");
 				ps.setInt(1, member.getId());
 				ps.setInt(2, Integer.valueOf(enumMailType.JOIN.toString()));
 				ps.executeUpdate();
@@ -236,7 +248,7 @@ public final class MemberManager {
 				
 			}
 			
-			ps = conn.prepareStatement("insert into mail (memberId, certificationNumber, certificationType) values(?,?,?)" );
+			ps = conn.prepareStatement("insert into mail (memberId, certificationNumber, certificationKind) values(?,?,?)" );
 			ps.setInt(1,member.getId() );
 			ps.setString(2, _uuid);
 			ps.setInt(3, Integer.parseInt(enumMailType.JOIN.toString()) );	

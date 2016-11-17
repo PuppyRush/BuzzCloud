@@ -15,7 +15,7 @@ public enum enumMemberAuthority {
 	
 	@Override
 	public String toString(){
-		return String.valueOf(number);
+		return this.name();
 	}
 	
 	public int toInteger(){

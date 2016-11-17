@@ -1,7 +1,9 @@
 package entity.authority.band;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 
 import entity.authority.Authority;
 
@@ -18,6 +20,19 @@ public class BandAuthority extends Authority{
 		return authorityType;
 	}
 
+	public ArrayList<enumBandAuthority> toArray(){
+		
+		ArrayList<enumBandAuthority> ary= new ArrayList<enumBandAuthority>();
+			
+		for(enumBandAuthority auth : authorityType.keySet()){
+			if(authorityType.get(auth) )
+				ary.add(auth);
+		}
+			
+		return ary;
+		
+	}
+	
 	public void setAuthorityType(EnumMap<enumBandAuthority, Boolean> authorityType) {
 		this.authorityType = authorityType;
 	}

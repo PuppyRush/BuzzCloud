@@ -4,6 +4,8 @@ package page.member;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.expression.common.TemplateParserContext;
+
 import entity.EntityException;
 import entity.member.Member;
 import entity.member.MemberController;
@@ -53,28 +55,39 @@ public class Login implements commandAction {
 			String email = request.getParameter("email");
 			String sessionId = request.getRequestedSessionId();
 			String planePassword = request.getParameter("password");
-			String nickname = request.getParameter("nickname");
+			
 			
 			//가입 방식에 따라 달리 처리한다.
 			idType = enumMemberType.valueOf(request.getParameter("idType"));
 			
-			Member tempMember = new Member.Builder(email, sessionId).registrationKind(idType).nickname(nickname).planePassword(planePassword).build();
-			
+			Member member; 
+			if(MemberController.getInstance().containsEntity(sessionId)){
+				member = MemberController.getInstance().getMember(sessionId);
+				member.setPlanePassword(planePassword);			
+			}
+			else{
+				member = MemberDB.getInstance().getMember(email);
+				member.setPlanePassword(planePassword);
+				
+				MemberController.getInstance().addMember(member, sessionId);
+				 
+			}
+							
 			switch(idType){
 				case NOTHING:
 					
 					//가입여부 확인.
-					if(!MemberDB.getInstance().isMember(email))
+					if(!MemberDB.getInstance().isJoin(email))
 						throw new EntityException("이메일이 존재하지 않습니다. 가입후 사용하세요. ", enumMemberState.NOT_JOIN, enumPage.JOIN);
 					
 					//로그인 여부 확인.				
 					if(MemberController.getInstance().containsEntity(sessionId)){
-						tempMember = MemberController.getInstance().getMember(sessionId);
-						if(tempMember.isLogin())
-							throw new EntityException( enumMemberState.ALREADY_LOGIN, enumPage.LOGIN);
+						member = MemberController.getInstance().getMember(sessionId);
+						if(member.isLogin())
+							throw new EntityException( enumMemberState.ALREADY_LOGIN, enumPage.MAIN);
 					}
 
-					EnumMap<enumMemberAbnormalState, Boolean> state = MemberDB.getInstance().getMemberAbnormalStates(tempMember.getId());
+					EnumMap<enumMemberAbnormalState, Boolean> state = MemberDB.getInstance().getMemberAbnormalStates(member.getId());
 					//잠김상태인가?
 					if( state.containsValue(true)){
 						
@@ -86,7 +99,7 @@ public class Login implements commandAction {
 						//아래의 두 상태는 비밀번호 일치여부를 검사할 필요 없음.
 						if( state.get(enumMemberAbnormalState.LOST_PASSWORD) ){					
 							
-							if(MemberManager.getInstance().isSendedmail(tempMember.getEmail(), enumMailType.LOST_PASSWORD))
+							if(MemberManager.getInstance().isSendedmail(member.getEmail(), enumMailType.LOST_PASSWORD))
 								throw new EntityException(enumMemberState.LOST_PASSWORD, enumPage.INPUT_CERTIFICATION_NUMBER);
 							else
 								throw new EntityException(enumMemberState.LOST_PASSWORD, enumPage.INPUT_MAIL);
@@ -96,7 +109,7 @@ public class Login implements commandAction {
 						//비밀번호 초과상태인가
 						else if(state.get(enumMemberAbnormalState.FAILD_LOGIN) ){
 						
-							if(MemberManager.getInstance().isSendedmail(tempMember.getEmail(), enumMailType.FAILED_LOGIN))
+							if(MemberManager.getInstance().isSendedmail(member.getEmail(), enumMailType.FAILED_LOGIN))
 								throw new EntityException(enumMemberState.EXCEED_FAILD_LOGIN, enumPage.INPUT_CERTIFICATION_NUMBER);
 							else
 								throw new EntityException(enumMemberState.EXCEED_FAILD_LOGIN, enumPage.INPUT_MAIL);
@@ -107,7 +120,7 @@ public class Login implements commandAction {
 						//잠김 상태중에서도 아래 두가지는 확인이 필요함.
 						if(state.get(enumMemberAbnormalState.LOST_PASSWORD )){
 							
-							tempMember.doLogin(sessionId);
+							member.doLogin();
 							
 							
 						}
@@ -122,14 +135,14 @@ public class Login implements commandAction {
 					}//ABNORMAL=0. 잠김상태가 아니면 로그인을 시도한다.
 					else{
 					
-						if(tempMember.doLogin(sessionId)==false)
+						if(member.doLogin()==false)
 							throw new EntityException(enumMemberState.NOT_EQUAL_PASSWORD, enumPage.LOGIN);	
 						else{//로그인성공
 							
 							returns.put("message", "로그인에 성공하셨습니다.");
 							returns.put("messageKind", enumCautionKind.NORMAL);
 							returns.put("isSuccessLogin", "true");
-							returns.put("id", email);
+							
 						}
 						
 						returns.put("view", enumPage.ENTRYTOMAIN.toString());				
@@ -140,15 +153,15 @@ public class Login implements commandAction {
 				case NAVER:
 				case GOOGLE:
 					
-					if(MemberDB.getInstance().isMember(email))
-						tempMember.doLogin(sessionId);
-						if(tempMember.verify())
-							MemberController.getInstance().addMember(tempMember, sessionId);
+					if(MemberDB.getInstance().isJoin(email))
+						member.doLogin();
+						if(member.verify())
+							MemberController.getInstance().addMember(member, sessionId);
 					else{
-						tempMember.doJoin(sessionId);
-						tempMember.doLogin(sessionId);
-						if(tempMember.verify())
-							MemberController.getInstance().addMember(tempMember, sessionId);
+						member.doJoin();
+						member.doLogin();
+						if(member.verify())
+							MemberController.getInstance().addMember(member, sessionId);
 						
 					}
 						

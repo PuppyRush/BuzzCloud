@@ -54,9 +54,7 @@ public class VerifyPage {
 
 					break;
 					
-
 					
-				case MAIN:
 				case ENTRYTOMAIN:
 					
 					if(!member.isJoin())

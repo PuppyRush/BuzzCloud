@@ -2,6 +2,16 @@
  * 
  */
 
+	function isValidateString(str){
+
+		var regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\+<>@\#$%&\\\=\(\'\"]/gi;
+		
+		if(str =="and" || str == "or" || str == "=" )
+			return false;
+		else if(regExp.test(str))
+			return false;
+	}	
+
 
 		getParameter = function(param){
 				    full_url=location.href;

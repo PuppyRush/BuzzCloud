@@ -4,7 +4,8 @@
 /target/
 enumMysql.java
 enumMail.java
-
+webapp/*
+.settings/*
 
 # Created by https://www.gitignore.io/api/eclipse,maven,linux,maven,maven,maven
 

@@ -1,0 +1,25 @@
+{
+  "name": "BuzzCloud",
+  "homepage": "https://github.com/PuppyRush/BuzzCloud",
+  "authors": [
+    "PuppyRush <gooddumi@naver.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "boostrap#^3.3.7",
+    "angular": "^1.6.1",
+    "jquery": "jqurey#^3.1.1",
+    "google-code-prettify": "^1.0.5"
+  }
+}

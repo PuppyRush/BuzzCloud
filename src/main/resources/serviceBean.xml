@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+		
+
+	<import resource="classpath:entityBean.xml"/>
+	<context:annotation-config/>
+		
+	<bean id="settingProfile" class="com.puppyrush.buzzcloud.service.config.account.SettingProfile" scope="singleton"/>
+	
+	<bean id="gettingMyAccountInfo" class="com.puppyrush.buzzcloud.service.config.account.GettingMyAccountInfo" scope="singleton"/>
+	
+	
+	<bean id="gettingSelectedBandMembers" class="com.puppyrush.buzzcloud.service.band.GettingSelectedBandMembers" scope="singleton"/>
+	
+	<bean id="searchedBandInfo" class="com.puppyrush.buzzcloud.service.band.searchedBandInfo" scope="singleton"/>
+		
+	<bean id="initMyBandInfo" class="com.puppyrush.buzzcloud.service.config.band.InitMyBandInfo" scope="singleton"/>
+	
+	
+	<bean id="initBandMap" class="com.puppyrush.buzzcloud.service.config.main.InitBandMap" scope="singleton"/>
+	
+	<bean id="updatingMyBand" class="com.puppyrush.buzzcloud.service.config.main.UpdatingMyBand" scope="singleton"/>
+	
+	<bean id="alreadyLogin" class="com.puppyrush.buzzcloud.service.config.member.AlreadyLogin" scope="singleton"/>
+	<bean id="login" class="com.puppyrush.buzzcloud.service.config.member.Login" scope="singleton"/>
+	<bean id="join" class="com.puppyrush.buzzcloud.service.config.Join" scope="singleton"/>
+	<bean id="logout" class="com.puppyrush.buzzcloud.service.config.member.Logout" scope="singleton"/>
+	
+	
+	
+	
+		
+</beans>
+

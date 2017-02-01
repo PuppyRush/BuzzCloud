@@ -10,6 +10,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.authority.band.BandAuthority;
 import com.puppyrush.buzzcloud.entity.authority.band.enumBandAuthority;
@@ -20,17 +22,11 @@ import com.puppyrush.buzzcloud.entity.authority.member.enumMemberAuthority;
 import com.puppyrush.buzzcloud.entity.band.Band;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
-public class AuthorityManager {
+@Service("authorityManager")
+public final class AuthorityManager {
 
 	protected Connection conn = ConnectMysql.getConnector();
 
-	private static class Singleton {
-		private static final AuthorityManager instance = new AuthorityManager();
-	}
-
-	public static AuthorityManager getInstance() {
-		return Singleton.instance;
-	}
  	public FileAuthority getFileAuthoirty(int memberId, int bandId) {
 
 		FileAuthority fAuth = null;

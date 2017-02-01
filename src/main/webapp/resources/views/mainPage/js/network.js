@@ -14,53 +14,51 @@
 		}	
 
 		
-
-		   $.ajax({
-		   url:'/page/mainPage/ajax/getSubBandRelation.jsp',
-		   data : { memberId: memberId},
-		   dataType:'json',
-		   success:function(data){
-		   	rootsBand = new Array(data.length);
+		$(document).ready(function() 
+		{
+										
+					var comAjax = new ComAjax();
+					comAjax.setUrl("/mainPage/initBandMap.ajax");
+					comAjax.setCallback("callback_drawNetwork");
+					comAjax.setType("post");
+					comAjax.ajax();
+		
+		});
+	
+		
+		function callback_drawNetwork(data){
+			
+				if(data== NULL || data.length == 0)
+					return;
+				
+				if(data["subBandRelation"]){
+					var subBandRelation = data["subBandRelation"];
+					rootsBand = new Array(subBandRelation.length);
 		    	var i=0;
-		   	for (var key in data) {		   
-		 					var temp = data[key];
+		   	for (var key in subBandRelation) {		   
+		 					var temp = subBandRelation[key];
 			  			rootsBand[i] = new bundleBand();
 			  			rootsBand[i].fromBand = temp[0];
 			  			rootsBand[i].toBand = temp[1];
 			  			i++;
 					 }
-		   	
-		   	networkSwitch1 = true;
-		   	if(networkSwitch1 && networkSwitch2){
-		   		drawVisualization();
-		    		}
-		          }
-		   
-		      });
-		      
-		      
-		   $.ajax({
-		   url:'/page/mainPage/ajax/getMyBands.jsp',
-		   data : { memberId: memberId},
-		   dataType:'json',
-		   success:function(data){
-		 	 	 bands = new Array(data.length);
-		    var i=0;
-		    for (var key in data) {		
-						bands[i] = new band();
-						bands[i].id = key;
-						bands[i].name = data[key];
-			  		i++;
-					 }
-		    
-		    	networkSwitch2 = true;
-		    		
-		    	if(networkSwitch1 && networkSwitch2){
-		    		drawVisualization();
-		    		}
-		          }
-		      });
+				}
+				else if(data["getMyBands"]){
+					var myBands = data["getMyBands"];
+				 bands = new Array(myBands.length);
+				    var i=0;
+				    for (var key in myBands) {		
+								bands[i] = new band();
+								bands[i].id = key;
+								bands[i].name = myBands[key];
+					  		i++;
+							 }
+				}
 			
+				drawVisualization();
+		}
+		
+		
 		 
 		
 		

@@ -11,32 +11,7 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-  
-<%
-
-	request.setCharacterEncoding("UTF-8");
-
-	Member member = null;
- 	
-	HashMap<String,Object> results =  VerifyPage.Verify(session.getId(), enumPage.MAIN);
-	boolean isSuccessVerify = (boolean)results.get("isSuccessVerify");
-	if(isSuccessVerify){
-	
-		member = MemberController.getInstance().getMember(session.getId());
-
-	}
-	else{
-
-		enumPage to = (enumPage)results.get("to");
-		
-		request.setAttribute("message",  (String)results.get("message"));
-		request.setAttribute("messageKind", results.get("messageKind"));
-		response.sendRedirect(to.toString());
-		return;
-				
-	}
-	
-%>
+ 
     
 <!DOCTYPE html>
 <html class="full" lang="ko">
@@ -59,17 +34,17 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
         
     
     <!-- Custom CSS -->
-			<link href="/page/mainPage/css/main.css?<?=filemtime(\'./css/readizgen.css\')?" rel="stylesheet" type="text/css">
-			<link href="/page/mainPage/css/form.css?<?=filemtime(\'./css/readizgen.css\')?" rel="stylesheet" type="text/css">
+			<link href="/resources/views/mainPage/css/main.css?<?=filemtime(\'./css/readizgen.css\')?" rel="stylesheet" type="text/css">
+			<link href="/resources/views/mainPage/css/form.css?<?=filemtime(\'./css/readizgen.css\')?" rel="stylesheet" type="text/css">
 			
 			<!-- ohsnap css  -->
-			<link href="/include/notificator/ohsnap.css" rel="stylesheet">
+			<link href="/resources/lib/include/notificator/ohsnap.css" rel="stylesheet">
 		
 			<!-- context menu css  -->
     <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css"/>
     
     <!--  autocomplete -->
-		<link href="/include/easyautocomplete/easy-autocomplete.min.css" rel="stylesheet"/>
+		<link href="/resources/lib/include/easyautocomplete/easy-autocomplete.min.css" rel="stylesheet"/>
 		    
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -172,14 +147,11 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 
 <form id="logoutForm" method="POST" ACTION="/logout.do">
 	</form>
-
-
-		
+	
 	
 
 <script>
 
-  var memberId = <%=member.getId()%>; 
 	var bands;
 	var rootsBand = new Array();
 
@@ -190,16 +162,12 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 		var message;
 		var popup_color;
 	
-		<% 
-		if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
-			enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
-		%>
-		  message = "<%=(String)request.getAttribute("message")%>";
-		  popup_color = "<%=(String)kind.getString()%>";
-		  ohSnap(message,{color:popup_color});
-	  <%
+		
+		message = ${message};
+		if(message !="" ){
+			popup_color = ${messageKind}
+			ohSnap(message,{color:popup_color});
 		}
-		%>
 		
 	
 			
@@ -226,25 +194,26 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
   <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.js" type="text/javascript"></script>
   <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
   <script src="https://swisnl.github.io/jQuery-contextMenu/js/main.js" type="text/javascript"></script>
-  <script type="text/javascript" src="/page/mainPage/js/contextMenu.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+  <script type="text/javascript" src="/resources/views/mainPage/js/contextMenu.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 		
 			
 		<!-- ohsnap -->
 		<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>
 		
 			<!-- autocomplete  -->
-	<script type="text/javascript" src="/include/easyautocomplete/jquery.easy-autocomplete.js"></script>
+	<script type="text/javascript" src="/resources/lib/include/easyautocomplete/jquery.easy-autocomplete.js"></script>
 	
 	
 		<!-- custom js  -->
-		<script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
-		<script type="text/javascript" src="/page/mainPage/js/form.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
-		<script type="text/javascript" src="/page/mainPage/js/autocomplete.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+		<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/commonAjax.js"></script>
+		<script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js"></script>
+		<script type="text/javascript" src="/resources/views/mainPage/js/form.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+		<script type="text/javascript" src="/resources/views/mainPage/js/autocomplete.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 	
 			<!-- network js  -->
-		<script type="text/javascript" src="/include/network-1.5.0/network.js"></script>
+		<script type="text/javascript" src="/resources/lib/include/network-1.5.0/network.js"></script>
 		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-		<script type="text/javascript" src="/page/mainPage/js/network.js"></script>
+		<script type="text/javascript" src="/resources/views/mainPage/js/network.js"></script>
 		
 		
 

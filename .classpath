@@ -25,5 +25,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/usr/local/jdk1.8.0_73/jre/lib/ext/javadude-annotation-2.1.6.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

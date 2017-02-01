@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+	
+<!-- <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+
+
+	<property name="contentType" value="text/html;charset=UTF-8"/>
+
+</bean> -->
+
+<bean id="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView"/> 
+
+</beans>
+	

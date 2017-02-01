@@ -9,20 +9,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
 
+import org.springframework.stereotype.Service;
+
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 import com.puppyrush.buzzcloud.property.enums.enumSystem;
 
+@Service("bandDB")
 public class BandDB {
 
 	protected Connection conn = ConnectMysql.getConnector();
 
-	private static class Singleton {
-		private static final BandDB instance = new BandDB();
-	}
-
-	public static BandDB getInstance() {
-		return Singleton.instance;
-	}
 
 	public int makeBand(String name, int owner, int admin){
 		

@@ -4,7 +4,7 @@
    var maxCapacity;
    
 	$.ajax({
-	    url:'/page/manager/ajax/group/getBandMembers.jsp',
+	    url:'/configPage/groupCnfig/initMyBandInformation.ajax',
 	    data: { memberId: memberId},
 	    dataType:'json',
 	    success:function(data){
@@ -14,7 +14,7 @@
 	 			 
            }
        })
-       
+    /*   
  $.ajax({
 	    url:'/page/manager/ajax/group/getSubBands.jsp',
 	    data: { memberId: memberId},
@@ -59,11 +59,11 @@
       })
   	   
 
-	
+	*/
 
 
 
-		//var members = new Array();
+   var members = new Array();
 		var bandMembers;
 		
 		var mebersOfPart = new Array();
@@ -88,7 +88,7 @@
 		    		if(str.length>=4){
 		    		
 		    		 $.ajax({
-		    		    url:'/page/manager/ajax/group/getMembersOfPart.jsp',
+		    		    url:'/configPage/groupCnfig/getMembersOfPart.jsp',
 		    		    data: { nickname: str },
 		    		    dataType:'json',
 		    		    success:function(data){
@@ -108,7 +108,7 @@
 		var options = {
 
 			  url: function(phrase) {
-				    return '/page/manager/ajax/group/getMembersOfPart.jsp';
+				    return '/configPage/groupCnfig/getMembersOfPart.jsp';
 				  },
 
 				  getValue: function(element) {
@@ -155,7 +155,7 @@
 		var options = {
 
 				  url: function(phrase) {
-					    return '/page/manager/ajax/group/getMembersOfPart.jsp';
+					    return '/configPage/groupCnfig/getMembersOfPart.jsp';
 					  },
 
 					  getValue: function(element) {
@@ -277,7 +277,7 @@
 				 str =  JSON.stringify(bandInfo);
 				 $.ajax({
 				 		
-			    url:'/page/manager/ajax/group/makeBand.jsp',
+			    url:'/configPage/groupCnfig/makeBand.jsp',
 			    data : {data : str},
 			    dataType:'json',
 			    success:function(data){
@@ -305,7 +305,7 @@
 	 			str =  JSON.stringify(bandInfo);
 			 $.ajax({
 			 		
-		    url:'/page/manager/ajax/group/updateBand.jsp',
+		    url:'/configPage/groupCnfig/updateBand.jsp',
 		    data : {data : str},
 		    dataType:'json',
 		    success:function(data){

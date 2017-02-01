@@ -59,7 +59,7 @@
 					</div>
 					<div class="modal-body">
 
-						<form class="form col-md-12 center-block" id="innerJoinForm"	>
+						<form class="form col-md-12 center-block" id="join.do"		method="POST" ACTION="/entryPage/join.do">
 										<div class="form-group">
 											<input type="text" name="email" id="email" class="form-control input-lg"	placeholder="Email">
 										</div>
@@ -93,7 +93,7 @@
 
 	</div>
 
-	<div class="logonModal">
+	<div class="loginModal">
 		<div class="text-vertical-center" tabindex="-1" role="dialog"
 			aria-hidden="true">
 			<div class="modal-dialog">
@@ -105,7 +105,7 @@
 					</div>
 					<div class="modal-body">
 
-						<form class="form col-md-12 center-block" id="loginForm"	method="POST" ACTION="login.do">
+						<form class="form col-md-12 center-block" id="loginForm"	method="POST" ACTION="/entryPage/login.do">
 							<div class="form-group">
 								<input type="text" name="email"	 id="email"		class="form-control input-lg" placeholder="Email">
 							</div>
@@ -181,7 +181,7 @@
 
 	<div id="ohsnap"></div>
 
-	<form id="alreadyLoginForm" method="GET" action="/alreadyLogin.do">
+	<form id="alreadyLoginForm" method="GET" action="/entryPage/postAlreadyLogin.do">
 	</form>  
 
 	<!--  static library -->
@@ -195,6 +195,7 @@
 
 	<!-- custom library  -->
 
+<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/commonAjax.js"></script>
 	<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/clientSideLibrary.js"></script>
 	<script type="text/javascript" charset="utf-8" src="/resources/views/entryPage/js/entryPage.js"></script>
 	
@@ -204,36 +205,18 @@
 
 	window.onload=function(){
 	
+
 		//메세지
 		var message;
 		var popup_color;
-		<% 
-			if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
-				enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
-		%>
-			  message = "<%=(String)request.getAttribute("message")%>";
-			  popup_color = "<%=(String)kind.getString()%>";
-			  ohSnap(message,{color:popup_color});
-		<%
-			}
-		%>
+	
 		
-		
-		
-		   $.ajax({
-				   type:"POST",
-				   dataType:"json",
-				   url:'/page/member/ajax/alreadyLogin.jsp',
-				   success:function(data){
-				   					   	
-		   			if(data["alreadyLogin"]){
-		   				$("#alreadyLoginForm").submit();	   					
-		   				}
-				   	
-			          }
-			      });
-		
-		
+		message = ${message};
+		if(message !="" ){
+			popup_color = ${messageKind}
+			ohSnap(message,{color:popup_color});
+		}
+				
 	}
 	
 </script>

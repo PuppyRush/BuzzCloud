@@ -4,16 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
-
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.mysql.jdbc.ResultSetMetaData;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.enumEntityState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberAbnormalState;
@@ -24,18 +20,23 @@ import com.puppyrush.buzzcloud.mail.enumMailType;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
+@Service("memerDb")
 public class MemberDB {
 
 	private static Connection conn = ConnectMysql.getConnector();
+	
+	@Autowired
+	private MemberController mCtl;
+	
+	public static void setConn(Connection conn) {
+		MemberDB.conn = conn;
+	}
 
 
-	private static class Singleton {
-		private static final MemberDB instance = new MemberDB();
+	public void setMemberController(MemberController mCtl) {
+		this.mCtl = mCtl;
 	}
 	
-	public static MemberDB getInstance () {
-		return Singleton.instance;
-	}
 	
 	public  EnumMap<enumMemberAbnormalState, Boolean> getMemberAbnormalStates(int memberId) throws Throwable{
 
@@ -84,8 +85,8 @@ public class MemberDB {
 			
 			member = new Member.Builder(memberId,email).abnormalState(state).registrationKind(idType).nickname(nickname).build();
 			
-			if(MemberController.getInstance().containsEntity(memberId) == false)
-				MemberController.getInstance().addEntity(memberId, member);
+			if(mCtl.containsEntity(memberId) == false)
+				mCtl.addEntity(memberId, member);
 			
 		}catch(SQLException e){
 			e.printStackTrace();
@@ -129,8 +130,8 @@ public class MemberDB {
 			
 			member = new Member.Builder(memberId,email).abnormalState(state).registrationKind(idType).nickname(nickname).build();
 					
-			if(MemberController.getInstance().containsEntity(memberId) == false)
-				MemberController.getInstance().addEntity(memberId, member);
+			if(mCtl.containsEntity(memberId) == false)
+				mCtl.addEntity(memberId, member);
 			
 			
 		}catch(SQLException e){
@@ -449,6 +450,8 @@ public class MemberDB {
 		
 		return isDoing;
 	}
+
+
 	
 }
 

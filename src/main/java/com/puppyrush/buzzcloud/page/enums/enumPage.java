@@ -6,37 +6,37 @@ public enum enumPage {
 
 	ROOT("http://114.129.212.30:"+enumSystem.PORT.toString()),
 	
-	ERROR404("/error/404error.jsp"),
-	ERROR403("/error/403error.jsp"),
+	ERROR404("/error/404error"),
+	ERROR403("/error/403error"),
 	
-	ENTRY("/page/entryPage/EntryPage.jsp"),
-	ENTRYTOMAIN("/page/entryPage/EntryToMain.jsp"),
-	MAIN("/page/mainPage/MainPage.jsp"),
+	ENTRY("entryPage/EntryPage"),
+	ENTRYTOMAIN("entryPage/EntryToMain"),
+	MAIN("mainPage/MainPage"),
 	
 	CERTIFICATE("verifyRegistration.do"),
-	LOGIN("/page/member/Login.jsp"),	//  /Member 폴더에서 시작.
-	JOIN("/page/member/Join.jsp"),
-	LOST_PASSWORD("/page/member/Lostpassword.jsp"),
-	RESET_PASSWORD("/page/member/ResetPassword.jsp"),
-	CERTIFICATE_FAILED_PASSWORD("/page/member/CertificatePassword.jsp"),
-	INPUT_CERTIFICATION_NUMBER("/page/member/CheckAuthNum.jsp"),
-	INPUT_MAIL("/page/member/InputMail.jsp"),
-	REGSTRY_DEVELOPER("/page/member/RegistryDeveloper.jsp"),
-	CHANGE_OLD_PWD("/page/member/ChangeOldPasswodjsp"),
+	LOGIN("member/Login"),
+	JOIN("member/Join"),
+	LOST_PASSWORD("member/Lostpassword"),
+	RESET_PASSWORD("member/ResetPassword"),
+	CERTIFICATE_FAILED_PASSWORD("member/CertificatePassword"),
+	INPUT_CERTIFICATION_NUMBER("member/CheckAuthNum"),
+	INPUT_MAIL("member/InputMail"),
+	REGSTRY_DEVELOPER("member/RegistryDeveloper"),
+	CHANGE_OLD_PWD("member/ChangeOldPasswodjsp"),
 	
-	BROWSER("/page/fileBrowser/FileBrowser.jsp"),
-	ISSUE("/page/issue/IssuePage.jsp"),
+	BROWSER("fileBrowser/FileBrowser"),
+	ISSUE("issue/IssuePage"),
 	
-	MY_ACCOUNT("/page/manager/MyAccount.jsp"),
-	GROUP_DASHBOARD("/page/manager/GroupDashboard.jsp"),
-	GROUP_MANAGER("/page/manager/Group.jsp"),
-	GROUP_MEMBER("/page/manager/Member.jsp"),
+	MY_ACCOUNT("manager/MyAccount"),
+	GROUP_DASHBOARD("manager/GroupDashboard"),
+	GROUP_MANAGER("manager/Group"),
+	GROUP_MEMBER("manager/Member"),
 	
-	SETTINGS("/Settings.jsp"),
+	SETTINGS("/Settings"),
 	
 	MAIL("/buzzCloudMail.do"),
 	
-	LOGIN_MANAGER("/AdminPage/AdminLogin.jsp");
+	LOGIN_MANAGER("/AdminPage/AdminLogin");
 		
 	
 	private String pageDirection;

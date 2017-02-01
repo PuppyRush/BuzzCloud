@@ -7,27 +7,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
+import com.javadude.annotation.Default;
 import com.mysql.jdbc.ResultSetMetaData;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
+@Service("DBManager")
 public final class DBManager {
 
 	private Connection conn = ConnectMysql.getConnector();
 	
-	private static class Singleton {
-		private static final DBManager instance = new DBManager();
-	}
-
-	public static DBManager getInstance() {
-		return Singleton.instance;
-	}
-
-
-	public ArrayList<HashMap<String,Object>> getColumnsOfAll(String tableName,  HashMap<String,Object> whereCaluse){
+	
+	public List<Map<String,Object>> getColumnsOfAll( String tableName, Map<String,Object> whereCaluse){
 		
-		ArrayList<Object> whereAry = new ArrayList<Object>();
-		ArrayList<HashMap<String,Object> > ary = new ArrayList<HashMap<String,Object> >();
+		List<Object> whereAry = new ArrayList<Object>();
+		List<Map<String,Object> > ary = new ArrayList<Map<String,Object> >();
 					
 		try {
 			
@@ -82,13 +80,13 @@ public final class DBManager {
 		
 	}
 	
-	public ArrayList<HashMap<String,Object>> getColumnsOfPart(String tableName, ArrayList<String> selectCaluse,  HashMap<String,Object> whereCaluse){
+	public List<Map<String,Object>> getColumnsOfPart(String tableName, List<String> selectCaluse,  Map<String,Object> whereCaluse){
 		
 		if(selectCaluse.size()==0)
 			return getColumnsOfAll(tableName, whereCaluse);
 		
-		ArrayList<Object> whereAry = new ArrayList<Object>();
-		ArrayList<HashMap<String,Object> > ary = new ArrayList<HashMap<String,Object> >();
+		List<Object> whereAry = new ArrayList<Object>();
+		List<Map<String,Object> > ary = new ArrayList<Map<String,Object> >();
 		
 			
 		try {
@@ -158,7 +156,7 @@ public final class DBManager {
 	
 	
 	
-	public void updateColumn(String tableName, HashMap<String,Object> set, HashMap<String,Object> whereCaluse){
+	public void updateColumn(String tableName, Map<String,Object> set, Map<String,Object> whereCaluse){
 		
 		ArrayList<Object> whereAry = new ArrayList<Object>();
 		ArrayList<Object> valuesAry = new ArrayList<Object>();
@@ -230,7 +228,7 @@ public final class DBManager {
 		
 	}
 	
-	public void insertColumn(String tableName, HashMap<String,Object> values){
+	public void insertColumn(String tableName, Map<String,Object> values){
 		
 		ArrayList<Object> valuesAry = new ArrayList<Object>();
 		StringBuilder sql = new StringBuilder("insert into ").append(tableName).append("(");
@@ -286,7 +284,7 @@ public final class DBManager {
 	 * 
 	 * @param where 조건절이 한개 이상은 있어야 한다.
 	 */
-	public void deleteColumns(String tableName, HashMap<String,Object> where){
+	public void deleteColumns(String tableName, Map<String,Object> where){
 
 		try {
 			

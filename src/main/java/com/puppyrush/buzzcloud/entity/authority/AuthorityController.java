@@ -3,10 +3,13 @@ package com.puppyrush.buzzcloud.entity.authority;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.springframework.stereotype.Service;
+
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.impl.EntityControllerImpl;
 
-public class AuthorityController extends EntityControllerImpl<Authority>{
+@Service("authorityController")
+final public class AuthorityController extends EntityControllerImpl<Authority>{
 
 	private HashMap<Class<?>, HashMap<Integer,Integer>> authorityMap;
 	private ArrayList<Class<?>> AuthorityClassAry;
@@ -32,21 +35,13 @@ public class AuthorityController extends EntityControllerImpl<Authority>{
 		
 	}
 	
-	private static class Singleton {
-		private static final AuthorityController instance = new AuthorityController();
-	}
-	
-	public static AuthorityController getInstance () {
-		return Singleton.instance;
-	}
-
 	public <E extends Authority> E getEntity(Class<E> entityKind, int authId){
 				
 		E auth = null;
 		HashMap<Integer,Integer> _entityMap =  authorityMap.get(entityKind.getClass());
 		int entityId = _entityMap.get(authId);
 		try {
-			auth = getEntity(entityId);
+			auth = (E) getEntity(entityId);
 		} catch (ControllerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

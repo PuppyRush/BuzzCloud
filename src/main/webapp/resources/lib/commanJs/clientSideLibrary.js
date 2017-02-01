@@ -30,8 +30,7 @@
 						    //해당하는 파라미터가 없을때.
 				    if(search[1].indexOf(param)==(-1)){
 				        
-				        return "";w
-				        return;
+				        return "";
 						    }
 				    
 				    search=search[1].split("&");
@@ -111,3 +110,5 @@ Map = function(){
 	      return count;
 	    }
 	};
+	
+

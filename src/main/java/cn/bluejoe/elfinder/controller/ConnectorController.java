@@ -43,8 +43,7 @@ public class ConnectorController
 
 	@RequestMapping
 	public void connector(HttpServletRequest request,
-			final HttpServletResponse response) throws IOException
-	{
+			final HttpServletResponse response) throws IOException{
 		
 		System.out.println("connn!");
 		

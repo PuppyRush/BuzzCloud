@@ -1,29 +1,16 @@
 package com.puppyrush.buzzcloud.entity.authority;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.EnumMap;
-import java.util.Iterator;
+import org.springframework.stereotype.Service;
 
-import com.puppyrush.buzzcloud.entity.authority.band.enumBandAuthority;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
+@Service("authorityDB")
 public final class AuthorityDB {
 	
 
 	private static Connection conn = ConnectMysql.getConnector();
 
-
-	private static class Singleton {
-		private static final AuthorityDB instance = new AuthorityDB();
-	}
-	
-	
-	public static AuthorityDB getInstance () {
-		return Singleton.instance;
-	}
-	
 	
 /*	public void updateBandAuthority(int bandId,  EnumMap<enumBandAuthority, Boolean> auths){
 		

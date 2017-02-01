@@ -7,7 +7,7 @@
 
 	function getMemberInfo(){
 		 $.ajax({
-		 url:'/page/manager/ajax/myaccount/getMemberInfo.jsp',
+		 url:'/configPage/MyAccount/getMyAccountInfo.ajax',
 		 data: { memberId: memberId},
 		 dataType:'json',
 		 success:function(data){
@@ -58,7 +58,7 @@
 		 
 		 
 	 	 $.ajax({
-	 	 url:'/page/manager/ajax/myaccount/setProfile.jsp',
+	 	 url:'/configPage/MyAccount/setProfile.ajax',
 	 	 data: { memberId: memberId, nickname:nickname , firstname : firstname , lastname : lastname  },
 	 	 dataType:'json',
 	 	 success:function(data){

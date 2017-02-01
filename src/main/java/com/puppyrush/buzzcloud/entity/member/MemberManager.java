@@ -6,39 +6,33 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
-import com.puppyrush.buzzcloud.entity.enumEntityState;
-import com.puppyrush.buzzcloud.entity.member.enums.enumMemberAbnormalState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberStandard;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
-import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
 import com.puppyrush.buzzcloud.mail.PostMan;
 import com.puppyrush.buzzcloud.mail.enumMailType;
-import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
-import com.puppyrush.buzzcloud.page.enums.enumPageError;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
-import com.puppyrush.buzzcloud.property.enums.enumSystem;
 
+@Service("memberManager")
 public final class MemberManager {
 	
 	private static Connection conn = ConnectMysql.getConnector();
-
-	private MemberManager() {
-	}
-
-
-	private static class Singleton {
-		private static final MemberManager instance = new MemberManager();
-	}
 	
-	public static MemberManager getInstance () {
-		return Singleton.instance;
-	}
+	@Autowired
+	private MemberDB mDB;
 	
-	
+	@Autowired
+	private MemberController mCtl;
 
+	@Autowired
+	private DBManager dbMng;
+	
 	/**
 	 * 
 	 * 
@@ -48,7 +42,7 @@ public final class MemberManager {
 	 */
 	public  boolean isPassingDateOfMail(String email, enumMailType mailType) throws SQLException{
 		
-		int memberId = MemberDB.getInstance().getIdOfEmail(email);
+		int memberId = mDB.getIdOfEmail(email);
 		
 		PreparedStatement ps = conn.prepareStatement("select sendedDate from mail where memberId = ? and certificationKind=?");
 		ps.setInt(1,memberId);
@@ -131,7 +125,7 @@ public final class MemberManager {
 	public  boolean isSendedmail(String email, enumMailType mailType) throws NumberFormatException, SQLException{
 		
 		//이미 전송하였는가?
-		int memberId = MemberDB.getInstance().getIdOfEmail(email);
+		int memberId = mDB.getIdOfEmail(email);
 		boolean isAlreadySend=false;
 		PreparedStatement ps =conn.prepareStatement("select isSendedMail, sendedMailDate from mail where memberId = ? and certificationKind = ?");
 		ps.setInt(1, memberId);
@@ -157,7 +151,7 @@ public final class MemberManager {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
-		if(MemberDB.getInstance().isJoin(email) == false)
+		if(mDB.isJoin(email) == false)
 			throw new EntityException(enumMemberState.NOT_JOIN, enumPage.ERROR404);
 		
 		try{
@@ -165,11 +159,11 @@ public final class MemberManager {
 			conn.setAutoCommit(false);
 			
 			Member member;
-			if(MemberController.getInstance().containsEntity(sId))
-				member = MemberController.getInstance().getMember(sId);
+			if(mCtl.containsEntity(sId))
+				member = mCtl.getMember(sId);
 			else{
-				member = MemberDB.getInstance().getMember(email);
-				MemberController.getInstance().addMember(member, sId);
+				member = mDB.getMember(email);
+				mCtl.addMember(member, sId);
 			}
 			 
 			int _id = member.getId();
@@ -238,7 +232,7 @@ public final class MemberManager {
 			String _uuid =  UUID.randomUUID().toString();
 			String hashedUUID =  BCrypt.hashpw(_uuid, BCrypt.gensalt(12));
 			
-			if(MemberDB.getInstance().isCertificatingJoin(member.getId())){
+			if(mDB.isCertificatingJoin(member.getId())){
 				
 				ps = conn.prepareStatement("delete from mail where memberId = ? and certificationKind = ?");
 				ps.setInt(1, member.getId());
@@ -278,6 +272,25 @@ public final class MemberManager {
 		
 	}
 	
+	public void updatePassword(int id, String pw) throws ControllerException{
+		
+		if(mCtl.containsEntity(id)){
+			Member member = mCtl.getEntity(id);
+			member.setPlanePassword(pw);
+			
+		}
+		
+		String newPw = BCrypt.hashpw( pw, BCrypt.gensalt(12));
+		
+		Map<String, Object> set = new HashMap<String, Object>();
+		Map<String, Object> where = new HashMap<String, Object>();
+		
+		set.put("password", newPw);
+		where.put("memberId", id);
+		
+		dbMng.updateColumn("member", set, where);
+		
+	}
 
 
 }

@@ -1,16 +1,14 @@
 package com.puppyrush.buzzcloud.entity.authority.file;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.EnumMap;
 
-import com.puppyrush.buzzcloud.entity.authority.Authority;
-import com.puppyrush.buzzcloud.entity.authority.band.BandAuthority;
-import com.puppyrush.buzzcloud.entity.authority.band.enumBandAuthority;
+import org.springframework.stereotype.Repository;
 
+import com.puppyrush.buzzcloud.entity.authority.Authority;
+
+//@Repository("fileAuthority")
 public class FileAuthority extends Authority{
 
 	private EnumMap<enumFileAuthority,Boolean> authorityType;

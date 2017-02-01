@@ -1,14 +1,15 @@
 package com.puppyrush.buzzcloud.entity.member;
 
-import java.awt.Point;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import java.sql.Timestamp;
+import java.util.EnumMap;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.band.enumBand;
@@ -17,15 +18,11 @@ import com.puppyrush.buzzcloud.entity.member.enums.enumMemberAbnormalState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberStandard;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
-import com.puppyrush.buzzcloud.mail.enumMailType;
 import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.page.enums.enumPageError;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 import com.puppyrush.buzzcloud.property.enums.enumSystem;
-
-import java.util.Set;
-import java.util.EnumMap;
 /**
  * member에 대한 객체 정보는 sessionId,email을 이용해  getMember를 통해서만 얻을 수 있으며
  * member객체를 생성하기 위한 생성자는 private이며 Builder를 통해서만 생성이 가능하다.
@@ -35,6 +32,8 @@ import java.util.EnumMap;
  * @author cmk
  *
  */
+
+//@Repository("member")
 public final class Member implements Entity {
 
 	private static Connection conn = ConnectMysql.getConnector();
@@ -52,7 +51,7 @@ public final class Member implements Entity {
 		private enumMemberType registrationKind;
 		private final String email;
 		private EnumMap<enumMemberAbnormalState, Boolean> abnormalState;
-		
+				
 		public Builder(int id, String email){
 			
 			this.id = id;
@@ -111,6 +110,7 @@ public final class Member implements Entity {
 	private boolean isLogin;
 	private boolean isLogout;
 	private boolean isJoin;
+	private String sessionId;
 	
 	
 	private Member(){
@@ -218,6 +218,27 @@ public final class Member implements Entity {
 		return abnormalState;
 	}
 
+	public void setPlanePassword(String planePassword) {
+		this.planePassword = planePassword;
+	}
+
+	public enumMemberType getRegistrationKind() {
+		return registrationKind;
+	}
+
+	public void setRegistrationKind(enumMemberType registrationKind) {
+		this.registrationKind = registrationKind;
+	}
+
+	
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+	
 	/////method/////
 
 	/**
@@ -525,7 +546,5 @@ public final class Member implements Entity {
 		
 	}
 
-	public void setPlanePassword(String planePassword) {
-		this.planePassword = planePassword;
-	}
+	
 }

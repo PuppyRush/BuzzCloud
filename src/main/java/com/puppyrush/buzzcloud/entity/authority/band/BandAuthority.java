@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.puppyrush.buzzcloud.entity.authority.Authority;
 
-public class BandAuthority extends Authority{
+//@Repository("bandAuthority")
+final public class BandAuthority extends Authority{
 
 	private EnumMap<enumBandAuthority,Boolean> authorityType;
 	

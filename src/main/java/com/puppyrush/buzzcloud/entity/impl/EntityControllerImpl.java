@@ -29,7 +29,7 @@ public class EntityControllerImpl<T extends Entity> implements EntityController{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Entity> T getEntity(int id) throws ControllerException {
+	public T getEntity(int id) throws ControllerException {
 
 		if(id<=0)
 			throw new IllegalArgumentException("userId는 0보다 커야 합니다.");

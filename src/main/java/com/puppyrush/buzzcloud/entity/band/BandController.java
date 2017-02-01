@@ -3,21 +3,18 @@ package com.puppyrush.buzzcloud.entity.band;
 
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.impl.EntityControllerImpl;
 
+@Service("bandController")
 public final class BandController extends EntityControllerImpl<Band>{
 
-	private BandController(){}
-	
-	private static class Singleton {
-		private static final BandController instance = new BandController();
-	}
-	
-	public static BandController getInstance () {
-		return Singleton.instance;
-	}
+	@Autowired
+	private BandManager bandMng;
 
 	
 	public Band newBand(int bandId){
@@ -27,7 +24,7 @@ public final class BandController extends EntityControllerImpl<Band>{
 				band = getEntity(bandId);
 		
 			else{
-				band = BandManager.getInstance().getBand(bandId);						
+				band = bandMng.getBand(bandId);						
 				addEntity(bandId,band);
 				 
 			}

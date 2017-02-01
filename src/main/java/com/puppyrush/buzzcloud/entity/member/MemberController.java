@@ -5,31 +5,26 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.puppyrush.buzzcloud.controller.form.LoginForm;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.enumController;
-import com.puppyrush.buzzcloud.entity.band.BandController;
 import com.puppyrush.buzzcloud.entity.impl.EntityControllerImpl;
-import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
-import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
+@Service("memberController")
 public final class MemberController extends EntityControllerImpl<Member>{
 
 	private static Connection conn = ConnectMysql.getConnector();
 	
+	@Autowired(required=false)
+	private MemberDB mDB;
+	
+	
 	private HashMap<String, Integer> sessionIdMap = new HashMap<String, Integer>();
-	
-	private static class Singleton {
-		private static final MemberController instance = new MemberController();
-	}
-	
-	public static MemberController getInstance () {
-		return Singleton.instance;
-	}
-	
+
 	public boolean containsEntity(String sId){
 		
 		if(sessionIdMap.containsKey(sId))
@@ -45,6 +40,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 	
 	public Member getMember(String sId) throws ControllerException{
 		
+		
 		if(sId==null)
 			throw new NullPointerException();
 		
@@ -56,6 +52,29 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		}			
 		
 		throw new ControllerException("비 정상적인 접근입니다.",enumController.NOT_EXIST_MEMBER_FROM_MAP);
+		
+	}
+	
+	
+	public Member getMember(LoginForm form) throws ControllerException{
+		
+		if(form.getSessionId()==null)
+			throw new NullPointerException();
+		
+		Member member; 
+		if(containsEntity(form.getSessionId())){
+			member = getMember(form.getSessionId());
+			member.setPlanePassword(form.getPassword());			
+		}
+		else{
+			member = mDB.getMember(form.getEmail());
+			member.setPlanePassword(form.getPassword());
+						
+			addMember(member, form.getSessionId());
+			 
+		}	
+		
+		return member;
 		
 	}
 	
@@ -88,13 +107,13 @@ public final class MemberController extends EntityControllerImpl<Member>{
 	
 	public Member newMember(String sessionId, String email) throws ControllerException{
 		Member member = null;
-		if(MemberController.getInstance().containsEntity(sessionId)){
-			member = MemberController.getInstance().getMember(sessionId);
+		if(containsEntity(sessionId)){
+			member = getMember(sessionId);
 						
 		}
 		else{
-			member = MemberDB.getInstance().getMember(email);						
-			MemberController.getInstance().addMember(member, sessionId);
+			member = mDB.getMember(email);						
+			addMember(member, sessionId);
 			 
 		}
 		
@@ -112,8 +131,8 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		if(containsEntity(member.getId()) == false )
 			addEntity(member.getId(), member);
 		
-		entityMap.put(member.getId(), member);
-		sessionIdMap.put(sId, member.getId());
+		if(containsEntity(sId) == false)
+			sessionIdMap.put(sId, member.getId());
 		
 	}
 		
@@ -127,10 +146,8 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		if(containsEntity(member.getId()) == false )
 			addEntity(member.getId(), member);
 		
-		
-		addEntity(member.getId(), member);
-		entityMap.put(member.getId(), member);
-		sessionIdMap.put(sId, member.getId());
+		if(containsEntity(sId) == false)
+			sessionIdMap.put(sId, member.getId());
 		
 	}
 		
@@ -141,11 +158,12 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		if(member==null)
 			throw new NullPointerException();
 		
-		removeMember(sId);
+		if(containsEntity(member.getId()) == false )
+			addEntity(member.getId(), member);
 		
-		
-		entityMap.put(member.getId(), member);
-		sessionIdMap.put(sId, uId);
+		if(containsEntity(sId) == false)
+			sessionIdMap.put(sId, member.getId());
+
 		
 	}
 	
@@ -166,5 +184,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
 		
 	}
+
+	
 	
 }

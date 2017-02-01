@@ -5,6 +5,9 @@ import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.HashMap;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
+
 import com.puppyrush.buzzcloud.entity.authority.band.BandAuthority;
 import com.puppyrush.buzzcloud.entity.authority.band.enumBandAuthority;
 import com.puppyrush.buzzcloud.entity.authority.file.FileAuthority;
@@ -16,6 +19,7 @@ import com.puppyrush.buzzcloud.property.tree.Tree;
 
 import java.util.EnumMap;
 
+//@Repository("band")
 public final class Band implements Entity{
 	
 	private static Connection conn = ConnectMysql.getConnector();

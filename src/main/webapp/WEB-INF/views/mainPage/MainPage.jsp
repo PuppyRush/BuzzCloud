@@ -136,7 +136,7 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 		</div>
 	</div>
 
-	<form id="bandForm" method="GET" ACTION="/viewFileBrowser.do">
+	<form id="bandForm" method="GET" ACTION="/mainPage/viewFileBrowser.do">
 		<input type="hidden" name="bandId" id="bandId">
 	</form>
 	
@@ -152,8 +152,8 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 
 <script>
 
-	var bands;
-	var rootsBand = new Array();
+	var _bands = new Array();
+	var _rootsBand = new Array();
 
 
 	window.onload=function(){

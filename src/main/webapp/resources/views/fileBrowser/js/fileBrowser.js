@@ -1,5 +1,13 @@
 
 					 
+   
+    $(document).ready(function() {
+    $('#elfinder').elfinder({
+        url : '/elfinder-servlet/connector',
+            });
+        });
+ /*
+
 			
 			(function($){
 				var i18nPath = 'js/i18n',
@@ -99,7 +107,7 @@
 				}
 			})(jQuery);
 			
-					
+					*/
 		
 		
 		

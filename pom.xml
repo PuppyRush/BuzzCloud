@@ -90,6 +90,15 @@
 			<scope>runtime</scope>
 		</dependency>
 
+<!-- elfidner -->
+		<dependency>
+			<groupId>com.github.bluejoe2008</groupId>
+			<artifactId>elfinder-servlet-2</artifactId>
+			<version>1.1</version>
+			<classifier>classes</classifier>
+		</dependency>
+
+
 		<!-- @Inject -->
 		<dependency>
 			<groupId>javax.inject</groupId>

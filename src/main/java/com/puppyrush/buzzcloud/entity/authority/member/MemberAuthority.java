@@ -27,8 +27,6 @@ public final class MemberAuthority extends Authority{
 	public void setAuthorityType(enumMemberAuthority authorityType) {
 		this.authorityType = authorityType;
 	}
-
-
 	
 
 }

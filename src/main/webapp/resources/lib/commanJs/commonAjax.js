@@ -7,7 +7,13 @@
 				this.url = "";
 				this.formId = gfn_isNull(opt_formId) == true ? "commonForm" : opt_formId;
 				this.param = "";
-				this.type = "";
+				this.type = "get";
+				this.async = true;
+				
+				this.setAsync = function async(async){
+					this.async = async;
+				}
+				
 				this.setUrl = function setUrl(url) {
 					this.url = url;
 				};
@@ -31,7 +37,7 @@
 					}
 					
 					$.ajax({
-						async : true,
+						async : this.async,
 						dataType : "json",
 						url : this.url,
 						type : this.type,

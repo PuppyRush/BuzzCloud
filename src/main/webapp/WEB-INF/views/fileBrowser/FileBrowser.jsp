@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+ <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
 <html class="full" lang="ko">
@@ -133,6 +134,7 @@
 			<script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js"></script>
 
 		<!-- context menu js  -->
+		<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/commonAjax.js"></script>
     <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.js" type="text/javascript"></script>
     <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
     <script src="https://swisnl.github.io/jQuery-contextMenu/js/main.js" type="text/javascript"></script>
@@ -148,10 +150,10 @@
 
 
 <script>
-		
-		window.onload=function(){
-	
-		}
+
+	var bandId = ${bandId};
+
+
 
 </script>
 

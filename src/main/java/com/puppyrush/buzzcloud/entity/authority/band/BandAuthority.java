@@ -50,9 +50,5 @@ final public class BandAuthority extends Authority{
 		
 		return new BandAuthority(-1, new Timestamp(System.currentTimeMillis()), auths);
 		
-	}
-	
-	
-	
-	
+	}	
 }

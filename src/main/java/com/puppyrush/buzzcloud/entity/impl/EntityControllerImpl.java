@@ -13,13 +13,15 @@ import com.puppyrush.buzzcloud.entity.interfaces.EntityController;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
-public class EntityControllerImpl<T extends Entity> implements EntityController{
+public abstract class EntityControllerImpl<T extends Entity> implements EntityController{
 
 	protected HashMap<Integer, T> entityMap = new HashMap<Integer, T>();
 	protected Connection conn = ConnectMysql.getConnector();
 	
+
 	protected EntityControllerImpl() {
 	}
+
 
 	@Override
 	public boolean containsEntity(int id) {

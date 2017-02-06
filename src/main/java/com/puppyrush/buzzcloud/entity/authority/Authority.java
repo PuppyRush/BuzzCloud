@@ -2,7 +2,9 @@ package com.puppyrush.buzzcloud.entity.authority;
 
 import java.sql.Connection;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 
 import com.puppyrush.buzzcloud.entity.authority.band.BandAuthority;
 import com.puppyrush.buzzcloud.entity.authority.band.enumBandAuthority;
@@ -15,7 +17,11 @@ public abstract class Authority implements Entity{
 	
 	private int authorityId;
 	private Timestamp grantedDate;
-	
+
+	public void setAuthorityId(int authorityId) {
+		this.authorityId = authorityId;
+	}
+
 	protected Authority(int id, Timestamp date){
 		authorityId = id;
 		grantedDate = date;

@@ -24,7 +24,7 @@ public final class DBManager {
 	
 	public List<Map<String,Object>> getColumnsOfAll( String tableName, Map<String,Object> whereCaluse){
 		
-		List<Object> whereAry = new ArrayList<Object>();
+		List<Object> whereValue = new ArrayList<Object>();
 		List<Map<String,Object> > ary = new ArrayList<Map<String,Object> >();
 					
 		try {
@@ -36,11 +36,11 @@ public final class DBManager {
 				Iterator<String> it = whereCaluse.keySet().iterator();
 				while(it.hasNext()){
 					String where = it.next();
-					whereAry.add(whereCaluse.get(where));
-					sql.append(where).append(" = ?");
+					whereValue.add(whereCaluse.get(where));
+					sql.append(where).append(" = ? ");
 					
 					if(it.hasNext()){
-						sql.append(" , ");
+						sql.append(" AND ");
 					}
 				}
 				
@@ -51,8 +51,8 @@ public final class DBManager {
 
 			PreparedStatement ps = conn.prepareStatement(sql.toString());
 			int i=0;
-			for(i=0 ; i < whereAry.size() ; i++)
-				ps.setObject(i+1, whereAry.get(i));
+			for(i=0 ; i < whereValue.size() ; i++)
+				ps.setObject(i+1, whereValue.get(i));
 			
 			ResultSet rs = ps.executeQuery();			
 			ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
@@ -102,7 +102,7 @@ public final class DBManager {
 					sql.append(select);
 					
 					if(it.hasNext()){
-						sql.append(" , ");
+						sql.append(" AND ");
 					}
 				}
 				
@@ -120,7 +120,7 @@ public final class DBManager {
 					sql.append(where).append(" = ?");
 					
 					if(it.hasNext()){
-						sql.append(" , ");
+						sql.append(" AND ");
 					}
 				}
 				
@@ -168,10 +168,10 @@ public final class DBManager {
 				String str = it.next();
 				valuesAry.add(set.get(str));
 				
-				sql.append(str).append(" = ?");
+				sql.append(str).append(" = ? ");
 				
 				if(it.hasNext()){
-					sql.append(",");
+					sql.append(" AND ");
 				}
 			}		
 		}
@@ -190,7 +190,7 @@ public final class DBManager {
 				sql.append(where).append(" = ?");
 				
 				if(it.hasNext()){
-					sql.append(" , ");
+					sql.append(" AND ");
 				}
 			}	
 		}
@@ -241,9 +241,9 @@ public final class DBManager {
 			sql.append(str);
 			
 			if(it.hasNext())
-				sql.append(" , ");			
+				sql.append(" AND ");			
 			else
-				sql.append(")");
+				sql.append(") ");
 		}
 		
 		sql.append(" values (");
@@ -254,9 +254,9 @@ public final class DBManager {
 			if(i==values.size()-1)
 				continue;			
 			else
-				sql.append(",");
+				sql.append(" AND ");
 		}
-		sql.append(")");
+		sql.append(") ");
 		
 		try {
 			
@@ -302,7 +302,7 @@ public final class DBManager {
 					sql.append(str).append(" = ? ");
 					
 					if(it.hasNext()){
-						sql.append(" , ");
+						sql.append(" AND ");
 					}
 				}
 				

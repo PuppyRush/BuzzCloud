@@ -90,13 +90,59 @@
 			<scope>runtime</scope>
 		</dependency>
 
-<!-- elfidner -->
+		<!-- elfidner -->
+		<!-- <dependency> <groupId>com.github.bluejoe2008</groupId> <artifactId>elfinder-servlet-2</artifactId> 
+			<version>1.1</version> <classifier>classes</classifier> </dependency> -->
+
 		<dependency>
-			<groupId>com.github.bluejoe2008</groupId>
-			<artifactId>elfinder-servlet-2</artifactId>
-			<version>1.1</version>
-			<classifier>classes</classifier>
+			<groupId>com.mortennobel</groupId>
+			<artifactId>java-image-scaling</artifactId>
+			<version>0.8.6</version>
 		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.5</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>elfinder</artifactId>
+			<version>2.1.11</version>
+			<exclusions>
+				<!-- The exclusions are because the bower versions don't have concat/min 
+					versions -->
+				<exclusion>
+					<artifactId>jquery-ui</artifactId>
+					<groupId>org.webjars.bower</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jquery</artifactId>
+					<groupId>org.webjars.bower</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery</artifactId>
+			<version>1.12.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery-ui</artifactId>
+			<version>1.11.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery-ui-themes</artifactId>
+			<version>1.11.4</version>
+		</dependency>
+
+
 
 
 		<!-- @Inject -->
@@ -109,8 +155,8 @@
 		<!-- Servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -123,6 +169,18 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
 		</dependency>
 
 		<dependency>

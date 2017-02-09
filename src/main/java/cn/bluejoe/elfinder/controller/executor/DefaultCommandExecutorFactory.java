@@ -3,9 +3,12 @@ package cn.bluejoe.elfinder.controller.executor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
+@Service("commandExecutorFactory")
 public class DefaultCommandExecutorFactory implements CommandExecutorFactory
 {
-	String _classNamePattern;
+	final String _classNamePattern = "cn.bluejoe.elfinder.controller.executors.%sCommandExecutor";
 
 	private Map<String, CommandExecutor> _map = new HashMap<String, CommandExecutor>();
 
@@ -43,11 +46,6 @@ public class DefaultCommandExecutorFactory implements CommandExecutorFactory
 	public CommandExecutor getFallbackCommand()
 	{
 		return _fallbackCommand;
-	}
-
-	public void setClassNamePattern(String classNamePattern)
-	{
-		_classNamePattern = classNamePattern;
 	}
 
 	public void setMap(Map<String, CommandExecutor> map)

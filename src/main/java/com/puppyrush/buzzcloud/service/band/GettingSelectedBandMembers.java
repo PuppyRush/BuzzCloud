@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.authority.AuthorityManager;
 import com.puppyrush.buzzcloud.entity.authority.file.FileAuthority;
@@ -80,6 +81,9 @@ public class GettingSelectedBandMembers{
 		
 		}
 		catch(EntityException e){
+			e.printStackTrace();
+		} catch (ControllerException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

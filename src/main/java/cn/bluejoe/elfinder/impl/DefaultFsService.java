@@ -7,12 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import cn.bluejoe.elfinder.controller.executor.FsItemEx;
-import cn.bluejoe.elfinder.localfs.LocalFsVolume;
 import cn.bluejoe.elfinder.service.FsItem;
 import cn.bluejoe.elfinder.service.FsItemFilter;
 import cn.bluejoe.elfinder.service.FsSecurityChecker;
@@ -156,16 +155,19 @@ public class DefaultFsService implements FsService
 		return _volumeMap;
 	}
 
+	@Override
 	public FsVolume[] getVolumes()
 	{
 		return _volumeMap.values().toArray(new FsVolume[0]);
 	}
 
+	@Override
 	public void setSecurityChecker(FsSecurityChecker securityChecker)
 	{
 		_securityChecker = securityChecker;
 	}
 
+	@Override
 	public void setServiceConfig(FsServiceConfig serviceConfig)
 	{
 		_serviceConfig = serviceConfig;
@@ -173,10 +175,12 @@ public class DefaultFsService implements FsService
 
 	public void setVolumeMap(Map<String, FsVolume> volumeMap)
 	{
-		for (Entry<String, FsVolume> en : volumeMap.entrySet())
+	
+		
+	/*	for (Entry<String, FsVolume> en : volumeMap.entrySet())
 		{
 			addVolume(en.getKey(), en.getValue());
-		}
+		}*/
 	}
 
 	/**
@@ -200,6 +204,14 @@ public class DefaultFsService implements FsService
 		}
 	}
 
+	@Override
+	public void initVolume()
+	{
+		_volumeMap.clear();
+		Logger.getLogger(this.getClass()).info("init volume");
+	}
+	
+	@Override
 	public void addVolume(String name, FsVolume fsVolume)
 	{
 		_volumeMap.put(name, fsVolume);

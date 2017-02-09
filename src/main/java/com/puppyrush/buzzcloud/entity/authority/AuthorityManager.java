@@ -7,11 +7,15 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.authority.band.BandAuthority;
 import com.puppyrush.buzzcloud.entity.authority.band.enumBandAuthority;
@@ -27,44 +31,60 @@ public final class AuthorityManager {
 
 	protected Connection conn = ConnectMysql.getConnector();
 
- 	public FileAuthority getFileAuthoirty(int memberId, int bandId) {
+	@Autowired
+	DBManager dbMng;
+	
+	@Autowired
+	AuthorityController authCtl;
 
+ 	public FileAuthority getFileAuthoirty(int memberId, int bandId) throws ControllerException {
+
+ 		
 		FileAuthority fAuth = null;
 
 		try {
 
-			PreparedStatement ps = conn
-					.prepareStatement("select * from fileAuthority where bandId = ? and memberId = ?");
-			ps.setInt(1, bandId);
-			ps.setInt(2, memberId);
-			ResultSet rs = ps.executeQuery();
-			rs.next();
+			Map<String, Object> where = new HashMap<String, Object>();
+			where.put("memberId", memberId);
+			where.put("bandId", bandId);
+			List<Map<String, Object>> res = dbMng.getColumnsOfAll("fileAuthority", where);
+			
+			if(res.size()>1)
+				throw new SQLException("no more 1 of filAuthority");
 
-			bandId = rs.getInt("bandId");
-
+			int authId = (Integer)res.get(0).get("authorityId");
+			Timestamp time = (Timestamp)res.get(0).get("grantedDate");
+			
+			if(authCtl.containsEntity(FileAuthority.class,authId))
+				return authCtl.getEntity(FileAuthority.class, authId);
+			
+			
 			EnumMap<enumFileAuthority, Boolean> auths = new EnumMap<enumFileAuthority, Boolean>(enumFileAuthority.class);
-			if (rs.getInt("canRemove") == 1)
+			if ((Integer)res.get(0).get("canRemove") == 1)
 				auths.put(enumFileAuthority.REMOVE, true);
 			else
 				auths.put(enumFileAuthority.REMOVE, false);
 
-			if (rs.getInt("canDownload") == 1)
+			if ((Integer)res.get(0).get("canDownload")== 1)
 				auths.put(enumFileAuthority.DOWNLOAD, true);
 			else
 				auths.put(enumFileAuthority.DOWNLOAD, false);
 
-			if (rs.getInt("canUpload") == 1)
+			if ((Integer)res.get(0).get("canUpload") == 1)
 				auths.put(enumFileAuthority.UPLOAD, true);
 			else
 				auths.put(enumFileAuthority.UPLOAD, false);
 
-			if (rs.getInt("canCreate") == 1)
+			if ((Integer)res.get(0).get("canCreate") == 1)
 				auths.put(enumFileAuthority.CREATE, true);
 			else
 				auths.put(enumFileAuthority.CREATE, false);
 
-			fAuth = new FileAuthority(rs.getInt("authorityId"), rs.getTimestamp("grantedDate"), auths);
-
+			
+			
+			fAuth = new FileAuthority(authId, time, auths);
+			authCtl.addEntity(fAuth);
+			
 		} catch (SQLException e) {
 
 			EnumMap<enumFileAuthority, Boolean> auths = new EnumMap<enumFileAuthority, Boolean>(

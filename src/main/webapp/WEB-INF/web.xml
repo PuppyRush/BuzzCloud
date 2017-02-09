@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns="http://java.sun.com/xml/ns/javaee" 
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+version="2.5">
+
+
+
+ <jsp-config>
+    <taglib>
+        <taglib-uri>/tld/cms_page.tld</taglib-uri>
+        <taglib-location>/WEB-INF/tld/cms_page.tld</taglib-location>
+    </taglib>
+  </jsp-config>   
+
+
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>/WEB-INF/spring/root-context.xml</param-value>
@@ -7,6 +21,14 @@
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
+  
+<!-- 
+   <servlet-mapping>
+    <servlet-name>elfinder</servlet-name>
+    <url-pattern>/elfinder-servlet/*</url-pattern>
+</servlet-mapping>
+   -->
+
   
   <servlet>
     <servlet-name>appServlet</servlet-name>
@@ -23,6 +45,5 @@
     <url-pattern>/</url-pattern>
   </servlet-mapping>
   
-   
-  
+
 </web-app>

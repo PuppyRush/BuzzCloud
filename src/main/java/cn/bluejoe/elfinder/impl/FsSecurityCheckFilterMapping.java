@@ -6,9 +6,9 @@ import cn.bluejoe.elfinder.service.FsSecurityChecker;
 
 public class FsSecurityCheckFilterMapping
 {
-	FsSecurityChecker _checker;
+	private FsSecurityChecker _checker;
 
-	String _pattern;
+	private String _pattern;
 
 	public FsSecurityChecker getChecker()
 	{

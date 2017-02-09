@@ -16,19 +16,19 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <title>Widget Store - 로그인 </title>
-<link href="../WidgetClientPage/css/bootstrap.min.css" rel="stylesheet">
+<link href="/resources/views/member/css/bootstrap.min.css" rel="stylesheet">
 
 
 
 <!-- Custom CSS -->
 <link href="/library/popup/style.css" rel="stylesheet">
-<link href="../WidgetClientPage/css/stylish-portfolio.css"
-	rel="stylesheet">
+
+<link href="/resources/views/member/css/stylish-portfolio.css"	rel="stylesheet">
 <!-- bootsnipp down -->
-<link href="../WidgetClientPage/css/login.css" rel="stylesheet">
+<link href="/resources/views/member/css/login.css" rel="stylesheet">
+
 <!-- Custom Fonts -->
-<link href="../WidgetClientPage/font-awesome/font-awesome.css"
-	rel="stylesheet" type="text/css">
+<link href="/resources/views/member/font-awesome/font-awesome.css"	rel="stylesheet" type="text/css">
 <link
 	href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic"
 	rel="stylesheet" type="text/css">
@@ -80,13 +80,12 @@
 
 
 <script	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	type="text/javascript" charset="utf-8"></script>
-<script language="Javascript" type="text/javascript"
-	src="http://code.jquery.com/jquery-1.9.1.js"></script>
+
 <script language="Javascript" type="text/javascript"
 	src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-
-<script src="../WidgetClientPage/js/jquery.js"></script>
-<script src="../WidgetClientPage/js/bootstrap.min.js"></script>
+<!-- Bootstrap Core JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>			
 
 <script>
 

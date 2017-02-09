@@ -1,5 +1,6 @@
 package cn.bluejoe.elfinder.controller.executors;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -7,10 +8,14 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 
 import cn.bluejoe.elfinder.controller.executor.AbstractJsonCommandExecutor;
 import cn.bluejoe.elfinder.controller.executor.CommandExecutor;
 import cn.bluejoe.elfinder.controller.executor.FsItemEx;
+import cn.bluejoe.elfinder.impl.DefaultFsService;
+import cn.bluejoe.elfinder.localfs.LocalFsVolume;
 import cn.bluejoe.elfinder.service.FsService;
 import cn.bluejoe.elfinder.service.FsVolume;
 
@@ -24,7 +29,8 @@ public class OpenCommandExecutor extends AbstractJsonCommandExecutor implements
 		boolean init = request.getParameter("init") != null;
 		boolean tree = request.getParameter("tree") != null;
 		String target = request.getParameter("target");
-
+		
+		
 		Map<String, FsItemEx> files = new LinkedHashMap<String, FsItemEx>();
 		if (init)
 		{

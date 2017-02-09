@@ -24,6 +24,20 @@
 	resize:none;
 }
 
+#bandContain{
+	width:100%;
+	max-width:100%;
+	max-height:100%;
+}
+
+.eac-square {
+	min-height:100%;
+	width:100%;
+  background-image: url("/resources/image/icon/icon_search.png");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
 /*  .modal-header{
  		background-color:#ccb23a;
  	}

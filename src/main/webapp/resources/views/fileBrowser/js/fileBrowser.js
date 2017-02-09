@@ -1,5 +1,23 @@
 
 					 
+
+
+    $(document).ready(function() {
+    	
+
+				var com = new ComAjax();
+				com.addParam("bandId", bandId);
+				com.setAsync(false);
+				com.setUrl("/elfinder-servlet/connector/init");
+				com.setType("post");
+				com.ajax();
+    	
+		    $('#elfinder').elfinder({
+		        url : '/elfinder-servlet/connector?bandId='+bandId,
+		            });
+        });
+ /*
+
 			
 			(function($){
 				var i18nPath = 'js/i18n',
@@ -99,7 +117,7 @@
 				}
 			})(jQuery);
 			
-					
+					*/
 		
 		
 		

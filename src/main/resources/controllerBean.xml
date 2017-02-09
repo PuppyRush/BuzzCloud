@@ -11,10 +11,10 @@
 	<context:annotation-config/>
 	
 	<bean id="configPageBean" class="com.puppyrush.buzzcloud.controller.GroupConfigPageController" scope="singleton"/>
-
 	<bean id="mainPageBean" class="com.puppyrush.buzzcloud.controller.MainPageController" scope="singleton"/>
-				
 	<bean id="entryPageBean" class="com.puppyrush.buzzcloud.controller.MainPageController" scope="singleton"/>
+	<bean id="elfinderController" class="cn.bluejoe.elfinder.controller.ConnectorController" scope="singleton"/>
+	<bean id="autoCompleteController" class="com.puppyrush.buzzcloud.controller.AutoCompleteController" scope="singleton"/>
 	
 </beans>
 

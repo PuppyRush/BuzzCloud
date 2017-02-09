@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+ <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
 <html class="full" lang="ko">
@@ -26,10 +27,7 @@
 <!-- Section CSS -->
 
 		<!-- custom CSS -->
-				<link rel="stylesheet" type="text/css"			href="/page/fileBrowser/css/filebrowser.css">
-				
-		
-				
+				<link rel="stylesheet" type="text/css"			href="/resources/views/fileBrowser/css/filebrowser.css">
 
 		<!-- jQuery UI (REQUIRED) -->
 		<link rel="stylesheet" type="text/css"			href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
@@ -39,9 +37,9 @@
     <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css"/>
 		    
 		<!-- elFinder CSS (REQUIRED) -->
-		<link rel="stylesheet" type="text/css"	href="/include/elFinder-2.1.16/css/elfinder.min.css">		
+		<link rel="stylesheet" type="text/css"	href="/resources/lib/include/elFinder-2.1.16/css/elfinder.min.css">		
 			<!-- <link rel="stylesheet" type="text/css" href="css/theme.css"> -->
-		<link rel="stylesheet" type="text/css" media="screen"			href="/include/elFinder-2.1.16/theme_win10/css/theme.css">
+		<link rel="stylesheet" type="text/css" media="screen"			href="/resources/lib/include/elFinder-2.1.16/theme_win10/css/theme.css">
 		
 		<!-- Section JavaScript -->
 		<!-- <link rel="stylesheet" type="text/css"			href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/smoothness/jquery-ui.css"> -->
@@ -52,7 +50,7 @@
 		
 
 				<!-- fullPage css  -->
-			<link rel="stylesheet" type="text/css" href="/include/fullPage/jquery.fullPage.css" />
+			<link rel="stylesheet" type="text/css" href="/resources/lib/include/fullPage/jquery.fullPage.css" />
 			
 
 
@@ -82,7 +80,7 @@
 			</div>	
    	 
 	 		 <div class="section" id="section1">
-	 		 		asd
+	 		 		
 	 		 </div>
 	   
 	</div>
@@ -125,33 +123,34 @@
 
 
 		<!-- elFinder JS (REQUIRED) -->
-		<script src="/include/elFinder-2.1.16/js/elfinder.full.js"></script>
-			<script type="text/javascript" src="/page/fileBrowser/js/fileBrowser.js"></script>
+		<script src="/resources/lib/include/elFinder-2.1.16/js/elfinder.full.js"></script>
+			<script type="text/javascript" src="/resources/views/fileBrowser/js/fileBrowser.js"></script>
 		
 
 		<!-- custom JS  -->
-			<script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
+			<script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js"></script>
 
 		<!-- context menu js  -->
+		<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/commonAjax.js"></script>
     <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.js" type="text/javascript"></script>
     <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
     <script src="https://swisnl.github.io/jQuery-contextMenu/js/main.js" type="text/javascript"></script>
-    <script type="text/javascript" src="/page/fileBrowser/js/contextmenu.js"></script>
+    <script type="text/javascript" src="/resources/views/fileBrowser/js/contextmenu.js"></script>
 		
 
 			<!-- This following line is optional. Only necessary if you use the option css3:false and you want to use other easing effects rather than "linear", "swing" or "easeInOutCubic". -->
 		<!-- fullPage -->
-		<script type="text/javascript" src="/include/fullPage/vendors/jquery.easings.min.js"></script>
-		<script type="text/javascript" src="/include/fullPage/vendors/scrolloverflow.min.js"></script>
-		<script type="text/javascript" src="/include/fullPage/jquery.fullPage.js"></script>
+		<script type="text/javascript" src="/resources/lib/include/fullPage/vendors/jquery.easings.min.js"></script>
+		<script type="text/javascript" src="/resources/lib/include/fullPage/vendors/scrolloverflow.min.js"></script>
+		<script type="text/javascript" src="/resources/lib/include/fullPage/jquery.fullPage.js"></script>
 		
 
 
 <script>
-		
-		window.onload=function(){
-	
-		}
+
+	var bandId = ${bandId};
+
+
 
 </script>
 

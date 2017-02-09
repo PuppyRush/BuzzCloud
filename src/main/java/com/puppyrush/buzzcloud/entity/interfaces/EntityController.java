@@ -9,4 +9,6 @@ public interface EntityController {
 	public void removeEntity(int id) throws ControllerException;	
 	public <T extends Entity> void addEntity(int id, T obj) throws ControllerException;
 	
+	 
+	
 }

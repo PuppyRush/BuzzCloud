@@ -33,7 +33,7 @@ import com.puppyrush.buzzcloud.property.enums.enumSystem;
  *
  */
 
-//@Repository("member")
+@Repository("member")
 public final class Member implements Entity {
 
 	private static Connection conn = ConnectMysql.getConnector();

@@ -6,11 +6,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 import com.puppyrush.buzzcloud.property.enums.enumSystem;
 
@@ -118,8 +122,10 @@ public class BandDB {
 		
 	}
 
- 	public void makeBandRequestJoin(int bandId, int memberId){
+ 	public Map<String,Object> makeBandRequestJoin(int bandId, int memberId){
 		
+ 		Map<String, Object> returns = new HashMap<String, Object>();
+ 		
 		try {
 			conn.setAutoCommit(false);
 			PreparedStatement ps = conn.prepareStatement("insert into bandRequestJoin (bandId, memberId) values(?,?)");
@@ -128,10 +134,18 @@ public class BandDB {
 			ps.setInt(2, memberId);
 			ps.executeUpdate();
 			conn.commit();
+			
+			returns.put("isSuccess", true);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			returns.put("isSuccess", false);
+			
+			웹소켓?
+			
 			e.printStackTrace();
 		}
+		
+		return returns;
 		
 	}
 
@@ -244,3 +258,4 @@ public class BandDB {
 		
 	}
 }
+

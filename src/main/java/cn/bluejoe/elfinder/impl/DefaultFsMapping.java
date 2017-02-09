@@ -4,8 +4,15 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.puppyrush.buzzcloud.entity.ControllerException;
+import com.puppyrush.buzzcloud.entity.authority.AuthorityManager;
+import com.puppyrush.buzzcloud.entity.band.BandController;
 
 import cn.bluejoe.elfinder.service.FsMapping;
 import cn.bluejoe.elfinder.service.FsServiceFactory;
@@ -13,6 +20,14 @@ import cn.bluejoe.elfinder.service.FsServiceFactory;
 @Service("defaultFsMapping")
 public class DefaultFsMapping implements FsMapping {
 
+	
+	@Autowired
+	private AuthorityManager authMng;
+
+	@Autowired(required=false)
+	private BandController bandCtl;	
+	
+	
 	public static class BandMember{
 		private int memberId;
 		private int bandId;
@@ -25,14 +40,40 @@ public class DefaultFsMapping implements FsMapping {
 		public int getMemberId() {
 			return memberId;
 		}
+		
 		public void setMemberId(int memberId) {
 			this.memberId = memberId;
 		}
+		
 		public int getBandId() {
 			return bandId;
 		}
+		
 		public void setBandId(int bandId) {
 			this.bandId = bandId;
+		}
+		
+		@Override 
+		public boolean equals(Object obj){
+			
+			BandMember o = (BandMember)obj;
+			
+			if(this.bandId==o.bandId && this.memberId == o.memberId)
+				return true;
+			else
+				return false;
+			
+		}
+		
+		@Override
+		public int hashCode(){
+			
+			int result = 17;
+			result = 31 * result + this.bandId;
+			result = 31 * result  + this.memberId;
+			
+			return result;
+			
 		}
 		
 	}
@@ -43,14 +84,17 @@ public class DefaultFsMapping implements FsMapping {
 	public void addFsServiceFactory(BandMember bm) {
 		// TODO Auto-generated method stub
 
-		if(contains(bm)==false){
+		if(contains(bm)){
 			throw new IllegalArgumentException("already exist object in the serviceMap");
 		}
 
 		FsServiceFactory fsService = null;
 		try {
-			fsService = new StaticFsServiceFactory(bm);
+			fsService = new StaticFsServiceFactory(bm,authMng,bandCtl);
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ControllerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

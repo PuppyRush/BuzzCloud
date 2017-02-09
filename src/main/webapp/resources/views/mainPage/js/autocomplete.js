@@ -5,7 +5,7 @@ var selectedBandIdOfAutoCompleted;
 							var options = {
 
 							  url: function(phrase) {
-								    return '/page/mainPage/ajax/getBandAll.jsp';
+								    return '/autocomplete/getBandNames.ajax';
 								  },
 
 								  getValue: function(element) {
@@ -14,41 +14,44 @@ var selectedBandIdOfAutoCompleted;
 
 								  ajaxSettings: {
 								    dataType: "json",
-								    method: "POST",
+								    method: "GET",
 								    data: {
 								      bandName: $('#searchBand').val()
 								    }
 								  },
 
-								  preparePostData: function(data) {
+	/*							  preparePostData: function(data) {
 								    data.phrase = $("#searchBand").val();
 								    return data;
-								  },
+								  },*/
 							
+							  template:{
+							  			type : "description",
+							  			fields :{description:"root"}
 								  
+								  },
+								  
+							  theme:"round",
 								  
 							  list: {
 							  maxNumberOfElements : 10,
 							  	match :{enabled:true},
 									onClickEvent: function() {
-										var index = $("#searchBand").getSelectedItemIndex();
-										var bandId= $("#searchBand").getItemData(index).id;
+
+										
+										var bandId= $("#searchBand").getSelectedItemData().selectedBandId;
+										var rootBandId= $("#searchBand").getSelectedItemData().rootBandId;
 										
 										selectedBandIdOfAutoCompleted = bandId
 										
-										$.ajax({
-									    url:'/page/mainPage/ajax/getSerachedBandInfo.jsp',
-									    data: { bandId: bandId},
-									    dataType:'json',
-									    success:function(data){
-							  	  			$("#rootBandName").val(data["rootBandName"]);
-							  	  			$("#bandAdminName").val(data["bandAdminName"]);
-							  	  			$("#bandOwnerName").val(data["bandOwnerName"]);
-							  	  			$("#bandContain").val(data["bandContain"]);
-							  	  			
-									 			 
-								           }
-								       })
+										var comAjax = new ComAjax();
+										comAjax.setUrl("/autocomplete/getSerachedBandInfo.ajax");
+										comAjax.setCallback("callback_setBandInfo");
+										comAjax.addParam("bandId",bandId);
+										comAjax.setType("GET");
+										comAjax.ajax();
+										
+				
 								       
 			
 									}	
@@ -57,4 +60,14 @@ var selectedBandIdOfAutoCompleted;
 								  requestDelay: 500
 						};
 
-						$("#searchBand").easyAutocomplete(options);
+			$("#searchBand").easyAutocomplete(options);
+							
+			function callback_setBandInfo(data){
+				
+				$("#rootBandName").val( "최상위 그룹 이름 : " + data["rootBandName"]);
+  	  			$("#bandAdminName").val( "검색된 밴드 관리자 : " + data["bandAdminName"]);
+  	  			$("#bandOwnerName").val( "검색된 밴드 소유주 :" + data["bandOwnerName"]);
+  	  			$("#bandContain").val(data["bandContain"]);
+				
+			}
+							

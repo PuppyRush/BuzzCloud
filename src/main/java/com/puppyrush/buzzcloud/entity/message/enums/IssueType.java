@@ -1,4 +1,4 @@
-package com.puppyrush.buzzcloud.entity.message.issue.enums;
+package com.puppyrush.buzzcloud.entity.message.enums;
 
 public enum IssueType {
 	

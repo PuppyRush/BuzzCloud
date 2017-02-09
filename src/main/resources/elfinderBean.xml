@@ -14,7 +14,7 @@
 	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"></bean>
 
 	<bean id="defaultFsMapping" class="cn.bluejoe.elfinder.impl.DefaultFsMapping"/>
-
+	
 	<!-- find appropriate command executor for given command -->
 	<bean id="commandExecutorFactory"		class="cn.bluejoe.elfinder.controller.executor.DefaultCommandExecutorFactory">		
 		<property name="fallbackCommand">

@@ -8,22 +8,23 @@
 		
 
 	<import resource="classpath:entityBean.xml"/>
+		<import resource="classpath:DBAccess.xml"/>
 	<context:annotation-config/>
 		
 	<bean id="settingProfile" class="com.puppyrush.buzzcloud.service.config.account.SettingProfile" scope="singleton"/>
-	
 	<bean id="gettingMyAccountInfo" class="com.puppyrush.buzzcloud.service.config.account.GettingMyAccountInfo" scope="singleton"/>
 	
 	
 	<bean id="gettingSelectedBandMembers" class="com.puppyrush.buzzcloud.service.band.GettingSelectedBandMembers" scope="singleton"/>
-	
-	<bean id="searchedBandInfo" class="com.puppyrush.buzzcloud.service.band.searchedBandInfo" scope="singleton"/>
-		
+	<bean id="searchedBandInfo" class="com.puppyrush.buzzcloud.service.band.searchedBandInfo" scope="singleton"/>		
 	<bean id="initMyBandInfo" class="com.puppyrush.buzzcloud.service.config.band.InitMyBandInfo" scope="singleton"/>
-	
+	<!-- 
+	<bean id="gettingBandNames" class="com.puppyrush.buzzcloud.service.autocomplete.GettingBandNames" scope="singleton"/>
+	<bean id="gettingMemberNames" class="com.puppyrush.buzzcloud.service.autocomplete.GettingMemberNames" scope="singleton"/>
+	<bean id="gettingSearchedBandInfo" class="com.puppyrush.buzzcloud.service.autocomplete.GettingSearchedBandInfo" scope="singleton"/>
+	 -->
 	
 	<bean id="initBandMap" class="com.puppyrush.buzzcloud.service.config.main.InitBandMap" scope="singleton"/>
-	
 	<bean id="updatingMyBand" class="com.puppyrush.buzzcloud.service.config.main.UpdatingMyBand" scope="singleton"/>
 	
 	<bean id="alreadyLogin" class="com.puppyrush.buzzcloud.service.config.member.AlreadyLogin" scope="singleton"/>

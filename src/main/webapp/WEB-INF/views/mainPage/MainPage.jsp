@@ -78,13 +78,12 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 																	
 						
 									
-										<div class="form-group has-feedback">
-											 
-												<input type="text" name="searchBand" id="searchBand" class="form-control input-md"	placeholder="그룹 찾기" >
-											  <i class="glyphicon glyphicon-search form-control-feedback"></i>
+										<div class="form-group">
+												<input type="search" name="searchBand" id="searchBand" class="eac-square"	placeholder="그룹 찾기" >
+											  
 										</div>
 									
-									<div class="form-group">
+									<div class="form-group ">
 											<input type="text" name="rootBandName" id="rootBandName" class="form-control input-md"	placeholder="최상위 그룹 이름"  readonly>
 										</div>
 										
@@ -131,7 +130,7 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 		<div class="row">
 	    <div class="col-md-11"></div>
 					<div id="context-menu-icon" class="col-md-1">
-						<img src="/image/icon/option_blue.jpg"	class="img-fluid context-menu-one btn btn-neutral">
+						<img src="/resources/image/icon/option_blue.jpg"	class="img-fluid context-menu-one btn btn-neutral">
 					</div>
 		</div>
 	</div>
@@ -145,7 +144,7 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 		<input type="hidden" name="bandId" id="bandId">
 	</form>
 
-<form id="logoutForm" method="POST" ACTION="/logout.do">
+<form id="logoutForm" method="GET" ACTION="/member/logout.do">
 	</form>
 	
 	

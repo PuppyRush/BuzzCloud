@@ -13,7 +13,12 @@
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
+	
+
 	<dependencies>
+
+	
+	
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -40,7 +45,21 @@
 		</dependency>
 
 
-		<!-- AspectJ -->
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-websocket</artifactId>
+	    <version>4.3.5.RELEASE</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-messaging</artifactId>
+	    <version>4.3.5.RELEASE</version>
+	</dependency>
+
+	
+	
+			<!-- AspectJ -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
@@ -229,6 +248,9 @@
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.9.13</version>
 		</dependency>
+
+
+		
 
 		<!-- Test -->
 		<dependency>

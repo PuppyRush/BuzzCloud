@@ -1,4 +1,4 @@
-package com.puppyrush.buzzcloud.service;
+package com.puppyrush.buzzcloud.service.autocomplete;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,12 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
-public class AutoComplete {
+@Service("getMemberNames")
+public class GettingMemberNames {
 
 	
-	public List<Map<String,String>> getMembersOfPart(String nickname){
+	public List<Map<String,Object>> excute(String nickname){
 		
 		List<String> partOfNicknames = new ArrayList<String>();
 		
@@ -42,10 +45,10 @@ public class AutoComplete {
 			e.printStackTrace();	
 		}
 			
-		List<Map<String,String>> returns = new ArrayList<Map<String,String>>();
+		List<Map<String,Object>> returns = new ArrayList<Map<String,Object>>();
 		
 		for(String str : partOfNicknames){
-			Map<String,String> map = new HashMap<String,String>();
+			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("name",str);
 			returns.add(map);
 		}

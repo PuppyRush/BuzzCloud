@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.puppyrush.buzzcloud.entity.ControllerException;
+import com.puppyrush.buzzcloud.entity.band.BandController;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 
 import cn.bluejoe.elfinder.controller.executor.CommandExecutionContext;
@@ -34,7 +35,7 @@ import cn.bluejoe.elfinder.impl.DefaultFsMapping.BandMember;
 import cn.bluejoe.elfinder.service.FsServiceFactory;
 
 @Controller("elfinderController")
-@RequestMapping("connector")
+@RequestMapping("/elfinder-servlet/connector")
 public class ConnectorController
 {
 	
@@ -48,6 +49,9 @@ public class ConnectorController
 	@Autowired(required=false)
 	private MemberController memberCtl;	
 	
+
+	
+	
 	@RequestMapping("/init")
 	public void init(@RequestParam("bandId") int bandId, HttpServletRequest request){
 		
@@ -60,8 +64,8 @@ public class ConnectorController
 		}
 		BandMember bm = new BandMember(bandId,memberId);
 		
-		if(fsMapping.contains(bm)){
-			Logger.getLogger(getClass()).info("init of (" +bandId + "," + memberId+")");
+		if(fsMapping.contains(bm)==false){
+			Logger.getLogger(getClass()).info("init fsService of (" +bandId + "," + memberId+")");
 			fsMapping.addFsServiceFactory(bm);
 		}
 		

@@ -45,7 +45,7 @@ final public class Login{
 	@Autowired(required=false)
 	private MemberManager mMng;
 		
-	public Map<String,Object> execute( LoginForm form){
+	public Map<String,Object> execute(LoginForm form){
 				
 		Map<String,Object> returns = new HashMap<String,Object>();
 		

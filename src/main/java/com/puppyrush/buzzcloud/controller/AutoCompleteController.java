@@ -14,6 +14,9 @@ import com.puppyrush.buzzcloud.entity.band.BandManager;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.tree.Tree;
+import com.puppyrush.buzzcloud.service.autocomplete.GettingBandNames;
+import com.puppyrush.buzzcloud.service.autocomplete.GettingMemberNames;
+import com.puppyrush.buzzcloud.service.autocomplete.GettingSearchedBandInfo;
 import com.puppyrush.buzzcloud.service.band.GettingSelectedBandMembers;
 import com.puppyrush.buzzcloud.service.band.SearchedBandInfo;
 
@@ -31,69 +34,52 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Controller("mainPage")
-@RequestMapping("/mainPage")
-public class MainPageController {
+@Controller("autoCompleteController")
+@RequestMapping("/autocomplete")
+public class AutoCompleteController {
 
 	// private final Logger logger = (Logger)
 	// LoggerFactory.getLogger(MainController.class);;
 
 	@Autowired(required = false)
-	private InitBandMap		bandMapInfo;
+	private GettingBandNames getBandNames;
 
 	@Autowired(required = false)
-	private SearchedBandInfo	searchedBandInfo;
-
-	@Autowired(required = false)
-	private BandDB bandDB;
-
+	private GettingMemberNames getMemberNames;
 	
-	public MainPageController() {
+	@Autowired(required = false)
+	private GettingSearchedBandInfo getSearchedBandInfo;
+	
+	
+	public AutoCompleteController() {
 
 	}
 
-	@RequestMapping(value = "/viewFileBrowser.do", method = RequestMethod.GET)
-	public ModelAndView viewFileBrowser(@RequestParam("bandId") int bandId) {
-
-		ModelAndView mv = new ModelAndView();
-		
-		mv.addObject("bandId", bandId);
-		mv.setViewName(enumPage.BROWSER.toString());
-		return mv;
-	}
-	
 	@ResponseBody
-	@RequestMapping(value = "/initBandMap.ajax", method = RequestMethod.POST)
-	public Map<String, Object> getMyBandMap(HttpServletRequest rq) {
+	@RequestMapping(value = "/getBandNames.ajax", method = RequestMethod.GET)
+	public List<Map<String, Object>> getBandNames(@RequestParam("bandName") String bandName) {
 
-		String sId = rq.getRequestedSessionId();
-		Map<String, Object> returns = bandMapInfo.execute(sId);
+		return getBandNames.excute(bandName);
 
-		return returns;
 	}
+	
 
+	@ResponseBody
+	@RequestMapping(value = "/getMemberNames.ajax", method = RequestMethod.GET)
+	public List<Map<String, Object>> getMemberNames(@RequestParam("memberName") String memberName) {
+
+		return getMemberNames.excute(memberName);
+
+	}
+	
 	@ResponseBody
 	@RequestMapping(value = "/getSerachedBandInfo.ajax", method = RequestMethod.GET)
 	public Map<String, Object> getSerachedBandInfo(@RequestParam("bandId") int bandId) {
 
-		return searchedBandInfo.execute(bandId);
-
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/requestBandJoin.ajax", method = RequestMethod.GET)
-	public Map<String, Object> requestBandJoin(@RequestParam("memberId") int memberId,	@RequestParam("bandId") int bandId) {
-
-		Map<String, Object> returns = new HashMap<String, Object>();
-
-		bandDB.makeBandRequestJoin(bandId, memberId);
-
-		returns.put("isSuccess", "true");
-
-		return returns;
-
+		
+		return getSearchedBandInfo.excute(bandId);
+		
 	}
 
 
-	
 }

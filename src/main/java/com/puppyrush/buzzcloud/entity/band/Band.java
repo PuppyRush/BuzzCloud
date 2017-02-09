@@ -72,6 +72,7 @@ public final class Band implements Entity{
 		}
 	}
 	
+	private String driverNickname;
 	private String driverPath;
 	private int maxCapacity;
 	private int usingCapacity;
@@ -100,6 +101,7 @@ public final class Band implements Entity{
 	
 	public static class Builder{
 	
+		private String driverNickname;
 		private String driverPath;
 		private int maxCapacity;
 		private int usingCapacity;
@@ -160,6 +162,12 @@ public final class Band implements Entity{
 			this.driverPath = path; 
 			return this;
 		}
+		
+		public Builder driverNickname(String name){
+			this.driverNickname = name; 
+			return this;
+		}
+		
 		
 		public Builder bandAuhority(BandAuthority bandAuthority){
 			this.bandAuthority = bandAuthority;
@@ -244,6 +252,15 @@ public final class Band implements Entity{
 
 	public void setDriverPath(String driverPath) {
 		this.driverPath = driverPath;
+	}
+	
+	
+	public String getDriverNickname() {
+		return driverNickname;
+	}
+
+	public void setDriverNickname(String driverNickname) {
+		this.driverNickname = driverNickname;
 	}
 	
 }

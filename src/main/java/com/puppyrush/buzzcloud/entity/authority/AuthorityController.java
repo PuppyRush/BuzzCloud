@@ -42,7 +42,7 @@ final public class AuthorityController extends EntityControllerImpl<Authority>{
 				
 		E auth = null;
 		
-		final int entityId = authorityMap.get(entityKind.getClass()).get(authId); 
+		final int entityId = authorityMap.get(entityKind).get(authId); 
 		try {
 			auth = (E) getEntity(entityId);
 		} catch (ControllerException e) {
@@ -57,7 +57,7 @@ final public class AuthorityController extends EntityControllerImpl<Authority>{
 	@Deprecated
 	public Authority getEntity(int id) throws ControllerException {
 
-		if(id<=0)
+		if(id<0)
 			throw new IllegalArgumentException("userId는 0보다 커야 합니다.");
 				
 		if(entityMap.containsKey(id))

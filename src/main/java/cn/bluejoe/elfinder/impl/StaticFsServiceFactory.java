@@ -3,25 +3,18 @@ package cn.bluejoe.elfinder.impl;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.entity.ControllerException;
+import com.puppyrush.buzzcloud.entity.enumController;
 import com.puppyrush.buzzcloud.entity.authority.AuthorityManager;
-import com.puppyrush.buzzcloud.entity.authority.file.FileAuthority;
 import com.puppyrush.buzzcloud.entity.authority.file.enumFileAuthority;
+import com.puppyrush.buzzcloud.entity.band.Band;
 import com.puppyrush.buzzcloud.entity.band.BandController;
-import com.puppyrush.buzzcloud.entity.member.MemberController;
-
 import cn.bluejoe.elfinder.impl.DefaultFsMapping.BandMember;
 import cn.bluejoe.elfinder.localfs.LocalFsVolume;
 import cn.bluejoe.elfinder.service.FsService;
@@ -35,34 +28,37 @@ import cn.bluejoe.elfinder.service.FsServiceFactory;
  *
  */
 
-public class StaticFsServiceFactory implements FsServiceFactory
+//
+final public class StaticFsServiceFactory implements FsServiceFactory
 {
 	
-	@Autowired
+	BandController bandCtl;
 	AuthorityManager authMng;
 
-	BandMember bm;
+	BandMember bandMember;
 	FsService _fsService;
 
-	public StaticFsServiceFactory(BandMember bm) throws SQLException {
+	public StaticFsServiceFactory(BandMember bm, AuthorityManager authMng, BandController bandCtl ) throws SQLException, ControllerException {
 		// TODO Auto-generated constructor stub
-		
-		
-		this.bm = bm;
+				
+		this.bandCtl = bandCtl;
+		this.authMng = authMng;
+		this.bandMember = bm;
+		_fsService = new DefaultFsService();
 		init();
 		
 	}
 	
-	private void init(){
+	private void init() throws ControllerException{
 		
 		_fsService.initVolume();
 		
-		for(LocalFsVolume vs : getVolums(bm.getBandId())){
+		for(LocalFsVolume vs : getVolums(bandMember.getBandId() ) ){
 			_fsService.addVolume(vs.getName(), vs);
 		}
 				
 		try {
-			_fsService.setSecurityChecker(getFsCheckChain(bm));
+			_fsService.setSecurityChecker(getFsCheckChain(bandMember));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,14 +69,25 @@ public class StaticFsServiceFactory implements FsServiceFactory
 		
 	}
 	
-	private List<LocalFsVolume> getVolums(int bandId){
+	private List<LocalFsVolume> getVolums(int bandId) throws ControllerException{
 		
 		List<LocalFsVolume> volums = new ArrayList<LocalFsVolume>();
 		
 		//..Todo
+		
+		Band band = null;
+		if(bandCtl.containsEntity(bandId))
+			band = bandCtl.getEntity(bandId);
+		else
+			throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
+				
+		final String driverPath = band.getDriverPath();
+		final String nickname = band.getDriverNickname();
+		
 		LocalFsVolume volume = new LocalFsVolume();
-		volume.setName("AA");
-		volume.setRootDir(new File("/tmp/a"));
+		volume.setName(nickname);
+		volume.setRootDir(new File(driverPath));
+		volums.add(volume);
 		
 		return volums;
 	}
@@ -151,7 +158,12 @@ public class StaticFsServiceFactory implements FsServiceFactory
 	public void invalidate() {
 		// TODO Auto-generated method stub
 		
-		init();
+		try {
+			init();
+		} catch (ControllerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 }

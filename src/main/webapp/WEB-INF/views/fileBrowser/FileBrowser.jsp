@@ -28,9 +28,6 @@
 
 		<!-- custom CSS -->
 				<link rel="stylesheet" type="text/css"			href="/resources/views/fileBrowser/css/filebrowser.css">
-				
-		
-				
 
 		<!-- jQuery UI (REQUIRED) -->
 		<link rel="stylesheet" type="text/css"			href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
@@ -83,7 +80,7 @@
 			</div>	
    	 
 	 		 <div class="section" id="section1">
-	 		 		asd
+	 		 		
 	 		 </div>
 	   
 	</div>

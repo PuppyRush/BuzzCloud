@@ -529,7 +529,7 @@ public final class BandManager {
 			ps.close();
 			rs.close();
 			
-			ps = conn.prepareStatement("select usingCapacity, maxCapacity, driverPath from bandDetail where bandId = ? ");
+			ps = conn.prepareStatement("select * from bandDetail where bandId = ? ");
 			ps.setInt(1, bandId);
 			rs = ps.executeQuery();
 			rs.next();
@@ -537,9 +537,10 @@ public final class BandManager {
 			int maxCapacity = rs.getInt("maxCapacity");
 			int usingCapacity = rs.getInt("usingCapacity");
 			String driverPath = rs.getString("driverPath");
+			String driverNickname = rs.getString("driverNickname");
 			
 			band = new Band.Builder(bandId, ownerId, bandName).bandAuhority(bandAuthority).members(members).upperBandId(upperBandId).maxCapacity(maxCapacity)
-					.usingCapacity(usingCapacity).driverPath(driverPath).build();
+					.usingCapacity(usingCapacity).driverPath(driverPath).driverNickname(driverNickname).build();
 
 			if (bCtl.containsEntity(bandId) == false)
 				bCtl.addEntity(bandId, band);
@@ -564,6 +565,7 @@ public final class BandManager {
 			
 			conn.setAutoCommit(false);
 		
+			String driverNickname = (String)obj.get("driverNickname");
 			String groupName = (String)obj.get("bandName");
 			String groupOwner = (String)obj.get("bandOwner");
 			String administrator = (String)obj.get("administrator");
@@ -642,6 +644,7 @@ public final class BandManager {
 			bld.members(authoritedMap);
 			bld.bandAuhority(bandAuth);
 			bld.driverPath(driverPath);
+			bld.driverNickname(driverNickname);
 			
 			bld.subBands(getSubBands(bandId));
 			Band band = bld.build();

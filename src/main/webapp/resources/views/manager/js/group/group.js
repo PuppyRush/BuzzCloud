@@ -3,66 +3,45 @@
    var myBands;
    var maxCapacity;
    
-	$.ajax({
-	    url:'/configPage/groupCnfig/initMyBandInformation.ajax',
-	    data: { memberId: memberId},
-	    dataType:'json',
-	    success:function(data){
-	  	  bandMembers = data;
-	 	    for (var key in data)  
-				   $("#groupMember").append('<option>'+key);	   				   		 	
-	 			 
-           }
-       })
-    /*   
- $.ajax({
-	    url:'/page/manager/ajax/group/getSubBands.jsp',
-	    data: { memberId: memberId},
-	    dataType:'json',
-	    success:function(data){
-	    myBands = data;
-	 	    for (var key in data) {		   
-	  		  $("#selectGroup").append('<option>'+key);	   		 	
-	 			 }
-           }
-      })
+	$(document).ready(function(){						
+				
+			var comAjax = new ComAjax();
+			comAjax.setUrl("/managerPage/groupConfig/initMyBandInformation.ajax");
+			comAjax.setCallback("callback_initMyBandInfo");
+			comAjax.setType("get");
+			comAjax.ajax();
+			
+	});
+		
+   
+	function callback_initMyBandInfo(data){
+		
+		bandMembers = data["bandMembers"];
+	  for (var key in bandMembers)  
+	   $("#groupMember").append('<option>'+key);	 
+	  
+	  myBands = data["subBands"];
+	    for (var key in myBands) {		   
+		  $("#selectGroup").append('<option>'+key);	   		 	
+			 }
+  
+    maxCapacity = Number(data["maxCapacity"])/(1024*1024);
+  	  $("#groupCapacity").attr("placeholder","할당할 용량 ( 가능한 최대 용량 :  " + maxCapacity+" )" );
+    
+  	bandAuthority = data["bandAuthority"];
+  	 for (var key in data) {		   
+			$("#bandAuthority").append('<option>'+key);	   		 	
+		 }
+		fileAuthority = data["fileAuthority"];
+		  for (var key in fileAuthority) {		   
+	  		$("#fileAuthority").append('<option>'+key);	   		 	
+		  	}
+  	 
+		  $("#groupOwner").val(data["groupOwner"]);
+		  $("#administrator").val(data["administrator"]);
+		  
+	}
        
-  $.ajax({
-	    url:'/page/manager/ajax/group/getMaxCapacity.jsp',
-	    data: { memberId: memberId},
-	    dataType:'json',
-	    success:function(data){
-	    	 maxCapacity = Number(data.capacity)/(1024*1024);
-	  	  $("#groupCapacity").attr("placeholder","할당할 용량 ( 가능한 최대 용량 :  " + maxCapacity+" )" );
-	 	   
-           }
-       })
-       
-   $.ajax({
-	    url:'/page/manager/ajax/group/getBandAuthority.jsp',
-	    dataType:'json',
-	    success:function(data){
-		    for (var key in data) {		   
-			  		$("#bandAuthority").append('<option>'+key);	   		 	
-				 }
-          }
-      })
-      
-   $.ajax({
-	    url:'/page/manager/ajax/group/getFileAuthority.jsp',
-	    dataType:'json',
-	    success:function(data){
-		    for (var key in data) {		   
-			  		$("#fileAuthority").append('<option>'+key);	   		 	
-				 }
-          }
-      })
-  	   
-
-	*/
-
-
-
    var members = new Array();
 		var bandMembers;
 		
@@ -79,126 +58,6 @@
 		
 		  
 		  
-		  
-		  
-	  $('#administrator').keyup(function() {
-		  
-		    var str = $(this).val();
-		    		
-		    		if(str.length>=4){
-		    		
-		    		 $.ajax({
-		    		    url:'/configPage/groupCnfig/getMembersOfPart.jsp',
-		    		    data: { nickname: str },
-		    		    dataType:'json',
-		    		    success:function(data){
-		    		    	
-		    		    	/* var members = new Array();*/
-			    		    for (var key in data) {	    			
-			    		    	mebersOfPart.push(key); 
-			    		    			}
-
-		    	           		  }
-		    		 	})
-    			}
-		    
-		});
-	
-	
-		var options = {
-
-			  url: function(phrase) {
-				    return '/configPage/groupCnfig/getMembersOfPart.jsp';
-				  },
-
-				  getValue: function(element) {
-				    return element.name;
-				  },
-
-				  ajaxSettings: {
-				    dataType: "json",
-				    method: "POST",
-				    data: {
-				      nickname:   $('#searchMember').val()
-				    }
-				  },
-
-				  preparePostData: function(data) {
-				    data.phrase = $("#searchMember").val();
-				    return data;
-				  },
-
-			  list: {
-			  	maxNumberOfElements : 10,
-			  	match :{enabled:true},
-					onClickEvent: function() {
-						var index = $("#searchMember").getSelectedItemIndex();
-						var nick = $("#searchMember").getItemData(index).name;
-						
-						$("#groupMember").each(function(){
-								if( $(this).val == nick){
-										return;
-								} 
-						});
-						
-						$("#groupMember").append('<option>'+nick);
-											
-					}	
-				},
-				  
-				  requestDelay: 400
-		};
-
-		$("#searchMember").easyAutocomplete(options);
-		
-		
-		var options = {
-
-				  url: function(phrase) {
-					    return '/configPage/groupCnfig/getMembersOfPart.jsp';
-					  },
-
-					  getValue: function(element) {
-					    return element.name;
-					  },
-
-					  ajaxSettings: {
-					    dataType: "json",
-					    method: "POST",
-					    data: {
-					      nickname:   $('#administrator').val()
-					    }
-					  },
-
-					  preparePostData: function(data) {
-					    data.phrase = $("#administrator").val();
-					    return data;
-					  },
-
-				  list: {
-				  maxNumberOfElements : 10,
-				  	match :{enabled:true},
-						onClickEvent: function() {
-							var index = $("#administrator").getSelectedItemIndex();
-							var nick = $("#administrator").getItemData(index).name;
-							
-							$("#groupMember").each(function(){
-									if( $(this).val == nick){
-											return;
-									} 
-							});
-							
-							$("#administrator").val(nick);
-												
-						}	
-					},
-					  
-					  requestDelay: 400
-			};
-
-		
-		$("#administrator").easyAutocomplete(options);
-
 		
 		function getBandInfoFromPage(){
 
@@ -343,5 +202,13 @@
     		$("#groupMember").empty();
     	 	$("#makeSubmit").val("그룹 만들기");
 		 
+	 	});
+	 
+
+		 $("#navPages li").on("click", function(){
+
+				$("#managerForm #forwardPageName").val($(this).attr('id'));
+				$("#managerForm").submit()			
+				
 	 	});
 	 

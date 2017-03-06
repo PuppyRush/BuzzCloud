@@ -21,10 +21,10 @@ $(document).ready(function() {
 					
 					case "myaccount":
 					case "group":
-					case "groupDashboard":
+					case "groupdashboard":
 					case "member":
 					
-				  	$("#managerForm #toPage").val(key);
+				  	$("#managerForm #forwardPageName").val(key);
 				  	$("#managerForm").submit();
 						break;
 						

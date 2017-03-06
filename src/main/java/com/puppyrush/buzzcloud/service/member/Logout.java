@@ -10,8 +10,9 @@ import com.puppyrush.buzzcloud.entity.enumController;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
+import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
 import com.puppyrush.buzzcloud.page.PageException;
-import com.puppyrush.buzzcloud.page.enums.enumCautionKind;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,14 +53,11 @@ final public class Logout {
 			
 			returns.put("view", enumPage.ENTRY.toString());	
 			returns.put("doLogout", true);
-			returns.put("message", "로그아웃에 성공하셨습니다.");
-			returns.put("messageKind", enumCautionKind.NORMAL.toString());
-			
+			returns.putAll(new InstanceMessage( "로그아웃에 성공하셨습니다.", InstanceMessageType.SUCCESS).getMessage());			
 		}catch( PageException e){
 			returns.put("doLogout", false);
 			returns.put("view", enumPage.ENTRY.toString());		
-			returns.put("message", "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.");
-			returns.put("messageKind", enumCautionKind.ERROR.toString());
+			returns.putAll(new InstanceMessage( "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.", InstanceMessageType.ERROR).getMessage());
 			e.printStackTrace();
 		}
 		catch( EntityException e){
@@ -69,17 +67,12 @@ final public class Logout {
 					case NOT_JOIN:
 						returns.put("initSession", true);
 						returns.put("view", e.getToPage().toString());		
-						returns.put("message", "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.");
-						returns.put("messageKind", enumCautionKind.ERROR.toString());
-	
+						returns.putAll(new InstanceMessage( "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.", InstanceMessageType.ERROR).getMessage());
 						break;
 					default:
-						
 						returns.put("doLogout", false);
 						returns.put("view", e.getToPage().toString());		
-						returns.put("message", "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.");
-						returns.put("messageKind", enumCautionKind.ERROR.toString());
-						
+						returns.putAll(new InstanceMessage( "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.", InstanceMessageType.ERROR).getMessage());
 						break;
 				}
 				

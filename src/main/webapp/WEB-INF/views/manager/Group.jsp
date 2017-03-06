@@ -1,40 +1,12 @@
-<%@page import="com.puppyrush.buzzcloud.entity.member.MemberController"%>
-<%@page import="com.puppyrush.buzzcloud.page.VerifyPage, 
-com.puppyrush.buzzcloud.page.enums.enumPage, java.util.ArrayList, java.util.HashMap , 
-com.puppyrush.buzzcloud.entity.member.Member , 
-com.puppyrush.buzzcloud.entity.band.Band, 
-com.puppyrush.buzzcloud.entity.band.BandManager" %>
-<%@page import="com.puppyrush.buzzcloud.page.enums.enumCautionKind, 
-com.puppyrush.buzzcloud.entity.band.Band.BundleBand,  
-com.puppyrush.buzzcloud.property.tree.Tree, 
-com.puppyrush.buzzcloud.property.tree.Node"%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
 <%
-
+{
 	request.setCharacterEncoding("UTF-8");
-
-	Member member = null;
- 	boolean isSuccessVerify = false;
-	HashMap<String,Object> results =  VerifyPage.Verify(session.getId(), enumPage.GROUP_MANAGER);
-	
-	if((boolean)results.get("isSuccessVerify")){
-	
-		member = MemberController.getInstance().getMember(session.getId());
-		isSuccessVerify = true;		
-		
-	}else{
-		isSuccessVerify = false;
-		enumPage to = (enumPage)results.get("to");
-		
-		request.setAttribute("message",  (String)results.get("message"));
-		request.setAttribute("messageKind", results.get("messageKind"));
-		response.sendRedirect(to.toString());
-		return;
 				
-	}
+}
 	
 %>
     
@@ -52,23 +24,21 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css"			href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
     
-       
-    
 			<!-- ohsnap css  -->
-			<link href="/include/notificator/ohsnap.css" rel="stylesheet">
+			<link href="/resources/lib/include/notificator/ohsnap.css" rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="/page/manager/bootstrap/css/bootstrap.min.css" />
-		<link href="/page/manager/css/main.css" rel="stylesheet">
-		<link href="/page/manager/css/group.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/resources/views/manager/bootstrap/css/bootstrap.min.css" />
+		<link href="/resources/views/manager/css/main.css" rel="stylesheet">
+		<link href="/resources/views/manager/css/group.css" rel="stylesheet">
 
     <!-- DATA TABLE CSS -->
-    <link href="/page/manager/css/table.css" rel="stylesheet"/>
+    <link href="/resources/views/manager/css/table.css" rel="stylesheet"/>
 
     <!--  autocomplete -->
-		<link href="/include/easyautocomplete/easy-autocomplete.min.css" rel="stylesheet"/>
+		<link href="/resources/lib/include/easyautocomplete/easy-autocomplete.min.css" rel="stylesheet"/>
 		    
     <!-- network css  -->
-    	<link href="/page/manager/css/network.css" rel="stylesheet">
+    	<link href="/resources/views/manager/css/network.css" rel="stylesheet">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -94,13 +64,13 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
           
         </div> 
           <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li><a href="/page/manager/MyAccount.jsp"><i class="icon-home icon-white"></i>My Account</a></li>                            
-              <li><a href="/page/manager/GroupDashboard.jsp"><i class="icon-home icon-white"></i>GroupDashboard</a></li>
-              <li class="active"><a href="/page/manager/Group.jsp"><i class="icon-home icon-white"></i>Group</a></li>
-              <li><a href="/page/manager/Member.jsp"><i class="icon-user icon-white"></i>Member</a></li>
-									<li><a href="/page/mainPage/MainPage.jsp"><i class="icon-user icon-white"></i>Home</a></li>
-            </ul>
+              <ul class="nav navbar-nav" id="navPages">
+              <li id="myaccount"><a href="#"><i class="icon-home icon-white"></i>My Account</a></li>                            
+     							<li id="groupdashboard"> <a href="#"><i class="icon-home icon-white"></i>GroupDashboard</a></li>
+              <li  class="active" id="group"><a href="#" ><i class="icon-home icon-white"></i>Group</a></li>
+              <li id="member"><a href="#"><i class="icon-user icon-white"></i>Member</a></li>
+									<li id="main"><a href="#"><i class="icon-user icon-white"></i>Home</a></li>
+            </ul>   
           </div><!--/.nav-collapse -->
         </div>
     </div>
@@ -257,23 +227,16 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 
 	<div id="ohsnap">	</div>
 
-
-	<form id="managerForm" method="POST" ACTION="/manager.do">
-		<input type="hidden" name="toPage" id="toPage">
-		<input type="hidden" name="bandId" id="bandId">
+	<form id="managerForm" method="GET" ACTION="/managerPage/forwading.do">
+		<input type="hidden" name="forwardPageName" id="forwardPageName">
 	</form>
 
 <script>
 
-var memberId = <%=member.getId()%>;
-
-
 
 window.onload=function(){
 		
-		$("#groupOwner").val("<%=member.getNickname()%>");
-		$("#administrator").val("<%=member.getNickname()%>");
-	  	
+		ohSnap("${message}",{'color': "${messageKind}" });
       
 }
 
@@ -293,23 +256,23 @@ window.onload=function(){
     	<!-- ohsnap -->
 		<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>
 	
-
-		 <script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
-   <script type="text/javascript" src="/page/manager/js/jquery.js"></script>    
-   <script type="text/javascript" src="/page/manager/js/admin.js"></script>
+<script type="text/javascript" src="/resources/lib/commanJs/commonAjax.js"></script>
+		 <script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js"></script>
+   <script type="text/javascript" src="/resources/views/manager/js/jquery.js"></script>    
+   <script type="text/javascript" src="/resources/views/manager/js/admin.js"></script>
 
 
 		<!-- autocomplete  -->
-		<script type="text/javascript" src="/include/easyautocomplete/jquery.easy-autocomplete.js"></script>
-		<script type="text/javascript" src="/page/manager/js/group.js"></script>
+		<script type="text/javascript" src="/resources/lib/include/easyautocomplete/jquery.easy-autocomplete.js"></script>
+		<script type="text/javascript" src="/resources/views/manager/js/group/autocomplete.js"></script>
 
 				
 		<!-- network js  -->
-		<script type="text/javascript" src="/include/network-1.5.0/network.js"></script>
+		<script type="text/javascript" src="/resources/lib/include/network-1.5.0/network.js"></script>
 		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-		<script type="text/javascript" src="/page/manager/js/network.js"></script>
+		<script type="text/javascript" src="/resources/views/manager/js/group/network.js"></script>
 		
-
+<script type="text/javascript" src="/resources/views/manager/js/group/group.js"></script>
 
 </body>
 

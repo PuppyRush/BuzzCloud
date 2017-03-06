@@ -1,13 +1,3 @@
-<%@page import="com.puppyrush.buzzcloud.entity.member.MemberController"%>
-<%@ page import="com.puppyrush.buzzcloud.page.VerifyPage, 
-com.puppyrush.buzzcloud.page.enums.enumPage, java.util.ArrayList, java.util.HashMap , 
-com.puppyrush.buzzcloud.entity.member.Member , 
-com.puppyrush.buzzcloud.entity.band.Band, 
-com.puppyrush.buzzcloud.entity.band.BandManager" %>
-<%@ page import="com.puppyrush.buzzcloud.page.enums.enumCautionKind, 
-com.puppyrush.buzzcloud.entity.band.Band.BundleBand,  
-com.puppyrush.buzzcloud.property.tree.Tree, 
-com.puppyrush.buzzcloud.property.tree.Node"%>	
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
@@ -58,7 +48,7 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 
 <body>
 
-	<div id="ohsnap"></div>
+
 
 
 	<div id="mask"></div>
@@ -123,7 +113,6 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 	</div>
 
 	<div id="mynetwork"></div>
-			
 	
 	<div class="container">
 
@@ -135,18 +124,21 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 		</div>
 	</div>
 
+	<div id="ohsnap"></div>
+
 	<form id="bandForm" method="GET" ACTION="/mainPage/viewFileBrowser.do">
 		<input type="hidden" name="bandId" id="bandId">
 	</form>
 	
-	<form id="managerForm" method="POST" ACTION="/manager.do">
-		<input type="hidden" name="toPage" id="toPage">
-		<input type="hidden" name="bandId" id="bandId">
+	<form id="managerForm" method="GET" ACTION="/managerPage/forwading.do">
+		<input type="hidden" name="forwardPageName" id="forwardPageName">
 	</form>
 
 <form id="logoutForm" method="GET" ACTION="/member/logout.do">
 	</form>
 	
+			
+
 	
 
 <script>
@@ -155,33 +147,16 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 	var _rootsBand = new Array();
 
 
-	window.onload=function(){
-	
-		//메세지
-		var message;
-		var popup_color;
-	
+	window.onload=function(){		
+			ohSnap("${message}",{'color': "${messageKind}" });
 		
-		message = ${message};
-		if(message !="" ){
-			popup_color = ${messageKind}
-			ohSnap(message,{color:popup_color});
-		}
-		
-	
-			
-
- 
 	}
-	////member가져오기
 
 
-	
-	
 </script>
 
 	<script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>			
-	<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.co/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
 
 
 	<!-- Bootstrap Core JavaScript -->

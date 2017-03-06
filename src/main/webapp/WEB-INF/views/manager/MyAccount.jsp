@@ -1,41 +1,8 @@
-<%@page import="com.puppyrush.buzzcloud.entity.member.MemberController"%>
-<%@page import="com.puppyrush.buzzcloud.page.VerifyPage, 
-com.puppyrush.buzzcloud.page.enums.enumPage, java.util.ArrayList, java.util.HashMap , 
-com.puppyrush.buzzcloud.entity.member.Member , 
-com.puppyrush.buzzcloud.entity.band.Band, 
-com.puppyrush.buzzcloud.entity.band.BandManager" %>
-<%@page import="com.puppyrush.buzzcloud.page.enums.enumCautionKind, 
-com.puppyrush.buzzcloud.entity.band.Band.BundleBand,  
-com.puppyrush.buzzcloud.property.tree.Tree, 
-com.puppyrush.buzzcloud.property.tree.Node"%>
-
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
 <%
-
-	request.setCharacterEncoding("UTF-8");
-
-	Member member = null;
- 	boolean isSuccessVerify = false;
-	HashMap<String,Object> results =  VerifyPage.Verify(session.getId(), enumPage.GROUP_MANAGER);
-	
-	if((boolean)results.get("isSuccessVerify")){
-	
-		member = MemberController.getInstance().getMember(session.getId());
-		isSuccessVerify = true;		
-		
-	}else{
-		isSuccessVerify = false;
-		enumPage to = (enumPage)results.get("to");
-		
-		request.setAttribute("message",  (String)results.get("message"));
-		request.setAttribute("messageKind", results.get("messageKind"));
-		response.sendRedirect(to.toString());
-		return;
-				
-	}
-	
+	request.setCharacterEncoding("UTF-8");	
 %>
     
 
@@ -49,19 +16,19 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link rel="stylesheet" type="text/css" href="/page/manager/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/views/manager/bootstrap/css/bootstrap.min.css" />
     
-    <link href="/page/manager/css/main.css" rel="stylesheet">
-    <link href="/page/manager/css/font-style.css" rel="stylesheet">
-    <link href="/page/manager/css/register.css" rel="stylesheet">
-    <link href="/page/manager/css/myaccount.css" rel="stylesheet">
+    <link href="/resources/views/manager/css/main.css" rel="stylesheet">
+    <link href="/resources/views/manager/css/font-style.css" rel="stylesheet">
+    <link href="/resources/views/manager/css/register.css" rel="stylesheet">
+    <link href="/resources/views/manager/css/myaccount.css" rel="stylesheet">
 				<!-- ohsnap css  -->
-			<link href="/include/notificator/ohsnap.css" rel="stylesheet">
+			<link href="/resources/lib/include/notificator/ohsnap.css" rel="stylesheet">
 		
 
 
-	<script type="text/javascript" src="/page/manager/js/jquery.js"></script>    
-    <script type="text/javascript" src="/page/manager/bootstrap/js/bootstrap.min.js"></script>
+	<!-- <script type="text/javascript" src="/resources/views/manager/js/jquery.js"></script> -->    
+    <script type="text/javascript" src="/resources/views/manager/bootstrap/js/bootstrap.min.js"></script>
 
     <style type="text/css">
       body {
@@ -96,12 +63,12 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
           
         </div> 
           <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li  class="active"><a href="/page/manager/MyAccount.jsp" id="myAccount"><i class="icon-home icon-white"></i>My Account</a></li>                            
-     							<li> <a href="/page/manager/GroupDashboard.jsp" id="groupDashboard"><i class="icon-home icon-white"></i>GroupDashboard</a></li>
-              <li><a href="/page/manager/Group.jsp" id="groupPage"><i class="icon-home icon-white"></i>Group</a></li>
-              <li><a href="/page/manager/Member.jsp" id="memberPage" ><i class="icon-user icon-white"></i>Member</a></li>
-									<li><a href="/page/mainPage/MainPage.jsp"><i class="icon-user icon-white"></i>Home</a></li>
+            <ul class="nav navbar-nav" id="navPages">
+              <li class="active"  id="myaccount"><a href="#"><i class="icon-home icon-white"></i>My Account</a></li>                            
+     							<li id="groupdashboard"> <a href="#"><i class="icon-home icon-white"></i>GroupDashboard</a></li>
+              <li id="group"><a href="#" ><i class="icon-home icon-white"></i>Group</a></li>
+              <li id="member"><a href="#"><i class="icon-user icon-white"></i>Member</a></li>
+									<li id="main"><a href="#"><i class="icon-user icon-white"></i>Home</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -171,7 +138,7 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
         		        	<!-- email -->
         		        	<label>E-mail</label>
         		        	<input name="email" id="email" class="input-huge" type="text" readonly="readonly">
-        		        
+  
         		        </div>
         		    
         		        <div class="footer">     		           
@@ -189,7 +156,7 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
       	<div class="container">
       		<div class="row">
       			<div class="col-sm-12 col-lg-12">
-      			<p><img src="images/logo.png" alt=""></p>
+      			<p><img src="/resources/views/manager/images/logo.png" alt=""></p>
       			<p>Blocks Dashboard Theme - Crafted With Love - Copyright 2013</p>
       			</div>
 
@@ -197,28 +164,38 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
       	</div><!-- /container -->		
 	</div><!-- /footerwrap -->  
 	
-
+		
+	<form id="managerForm" method="GET" ACTION="/managerPage/forwading.do">
+		<input type="hidden" name="forwardPageName" id="forwardPageName">
+	</form>
 	
 	<script>
 	
-	var memberId = <%=member.getId()%>;
-
 	window.onload=function(){
-	
-	       
+		ohSnap("${message}",{'color': "${messageKind}" });
 	}
 	
 	
 	</script>
 		
-				
-
-  	<!-- ohsnap -->
-		<script type="text/javascript" charset="utf-8"	src="/include/notificator/ohsnap.js"	></script>
-		
+	<!-- jQuery and jQuery UI (REQUIRED) -->
+	
 		<script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>
-  <script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
-	<script type="text/javascript" src="/page/manager/js/myaccount.js"></script>
+		<script	 src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
+		<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
+				
+		<!-- Bootstrap Core JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+
+    
+ 	<!-- ohsnap -->
+	<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>
+	
+	<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/commonAjax.js"></script>
+	<script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js"></script>
+	<script type="text/javascript" src="/resources/lib/commanJs/formValidator.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/myaccount.js"></script>
+		
 	
 </body>
 

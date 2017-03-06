@@ -23,29 +23,25 @@ import com.puppyrush.buzzcloud.entity.member.Member;
 public class GettingSelectedBandMembers{
 
 	@Autowired(required=false)
-	private static DBManager dbMng;
+	private DBManager dbMng;
 
 	@Autowired(required=false)
-	private static BandManager bandMng;
+	private BandManager bandMng;
 
 	@Autowired(required=false)
-	private static AuthorityManager authMng;
+	private AuthorityManager authMng;
 
-	
 	public Map<String, Object> execute(int bandId) {
 				
 		ArrayList<Member> members = new ArrayList<Member>();
 		members = bandMng.getMembersOf(bandId);
 					
-		
-		ArrayList<String> selCaluse = new ArrayList<String>();
 		HashMap<String,Object> whereCaluse = new HashMap<String,Object>();	
-		selCaluse.add("joinDate");
-		selCaluse.add("memberId");
+		
 		whereCaluse.put("bandId", bandId);
 		
 		Map<Integer, Map<String,Object>> bandMembers = new HashMap<Integer,Map<String,Object>>(); 
-		for(Map<String,Object> map : dbMng.getColumnsOfPart("bandMember", selCaluse, whereCaluse) ){
+		for(Map<String,Object> map : dbMng.getColumnsOfAll("bandMember", whereCaluse) ){
 			bandMembers.put((Integer)map.get("memberId"), map);
 		}
 		

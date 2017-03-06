@@ -28,8 +28,8 @@ public final class InstanceMessage extends Message{
 	public Map<String,Object> getMessage(){
 		
 		Map<String, Object> returns = new HashMap<String, Object>();
-		returns.put("contents", this.getContents());
-		returns.put("messageType", type.toString());
+		returns.put("message", this.getContents());
+		returns.put("messageKind", type.toString());
 		
 		return returns;
 		

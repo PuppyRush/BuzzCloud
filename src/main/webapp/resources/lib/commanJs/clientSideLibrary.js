@@ -10,6 +10,7 @@
 			return false;
 		else if(regExp.test(str))
 			return false;
+		return true;
 	}	
 
 

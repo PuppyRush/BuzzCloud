@@ -1,4 +1,4 @@
-package com.puppyrush.buzzcloud.service.main;
+package com.puppyrush.buzzcloud.service.band;
 
 import java.sql.SQLException;
 import java.util.EnumMap;

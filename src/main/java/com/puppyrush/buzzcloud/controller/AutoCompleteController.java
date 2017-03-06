@@ -18,9 +18,8 @@ import com.puppyrush.buzzcloud.service.autocomplete.GettingBandNames;
 import com.puppyrush.buzzcloud.service.autocomplete.GettingMemberNames;
 import com.puppyrush.buzzcloud.service.autocomplete.GettingSearchedBandInfo;
 import com.puppyrush.buzzcloud.service.band.GettingSelectedBandMembers;
+import com.puppyrush.buzzcloud.service.band.InitBandMap;
 import com.puppyrush.buzzcloud.service.band.SearchedBandInfo;
-
-import com.puppyrush.buzzcloud.service.main.InitBandMap;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;

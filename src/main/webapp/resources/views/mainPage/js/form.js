@@ -35,24 +35,22 @@
 								
 					}
 				 
-				 $("#joinBandButton").on("click",function(){			 		 
-					 
-					   $.ajax({
-					   url:'/page/mainPage/ajax/requestBandJoin.jsp',
-					   data : { memberId: memberId, bandId : selectedBandIdOfAutoCompleted},
-					   dataType:'json',
-					   success:function(data){
-			   				if(data["isSuccess"]){
-			   						$('#mask').hide();
-			   						$('.searchModal').hide();  
-	   								$("#ohsnap").show();
-			   						ohSnap("그룹에 가입이 신청되었습니다. 승인이 되면 사용이 가능합니다.", {color: 'green'});	   				
-			   						}
-					          }
-					   
-					      });
+				 $("#joinBandButton").on("click",function(){			 
+						 
+							var comAjax = new ComAjax();
+							comAjax.setUrl("/band/requestBandJoin.ajax");
+							comAjax.setCallback("callback_requestedJoin");
+							comAjax.addParam("bandId",selectedBandIdOfAutoCompleted);
+							comAjax.setType("POST");
+							comAjax.ajax();
 				 
 				 });
 
-
+				 function callback_requestedJoin(data){
+					
+					 $('#mask').hide();
+						$('.searchModal').hide();  
+						$("#ohsnap").show();
+						ohSnap(data["message"], {color: data["messageKind"]});
+				 }
 				

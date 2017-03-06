@@ -28,7 +28,7 @@ public enum enumPage {
 	ISSUE("issue/IssuePage"),
 	
 	MY_ACCOUNT("manager/MyAccount"),
-	GROUP_DASHBOARD("manager/GroupDashboard"),
+	GROUP_DASHBOARD("manager/GroupDashBoard"),
 	GROUP_MANAGER("manager/Group"),
 	GROUP_MEMBER("manager/Member"),
 	

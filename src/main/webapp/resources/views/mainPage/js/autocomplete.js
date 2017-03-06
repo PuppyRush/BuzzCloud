@@ -50,9 +50,7 @@ var selectedBandIdOfAutoCompleted;
 										comAjax.addParam("bandId",bandId);
 										comAjax.setType("GET");
 										comAjax.ajax();
-										
-				
-								       
+
 			
 									}	
 								},

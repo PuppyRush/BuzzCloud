@@ -1,4 +1,4 @@
-package com.puppyrush.buzzcloud.service.config.account;
+package com.puppyrush.buzzcloud.service.manager.account;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +12,8 @@ import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.MemberManager;
+import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
 
 @Service("settingProfile")
 public class SettingProfile{
@@ -51,21 +53,12 @@ public class SettingProfile{
 			} catch (ControllerException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			
-		}
-				
-		if( !form.getPassword().equals("")){
-			
-			try {
-				mMng.updatePassword(form.getMemberId(), form.getPassword());
-			} catch (ControllerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				returns.putAll(new InstanceMessage(e.getMessage(),InstanceMessageType.ERROR).getMessage());
 			}
 			
 		}
 		
+		returns.putAll(new InstanceMessage("변경에 성공하였습니다",InstanceMessageType.SUCCESS).getMessage());
 		return returns;
 		
 	}

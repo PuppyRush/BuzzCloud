@@ -1,4 +1,4 @@
-package com.puppyrush.buzzcloud.service.config.band;
+package com.puppyrush.buzzcloud.service.manager.band;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ final public class InitMyBandInfo {
 
 	int memberId;
 
-	public Map<String, Object> execute(int	memberId) {
+	public Map<String, Object> execute(int	memberId) throws ControllerException {
 
 		this.memberId = memberId;
 		
@@ -41,6 +41,9 @@ final public class InitMyBandInfo {
 		returns.put("bandAuthority", getBandAuthority());
 		returns.put("fileAuthority", getFileAuthority());
 		
+		Member member = mCtl.getEntity(memberId);
+		returns.put("groupOwner", member.getNickname());
+		returns.put("administrator", member.getNickname());
 		
 		return returns;
 

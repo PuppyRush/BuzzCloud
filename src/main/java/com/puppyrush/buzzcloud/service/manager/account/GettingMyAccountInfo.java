@@ -1,4 +1,4 @@
-package com.puppyrush.buzzcloud.service.config.account;
+package com.puppyrush.buzzcloud.service.manager.account;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,22 +24,14 @@ public class GettingMyAccountInfo{
 	private DBManager dbMng;
 
 
-	public Map<String, Object> execute(int memberId){
+	public Map<String, Object> execute(Member member){
 		
 		HashMap<String,Object> where = new HashMap<String,Object>(); 			
 		HashMap<String,Object> memberInfo = new HashMap<String,Object>(); 			
 		List<Map<String, Object>> memberDetail = new ArrayList<Map<String, Object>>();
 		
-		Member member;
-		try {
-			member = mCtl.getEntity(memberId);
-		} catch (ControllerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return memberInfo;
-		}
-		
-		where.put("memberId", memberId);
+				
+		where.put("memberId", member.getId());
 		memberDetail = dbMng.getColumnsOfAll("memberDetail", where);
 		 
 		memberInfo.put("nickname", member.getNickname());

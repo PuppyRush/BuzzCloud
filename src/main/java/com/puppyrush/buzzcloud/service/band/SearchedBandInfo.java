@@ -17,16 +17,16 @@ import com.puppyrush.buzzcloud.entity.member.MemberDB;
 public class SearchedBandInfo{
 
 	@Autowired(required=false)
-	private static DBManager dbMng;
+	private DBManager dbMng;
 
 	@Autowired(required=false)
-	private static BandManager bandMng;
+	private BandManager bandMng;
 
 	@Autowired(required=false)
-	private static BandDB bandDB;
+	private BandDB bandDB;
 	
 	@Autowired(required=false)
-	private static MemberDB mDB;
+	private MemberDB mDB;
 	
 
 	

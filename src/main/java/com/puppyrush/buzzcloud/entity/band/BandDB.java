@@ -2,9 +2,11 @@ package com.puppyrush.buzzcloud.entity.band;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,8 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 import com.puppyrush.buzzcloud.property.enums.enumSystem;
@@ -23,7 +28,9 @@ public class BandDB {
 
 	protected Connection conn = ConnectMysql.getConnector();
 
-
+	@Autowired
+	private DBManager dbMng;	
+	
 	public int makeBand(String name, int owner, int admin){
 		
 	
@@ -122,11 +129,31 @@ public class BandDB {
 		
 	}
 
- 	public Map<String,Object> makeBandRequestJoin(int bandId, int memberId){
+ 	public Map<String,Object> makeBandRequestJoin(int bandId, int memberId) throws SQLException{
 		
  		Map<String, Object> returns = new HashMap<String, Object>();
  		
-		try {
+ 		HashMap<String, Object> where = new HashMap<String, Object>();
+		
+		where.put("memberId", memberId);
+		where.put("bandId", bandId);
+ 		
+		List<Map<String, Object>> result = dbMng.getColumnsOfAll("bandRequestJoin",where);
+		if(!result.isEmpty()){
+			if((int)result.get(0).get("memberId")==memberId && (int)result.get(0).get("bandId")==bandId){
+				
+				Timestamp date = (Timestamp)result.get(0).get("requestDate");
+				StringBuilder bld = new StringBuilder();
+				bld.append("이미 가입요청을 하셨습니다. (");
+				bld.append(date.valueOf("2009-10-03 20:10:10").toString());
+				bld.append(")\n그룹 소유주의 허가를 기다리시거나 설정페이지에서 가입요청을 철회하세요.");
+				
+				InstanceMessage msg = new InstanceMessage(bld.toString(),InstanceMessageType.SUCCESS);
+				returns.putAll(msg.getMessage());
+				returns.put("isSuccess", false);
+			}
+		}
+		else{
 			conn.setAutoCommit(false);
 			PreparedStatement ps = conn.prepareStatement("insert into bandRequestJoin (bandId, memberId) values(?,?)");
 		
@@ -136,17 +163,11 @@ public class BandDB {
 			conn.commit();
 			
 			returns.put("isSuccess", true);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			returns.put("isSuccess", false);
 			
-			웹소켓?
-			
-			e.printStackTrace();
+			InstanceMessage msg = new InstanceMessage("그룹에 가입이 신청되었습니다. 승인이 되면 사용이 가능합니다.",InstanceMessageType.SUCCESS);
+			returns.putAll(msg.getMessage());
 		}
-		
 		return returns;
-		
 	}
 
 	public void makeBandMember(int bandId, int memberId){

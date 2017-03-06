@@ -12,12 +12,13 @@ import com.puppyrush.buzzcloud.entity.band.Band.BundleBand;
 import com.puppyrush.buzzcloud.entity.band.BandDB;
 import com.puppyrush.buzzcloud.entity.band.BandManager;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
+import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
+import com.puppyrush.buzzcloud.page.enums.enumPageError;
 import com.puppyrush.buzzcloud.property.tree.Tree;
 import com.puppyrush.buzzcloud.service.band.GettingSelectedBandMembers;
+import com.puppyrush.buzzcloud.service.band.InitBandMap;
 import com.puppyrush.buzzcloud.service.band.SearchedBandInfo;
-
-import com.puppyrush.buzzcloud.service.main.InitBandMap;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
 
 @Controller("mainPage")
 @RequestMapping("/mainPage")
@@ -44,8 +46,6 @@ public class MainPageController {
 	@Autowired(required = false)
 	private SearchedBandInfo	searchedBandInfo;
 
-	@Autowired(required = false)
-	private BandDB bandDB;
 
 	
 	public MainPageController() {
@@ -61,6 +61,7 @@ public class MainPageController {
 		mv.setViewName(enumPage.BROWSER.toString());
 		return mv;
 	}
+		
 	
 	@ResponseBody
 	@RequestMapping(value = "/initBandMap.ajax", method = RequestMethod.POST)
@@ -79,21 +80,6 @@ public class MainPageController {
 		return searchedBandInfo.execute(bandId);
 
 	}
-
-	@ResponseBody
-	@RequestMapping(value = "/requestBandJoin.ajax", method = RequestMethod.GET)
-	public Map<String, Object> requestBandJoin(@RequestParam("memberId") int memberId,	@RequestParam("bandId") int bandId) {
-
-		Map<String, Object> returns = new HashMap<String, Object>();
-
-		bandDB.makeBandRequestJoin(bandId, memberId);
-
-		returns.put("isSuccess", "true");
-
-		return returns;
-
-	}
-
 
 	
 }

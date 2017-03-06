@@ -18,9 +18,10 @@ import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.entity.member.MemberManager;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberAbnormalState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
+import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
 import com.puppyrush.buzzcloud.mail.enumMailType;
 import com.puppyrush.buzzcloud.page.PageException;
-import com.puppyrush.buzzcloud.page.enums.enumCautionKind;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.page.enums.enumPageError;
 
@@ -59,33 +60,31 @@ final public class Login{
 			returns.put("nickname", member.getNickname());
 			returns.put("id", String.valueOf(member.getId()));
 			returns.put("email", member.getEmail());
-			
-		
+			returns.putAll(new InstanceMessage("로그인에 성공하셨습니다.", InstanceMessageType.SUCCESS).getMessage());
 		}catch(PageException e){
 			e.printStackTrace();
-			
 			returns.put("is_successLogin", false);
 			returns.put("view",e.getPage().toString());		
-			
-		
+			returns.putAll(new InstanceMessage(e.getMessage(), InstanceMessageType.ERROR).getMessage());
 		}catch(EntityException e){
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			returns.put("view", e.getToPage().toString());	
-			returns.put("message", e.getMessage());
-			returns.put("messageKind", enumCautionKind.ERROR);
 			
+			InstanceMessage msg = new InstanceMessage(e.getMessage(), InstanceMessageType.ERROR);
+			returns.putAll(msg.getMessage());
 		}catch(SQLException e){
 			e.printStackTrace();
 			returns.put("view", enumPage.ERROR403);
-			returns.put("message", "알수없는 오류 발생. 관리자에게 문의하세요");
-			returns.put("messageKind", enumCautionKind.ERROR);
+			
+			InstanceMessage msg = new InstanceMessage("알수없는 오류 발생. 관리자에게 문의하세요", InstanceMessageType.ERROR);
+			returns.putAll(msg.getMessage());
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			returns.put("view", enumPage.ERROR403.toString());
-			returns.put("message", "알수없는 오류 발생. 관리자에게 문의하세요");
-			returns.put("messageKind", enumCautionKind.ERROR);
+			InstanceMessage msg = new InstanceMessage("알수없는 오류 발생. 관리자에게 문의하세요", InstanceMessageType.ERROR);
+			returns.putAll(msg.getMessage());
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -237,8 +236,9 @@ final public class Login{
 			throw new EntityException(enumMemberState.NOT_EQUAL_PASSWORD, enumPage.LOGIN);	
 		else{//로그인성공
 			
-			returns.put("message", "로그인에 성공하셨습니다.");
-			returns.put("messageKind", enumCautionKind.NORMAL.toString());
+			InstanceMessage msg = new InstanceMessage("로그인에 성공하셨습니다.", InstanceMessageType.SUCCESS);
+			returns.putAll(msg.getMessage());
+
 			returns.put("isSuccessLogin", true);
 			
 		}

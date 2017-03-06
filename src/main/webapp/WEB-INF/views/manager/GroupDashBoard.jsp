@@ -1,12 +1,3 @@
-<%@page import="com.puppyrush.buzzcloud.page.VerifyPage, 
-com.puppyrush.buzzcloud.page.enums.enumPage, java.util.ArrayList, java.util.HashMap , 
-com.puppyrush.buzzcloud.entity.member.Member , 
-com.puppyrush.buzzcloud.entity.band.Band, 
-com.puppyrush.buzzcloud.entity.band.BandManager" %>
-<%@page import="com.puppyrush.buzzcloud.page.enums.enumCautionKind, 
-com.puppyrush.buzzcloud.entity.band.Band.BundleBand,  
-com.puppyrush.buzzcloud.property.tree.Tree, 
-com.puppyrush.buzzcloud.property.tree.Node"%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -15,25 +6,6 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 
 	request.setCharacterEncoding("UTF-8");
 
-	
- 	boolean isSuccessVerify = false;
-	HashMap<String,Object> results =  VerifyPage.Verify(session.getId(), enumPage.GROUP_DASHBOARD);
-	
-	if((boolean)results.get("isSuccessVerify")){
-	
-	
-		isSuccessVerify = true;		
-		
-	}else{
-		isSuccessVerify = false;
-		enumPage to = (enumPage)results.get("to");
-		
-		request.setAttribute("message",  (String)results.get("message"));
-		request.setAttribute("messageKind", results.get("messageKind"));
-		response.sendRedirect(to.toString());
-		return;
-				
-	}
 	
 %>
 
@@ -45,39 +17,39 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
     <meta name="description" content="">
     <meta name="author" content="Carlos Alvarez - Alvarez.is">
 
-    <link rel="stylesheet" type="text/css" href="/page/manager/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/views/manager/bootstrap/css/bootstrap.min.css" />
 
-    <link href="/page/manager/css/main.css" rel="stylesheet">
-    <link href="/page/manager/css/font-style.css" rel="stylesheet">
-    <link href="/page/manager/css/flexslider.css" rel="stylesheet">
+    <link href="/resources/views/manager/css/main.css" rel="stylesheet">
+    <link href="/resources/views/manager/css/font-style.css" rel="stylesheet">
+    <link href="/resources/views/manager/css/flexslider.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-			<link href="/page/issuePage/css/message.css" rel="stylesheet" type="text/css">
+			<link href="/resources/views/issuePage/css/message.css" rel="stylesheet" type="text/css">
 
-		<script type="text/javascript" src="/page/manager/js/groupDashboard.js"></script>
+		<script type="text/javascript" src="/resources/views/manager/js/groupDashboard.js"></script>
 
-    <script type="text/javascript" src="/page/manager/js/jquery.js"></script>    
-    <script type="text/javascript" src="/page/manager/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/resources/views/manager/js/jquery.js"></script>    
+    <script type="text/javascript" src="/resources/views/manager/bootstrap/js/bootstrap.min.js"></script>
 
-	<script type="text/javascript" src="/page/manager/js/lineandbars.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/lineandbars.js"></script>
     
-	<script type="text/javascript" src="/page/manager/js/dash-charts.js"></script>
-	<script type="text/javascript" src="/page/manager/js/gauge.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/dash-charts.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/gauge.js"></script>
 	
 	<!-- NOTY JAVASCRIPT -->
-	<script type="text/javascript" src="/page/manager/js/noty/jquery.noty.js"></script>
-	<script type="text/javascript" src="/page/manager/js/noty/layouts/top.js"></script>
-	<script type="text/javascript" src="/page/manager/js/noty/layouts/topLeft.js"></script>
-	<script type="text/javascript" src="/page/manager/js/noty/layouts/topRight.js"></script>
-	<script type="text/javascript" src="/page/manager/js/noty/layouts/topCenter.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/jquery.noty.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/top.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topLeft.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topRight.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topCenter.js"></script>
 	
 	<!-- You can add more layouts if you want -->
-	<script type="text/javascript" src="/page/manager/js/noty/themes/default.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/themes/default.js"></script>
     <!-- <script type="text/javascript" src="assets/js/dash-noty.js"></script> This is a Noty bubble when you init the theme-->
 	<script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
-	<script src="/page/manager/js/jquery.flexslider.js" type="text/javascript"></script>
+	<script src="/resources/views/manager/js/jquery.flexslider.js" type="text/javascript"></script>
 
-    <script type="text/javascript" src="/page/manager/js/admin.js"></script>
+    <script type="text/javascript" src="/resources/views/manager/js/admin.js"></script>
       
     <style type="text/css">
       body {
@@ -141,13 +113,13 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
           </button>
          
         </div> 
-          <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li><a href="/page/manager/MyAccount.jsp" id="myAccount"><i class="icon-home icon-white"></i>My Account</a></li>                            
-     						<li class="active"> <a href="/page/manager/GroupDashboard.jsp" id="groupDashboard"><i class="icon-home icon-white"></i>GroupDashboard</a></li>
-              <li><a href="/page/manager/Group.jsp" id="groupPage"><i class="icon-home icon-white"></i>Group</a></li>
-              <li><a href="/page/manager/Member.jsp" id="memberPage" ><i class="icon-user icon-white"></i>Member</a></li>
-									<li><a href="/page/mainPage/MainPage.jsp"><i class="icon-user icon-white"></i>Home</a></li>
+          <div class="navbar-collapse collapse">          
+            <ul class="nav navbar-nav" id="navPages">
+              <li id="myaccount"><a href="#"><i class="icon-home icon-white"></i>My Account</a></li>                            
+     							<li class="active" id="groupdashboard"> <a href="#"><i class="icon-home icon-white"></i>GroupDashboard</a></li>
+              <li id="group"><a href="#" ><i class="icon-home icon-white"></i>Group</a></li>
+              <li id="member"><a href="#"><i class="icon-user icon-white"></i>Member</a></li>
+									<li id="main"><a href="#"><i class="icon-user icon-white"></i>Home</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -680,32 +652,20 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 
 <div id="ohsnap"></div>
 
-	<form id="managerForm" method="POST" ACTION="/manager.do">
-		<input type="hidden" name="toPage" id="toPage">
-		<input type="hidden" name="bandId" id="bandId">
+	<form id="managerForm" method="GET" ACTION="/managerPage/forwading.do">
+		<input type="hidden" name="forwardPageName" id="forwardPageName">
 	</form>
+	
 
-<script type="text/javascript" src="/commanJs/clientSideLibrary.js"></script>
-<script type="text/javascript" src="/page/issuePage/js/message.js"></script>
-
+<script type="text/javascript" src="resources/lib/commanJs/clientSideLibrary.js"></script>
+<script type="text/javascript" src="/resources/views/issuePage/js/message.js"></script>
+<script type="text/javascript" src="/resources/views/manager/js/groupDashboard.js"></script>
 
 <script>
 
 	window.onload=function(){
 	
-		//메세지
-		var message;
-		var popup_color;
-		<% 
-			if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
-				enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
-		%>
-			  message = "<%=(String)request.getAttribute("message")%>";
-			  popup_color = "<%=(String)kind.getString()%>";
-			  ohSnap(message,{color:popup_color});
-		<%
-			}
-		%>
+		ohSnap("${message}",{'color': "${messageKind}" });
 		
 	}
 	

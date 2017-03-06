@@ -1,10 +1,10 @@
-package com.puppyrush.buzzcloud.controller;
+package com.puppyrush.buzzcloud.controller.manager;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
-import com.puppyrush.buzzcloud.controller.form.ProfileForm;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.authority.AuthorityManager;
@@ -17,10 +17,10 @@ import com.puppyrush.buzzcloud.entity.band.BandManager;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.page.PageException;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
+import com.puppyrush.buzzcloud.page.enums.enumPageError;
 import com.puppyrush.buzzcloud.property.tree.Tree;
-import com.puppyrush.buzzcloud.service.config.account.GettingMyAccountInfo;
-import com.puppyrush.buzzcloud.service.config.account.SettingProfile;
-import com.puppyrush.buzzcloud.service.config.band.InitMyBandInfo;
+import com.puppyrush.buzzcloud.service.manager.band.InitMyBandInfo;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,40 +32,63 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller("accountPage")
-@RequestMapping("/configPage/MyAccount/*")
-public class AccountConfigPageController {
+@Controller("managerPage")
+@RequestMapping("/managerPage/*")
+public class PageForwadingController {
 
 	// private final Logger logger = (Logger)
 	// LoggerFactory.getLogger(MainController.class);;
 
 	
-	public AccountConfigPageController() {
+	public PageForwadingController() {
 
 	}
 
+
+	@RequestMapping(value = "/forwading.do", method = RequestMethod.GET)
+	public ModelAndView manager(@RequestParam("forwardPageName") String forwardPageName) {
+
+		ModelAndView mv = new ModelAndView();
 	
-	@ResponseBody
-	@RequestMapping(value = "/getMyAccountInfo.ajax", method = RequestMethod.POST)
-	public Map<String, Object> getMyAccountInfo(@RequestParam("memberId") int memberId) {
-
-		GettingMyAccountInfo info =new GettingMyAccountInfo();
-		Map<String, Object> returns = info.execute(memberId);
+		switch(forwardPageName){
 		
-		return returns;
+			case "groupdashboard":
+				mv.setViewName(enumPage.GROUP_DASHBOARD.toString());
+				
+				break;
 		
+			case "myaccount":
+				mv.setViewName(enumPage.MY_ACCOUNT.toString());
+				
+				break;
+				
+			case "group":
+				mv.setViewName(enumPage.GROUP_MANAGER.toString());
+				break;
+				
+			case "member":
+				mv.setViewName(enumPage.GROUP_MEMBER.toString());
+				break;
+				
+			case "main":
+				mv.setViewName(enumPage.MAIN.toString());
+				break;
+				
+			default:
+				try {
+					throw new PageException(enumPageError.UNKNOWN_PARA_VALUE);
+				} catch (PageException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+		
+		}
+		
+		return mv;
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/setProfile.ajax", method = RequestMethod.POST)
-	public Map<String, Object> setProfile(ProfileForm form) {
 
-		SettingProfile set = new SettingProfile();
-		Map<String, Object> returns = set.execute(form);
-		
-		return returns;
-		
-	}
 
 
 }

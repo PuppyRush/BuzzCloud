@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.javadude.annotation.Default;
 import com.mysql.jdbc.ResultSetMetaData;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
@@ -156,27 +155,27 @@ public final class DBManager {
 	
 	
 	
-	public void updateColumn(String tableName, Map<String,Object> set, Map<String,Object> whereCaluse){
+	public void updateColumn(String tableName, Map<String,Object> set, Map<String,Object> whereCaluse) throws SQLException{
 		
 		ArrayList<Object> whereAry = new ArrayList<Object>();
-		ArrayList<Object> valuesAry = new ArrayList<Object>();
+		ArrayList<Object> setAry = new ArrayList<Object>();
 		StringBuilder sql = new StringBuilder("update ").append(tableName).append(" ").append(" set ");
 		
 		if(set.size()>0){
 			Iterator<String> it = set.keySet().iterator();
 			while(it.hasNext()){
 				String str = it.next();
-				valuesAry.add(set.get(str));
+				setAry.add(set.get(str));
 				
 				sql.append(str).append(" = ? ");
 				
 				if(it.hasNext()){
-					sql.append(" AND ");
+					sql.append(" , ");
 				}
 			}		
 		}
 		else
-			return;
+			throw new SQLException("update 명령에 set은 한 개 이상은 있어야합니다.");
 		
 		
 		if(whereCaluse.size()>0){
@@ -202,8 +201,8 @@ public final class DBManager {
 			PreparedStatement ps = conn.prepareStatement(sql.toString());
 			
 			int i=0;
-			for(i=0 ; i < valuesAry.size() ; i++)
-				ps.setObject(i+1, valuesAry.get(i));
+			for(i=0 ; i < setAry.size() ; i++)
+				ps.setObject(i+1, setAry.get(i));
 			
 			for(int l=0 ; l < whereAry.size() ; l++)
 				ps.setObject(i+l+1, whereAry.get(l));

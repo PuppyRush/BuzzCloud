@@ -155,6 +155,40 @@ public class MemberDB {
 		return member;
 	}
 		
+	public boolean isExistNickname(String nickname){
+		
+		
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		boolean result = false;
+		try{
+			ps = conn.prepareStatement("select memberId from member where nickname = ?");
+			ps.setString(1, nickname);
+			rs = ps.executeQuery();
+			
+			if(rs.next())			
+				result = true;	
+			else
+				result =false;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			try {
+				ps.close();
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				result = false;
+			}
+		}
+		
+		return result;
+		
+	}
+	
 	public  boolean isJoin(int uId) throws SQLException{
 		
 		PreparedStatement ps = null;

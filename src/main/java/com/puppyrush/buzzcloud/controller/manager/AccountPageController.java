@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,10 +56,19 @@ public class AccountPageController {
 
 	@ResponseBody
 	@RequestMapping(value = "/setProfile.ajax", method = RequestMethod.POST)
-	public Map<String, Object> setProfile(ProfileForm form) {
+	public Map<String, Object> setProfile(HttpServletRequest rq, ProfileForm form) {
 
 		
-		Map<String, Object> returns = settingProfile.execute(form);
+		Map<String, Object> returns = new HashMap<String, Object>();
+		try {
+			returns = settingProfile.execute(form, mCtl.getMember(rq.getRequestedSessionId()).getId());
+		} catch (ControllerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return returns;
 		

@@ -45,9 +45,9 @@
 			var comAjax = new ComAjax();
 			comAjax.setUrl("/managerPage/myAccount/setProfile.ajax");
 			comAjax.setCallback("callback_submitProfile")
-			comAjax.addParam("nickname",nickname);
-			comAjax.addParam("firstname",firstname);
-			comAjax.addParam("lastname",lastname);
+			comAjax.addParam("firstname",$(".profileForm #firstname").val() );
+			comAjax.addParam("lastname",$(".profileForm #lastname").val());
+			comAjax.addParam("nickname",$(".profileForm #nickname").val());
 			comAjax.setType("post");
 			comAjax.ajax();
 

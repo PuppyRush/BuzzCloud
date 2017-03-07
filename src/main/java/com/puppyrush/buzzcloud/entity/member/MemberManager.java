@@ -272,7 +272,7 @@ public final class MemberManager {
 		
 	}
 	
-	public void updatePassword(int id, String pw) throws ControllerException{
+	public void updatePassword(int id, String pw) throws ControllerException, SQLException{
 		
 		if(mCtl.containsEntity(id)){
 			Member member = mCtl.getEntity(id);

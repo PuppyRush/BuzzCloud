@@ -5,8 +5,7 @@ public class ProfileForm {
 	private String firstname;
 	private String nickname;
 	private String lastname;
-	private int memberId;
-	
+
 	public String getFirstname() {
 		return firstname;
 	}
@@ -25,11 +24,6 @@ public class ProfileForm {
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
-	public int getMemberId() {
-		return memberId;
-	}
-	public void setMemberId(int memberId) {
-		this.memberId = memberId;
-	}
+
 
 }

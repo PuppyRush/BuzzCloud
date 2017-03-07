@@ -51,6 +51,9 @@ public class SettingProfile{
 			set.put("nickname", form.getNickname());
 			dbMng.updateColumn("member", set, where);
 			
+			mCtl.updateProperty(memberId, "nickname", form.getNickname());
+			
+		/*	
 			if(mCtl.containsEntity(memberId)){
 				Member member;
 				try {
@@ -63,7 +66,7 @@ public class SettingProfile{
 					returns.putAll(new InstanceMessage(e.getMessage(),InstanceMessageType.ERROR).getMessage());
 				}
 				
-			}
+			}*/
 			
 			returns.putAll(new InstanceMessage("변경에 성공하였습니다",InstanceMessageType.SUCCESS).getMessage());
 		}

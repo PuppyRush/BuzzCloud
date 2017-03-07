@@ -8,7 +8,7 @@ public interface EntityController {
 	public <T extends Entity> T getEntity(int id) throws ControllerException;
 	public void removeEntity(int id) throws ControllerException;	
 	public <T extends Entity> void addEntity(int id, T obj) throws ControllerException;
-	
+	public void updateProperty(int id, String propertyname, Object newValue);
 	 
 	
 }

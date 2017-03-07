@@ -123,6 +123,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		return member;
 	}
 	
+	
 	public void addMember(Member member,String sId) throws ControllerException{
 		
 		if(member==null)
@@ -136,6 +137,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		
 	}
 		
+	
 	public void addMember(String email, String sId) throws SQLException, ControllerException{
 		
 		Member member = setMember(email);
@@ -151,6 +153,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		
 	}
 		
+	
 	public void addMember(int uId, String sId) throws SQLException, ControllerException{
 		
 		Member member = setMember(uId);
@@ -166,6 +169,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 
 		
 	}
+	
 	
 	public void removeMember(String sId) throws ControllerException{
 		
@@ -185,6 +189,5 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		
 	}
 
-	
 	
 }

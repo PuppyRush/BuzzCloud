@@ -1,5 +1,8 @@
 package com.puppyrush.buzzcloud.entity.impl;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -49,7 +52,7 @@ public abstract class EntityControllerImpl<T extends Entity> implements EntityCo
 		if(entityMap.containsKey(obj))
 			throw new ControllerException(enumController.ALREAY_EXIST_MEMBER_FROM_MAP);
 		
-		entityMap.put(id, (T) obj);
+		entityMap.put(id, (T)obj);
 		
 	}
 
@@ -63,4 +66,34 @@ public abstract class EntityControllerImpl<T extends Entity> implements EntityCo
 		
 	}
 	
+	@Override
+	public void updateProperty(int id, String propertyName, Object newValue) {
+		// TODO Auto-generated method stub
+		
+		try{
+			
+			if(!containsEntity(id)){
+				throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
+			}
+			
+			T obj = getEntity(id);
+			Field field = obj.getClass().getDeclaredField(propertyName);
+			field.setAccessible(true);
+			Object value = field.get(obj);
+						
+			if(!newValue.getClass().isInstance(value)){
+				throw new NoSuchFieldException("두 타입이 일치하지 않습니다.");
+			}
+			else{
+				field.set(obj, newValue);				
+			}
+			
+		}catch(NoSuchFieldException e){
+			e.printStackTrace();
+		}catch(ControllerException e){
+			e.printStackTrace();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 }

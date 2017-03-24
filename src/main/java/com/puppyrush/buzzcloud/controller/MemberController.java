@@ -51,10 +51,11 @@ public class MemberController {
 	public ModelAndView logout(HttpServletRequest request) {
 
 		ModelAndView mv = new ModelAndView();
-		logout.execute(request.getRequestedSessionId());
+		Map<String,Object> returns = logout.execute(request.getRequestedSessionId());
 		
 		
-		mv.setViewName(enumPage.LOGIN.toString());
+		mv.setViewName((String)returns.get("view"));
+		mv.addAllObjects(returns);
 		return mv;
 	}
 	

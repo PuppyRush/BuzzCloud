@@ -204,14 +204,8 @@
 <script>
 
 	window.onload=function(){
-	
-
-		//메세지
-		var message;
-		var popup_color;
-	
 		
-		message = ${message};
+		message = "${message}";
 		if(message !="" ){
 			popup_color = ${messageKind}
 			ohSnap(message,{color:popup_color});

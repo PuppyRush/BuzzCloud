@@ -52,10 +52,8 @@ final public class Logout {
 			mCtl.removeMember(sId);
 			
 			returns.put("view", enumPage.ENTRY.toString());	
-			returns.put("doLogout", true);
 			returns.putAll(new InstanceMessage( "로그아웃에 성공하셨습니다.", InstanceMessageType.SUCCESS).getMessage());			
 		}catch( PageException e){
-			returns.put("doLogout", false);
 			returns.put("view", enumPage.ENTRY.toString());		
 			returns.putAll(new InstanceMessage( "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.", InstanceMessageType.ERROR).getMessage());
 			e.printStackTrace();
@@ -70,7 +68,6 @@ final public class Logout {
 						returns.putAll(new InstanceMessage( "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.", InstanceMessageType.ERROR).getMessage());
 						break;
 					default:
-						returns.put("doLogout", false);
 						returns.put("view", e.getToPage().toString());		
 						returns.putAll(new InstanceMessage( "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.", InstanceMessageType.ERROR).getMessage());
 						break;

@@ -17,40 +17,16 @@
     <meta name="description" content="">
     <meta name="author" content="Carlos Alvarez - Alvarez.is">
 
-    <link rel="stylesheet" type="text/css" href="/resources/views/manager/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
 
     <link href="/resources/views/manager/css/main.css" rel="stylesheet">
     <link href="/resources/views/manager/css/font-style.css" rel="stylesheet">
     <link href="/resources/views/manager/css/flexslider.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-			<link href="/resources/views/issuePage/css/message.css" rel="stylesheet" type="text/css">
 
-		<script type="text/javascript" src="/resources/views/manager/js/groupDashboard.js"></script>
-
-    <script type="text/javascript" src="/resources/views/manager/js/jquery.js"></script>    
-    <script type="text/javascript" src="/resources/views/manager/bootstrap/js/bootstrap.min.js"></script>
-
-	<script type="text/javascript" src="/resources/views/manager/js/lineandbars.js"></script>
-    
-	<script type="text/javascript" src="/resources/views/manager/js/dash-charts.js"></script>
-	<script type="text/javascript" src="/resources/views/manager/js/gauge.js"></script>
-	
-	<!-- NOTY JAVASCRIPT -->
-	<script type="text/javascript" src="/resources/views/manager/js/noty/jquery.noty.js"></script>
-	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/top.js"></script>
-	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topLeft.js"></script>
-	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topRight.js"></script>
-	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topCenter.js"></script>
-	
-	<!-- You can add more layouts if you want -->
-	<script type="text/javascript" src="/resources/views/manager/js/noty/themes/default.js"></script>
-    <!-- <script type="text/javascript" src="assets/js/dash-noty.js"></script> This is a Noty bubble when you init the theme-->
-	<script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
-	<script src="/resources/views/manager/js/jquery.flexslider.js" type="text/javascript"></script>
-
-    <script type="text/javascript" src="/resources/views/manager/js/admin.js"></script>
-      
+		
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -116,7 +92,7 @@
           <div class="navbar-collapse collapse">          
             <ul class="nav navbar-nav" id="navPages">
               <li id="myaccount"><a href="#"><i class="icon-home icon-white"></i>My Account</a></li>                            
-     							<li class="active" id="groupdashboard"> <a href="#"><i class="icon-home icon-white"></i>GroupDashboard</a></li>
+    							<li class="active" id="groupdashboard"> <a href="#"><i class="icon-home icon-white"></i>GroupDashboard</a></li>
               <li id="group"><a href="#" ><i class="icon-home icon-white"></i>Group</a></li>
               <li id="member"><a href="#"><i class="icon-user icon-white"></i>Member</a></li>
 									<li id="main"><a href="#"><i class="icon-user icon-white"></i>Home</a></li>
@@ -147,7 +123,7 @@
 	      		<dtitle>User Profile</dtitle>
 	      		<hr>
 				<div class="thumbnail">
-					<img src="/page/manager/images/face80x80.jpg" alt="Marcel Newman" class="img-circle">
+					<img src=/resources/views/manager/images/face80x80.jpg" alt="Marcel Newman" class="img-circle">
 				</div><!-- /thumbnail -->
 				<h1>Marcel Newman</h1>
 				<h3>Max Capcity : 3GB</h3>
@@ -167,7 +143,7 @@
 			        <ul class="mail">
 			            <li>
 			                <i class="unread"></i>
-			                <img class="avatar" src="/page/manager/images/photo01.jpg" alt="avatar">
+			                <img class="avatar" src="/resources/views/manager/images/photo01.jpg" alt="avatar">
 			                <p class="sender">Adam W.</p>
 			                <p class="message"><strong>Working</strong> - This is the last...</p>
 			                <div class="actions">
@@ -179,7 +155,7 @@
 			            </li>
 			            <li>
 			                <i class="read"></i>
-			                <img class="avatar" src="/page/manager/images/photo02.jpg" alt="avatar">
+			                <img class="avatar" src="/resources/views/manager/images/photo02.jpg" alt="avatar">
 			                <p class="sender">Dan E.</p>
 			                <p class="message"><strong>Hey man!</strong> - You have to taste ...</p>
 			                <div class="actions">
@@ -191,7 +167,7 @@
 			            </li>
 			            <li>
 			                <i class="read"></i>
-			                <img class="avatar" src="/page/manager/images/photo03.jpg" alt="avatar">
+			                <img class="avatar" src="/resources/views/manager/images/photo03.jpg" alt="avatar">
 			                <p class="sender">Leonard N.</p>
 			                <p class="message"><strong>New Mac :D</strong> - So happy with ...</p>
 			                <div class="actions">
@@ -203,7 +179,7 @@
 			            </li>
 			            <li>
 			                <i class="read"></i>
-			                <img class="avatar" src="/page/manager/images/photo04.jpg" alt="avatar">
+			                <img class="avatar" src="/resources/views/manager/images/photo04.jpg" alt="avatar">
 			                <p class="sender">Peter B.</p>
 			                <p class="message"><strong>Thank you</strong> - Finally I can ...</p>
 			                <div class="actions">
@@ -246,7 +222,7 @@
 	      		<dtitle>그룹이 생성된 시간</dtitle>
 	      		<hr>
 	      		<div class="cont">
-					<p><img src="/page/manager/images/up.png" alt=""> <bold>Up</bold> | 356ms.</p>
+					<p><img src="/resources/views/manager/images/up.png" alt=""> <bold>Up</bold> | 356ms.</p>
 				</div>
 			</div>
 
@@ -287,7 +263,7 @@
 					<br>
 					<p><bold>$156</bold> | <bad>Denied</bad></p>
 					<br>
-					<p><img src="/page/manager/images/up-small.png" alt=""> 12% Compared Last Month</p>
+					<p><img src="/resources/views/manager/images/up-small.png" alt=""> 12% Compared Last Month</p>
 
 				</div>
 
@@ -303,8 +279,8 @@
 	      		<br>
 	            <div class="flexslider">
 					<ul class="slides">
-						<li><img src="/page/manager/images/slide01.png" alt="slider"></li>
-						<li><img src="/page/manager/images/slide02.png" alt="slider"></li>
+						<li><img src="/resources/views/manager/images/slide01.png" alt="slider"></li>
+						<li><img src="/resources/views/manager/images/slide02.png" alt="slider"></li>
 					</ul>
             </div>
 				<div class="cont">
@@ -362,7 +338,7 @@
 	      		<hr>
 	      		<div class="cont">
       			<p><bold>388</bold></p>
-      			<p><img src="/page/manager/images/up-small.png" alt=""> 412 Max. | <img src="images/down-small.png" alt=""> 89 Min.</p>
+      			<p><img src="/resources/views/manager/images/up-small.png" alt=""> 412 Max. | <img src="/resources/views/manager/images/down-small.png" alt=""> 89 Min.</p>
 	      		</div>
       		</div>
       		
@@ -372,7 +348,7 @@
 	      		<hr>
 	      		<div class="cont">
       			<p><bold>145.0K</bold></p>
-      			<p><img src="/page/manager/images/up-small.png" alt=""> 23.88%</p>
+      			<p><img src="/resources/views/manager/images/up-small.png" alt=""> 23.88%</p>
 	      		</div>
       		</div>
       	</div>
@@ -419,27 +395,7 @@
 	  <!-- FOURTH ROW OF BLOCKS -->     
 	<div class="row">
 	
-	  <!-- TWITTER WIDGET BLOCK -->     
-		<div class="col-sm-3 col-lg-3">
-			<div class="dash-unit">
-	      		<dtitle>Twitter Widget</dtitle>
-	      		<hr>
-				<div class="info-user">
-					<span aria-hidden="true" class="li_megaphone fs2"></span>
-				</div>
-				<br>
-		 		<div id="jstwitter" class="clearfix">
-					<ul id="twitter_update_list"></ul>
-				</div>
-				<script src="http://twitter.com/javascripts/blogger.js"></script><!-- Script Needed to load the Tweets -->
-				<script src="http://api.twitter.com/1/statuses/user_timeline/wrapbootstrap.json?callback=twitterCallback2&amp;count=1"></script>
-				<!-- To show your tweets replace "wrapbootstrap", in the line above, with your user. -->
-				<div class="text">
-				<p><grey>Show your tweets here!</grey></p>
-				</div>
-			</div>
-		</div>
-
+	 
 	  <!-- NOTIFICATIONS BLOCK -->     
 		<div class="col-sm-3 col-lg-3">
 			<div class="dash-unit">
@@ -562,7 +518,7 @@
 	      		<dtitle>Last Registered User</dtitle>
 	      		<hr>
 	      			<div class="cont2">
-	      				<img src="/page/manager/images/user-avatar.jpg" alt="">
+	      				<img src="/resources/views/manager/images/user-avatar.jpg" alt="">
 	      				<br>
 	      				<br>
 	      				<p>Paul Smith</p>
@@ -640,7 +596,7 @@
       	<div class="container">
       		<div class="row">
       			<div class="col-sm-12 col-lg-12">
-      			<p><img src="/page/manager/images/logo.png" alt=""></p>
+      			<p><img src="/resources/views/manager/images/logo.png" alt=""></p>
       			<p>Blocks Dashboard Theme - Crafted With Love - Copyright 2013</p>
       			</div>
 
@@ -657,9 +613,37 @@
 	</form>
 	
 
-<script type="text/javascript" src="resources/lib/commanJs/clientSideLibrary.js"></script>
+<script type="text/javascript" src="/resources/bower_components/jquery/jquery.js"></script>    
+</script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    
+    
+
+	<script type="text/javascript" src="/resources/views/manager/js/lineandbars.js"></script>
+    
+	<script type="text/javascript" src="/resources/views/manager/js/dash-charts.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/gauge.js"></script>
+	
+	<!-- NOTY JAVASCRIPT -->
+	<script type="text/javascript" src="/resources/views/manager/js/noty/jquery.noty.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/top.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topLeft.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topRight.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topCenter.js"></script>
+	
+	<!-- You can add more layouts if you want -->
+	<script type="text/javascript" src="/resources/views/manager/js/noty/themes/default.js"></script>
+    <!-- <script type="text/javascript" src="assets/js/dash-noty.js"></script> This is a Noty bubble when you init the theme-->
+	<script type="text/javascript" src="/resources/bower_components/highcharts/highcharts.src.js"></script>
+	<script src="/resources/views/manager/js/jquery.flexslider.js" type="text/javascript"></script>
+
+    <script type="text/javascript" src="/resources/views/manager/js/admin.js"></script>
+      
+
+<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>		
+<script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js"></script>
 <script type="text/javascript" src="/resources/views/issuePage/js/message.js"></script>
-<script type="text/javascript" src="/resources/views/manager/js/groupDashboard.js"></script>
+<script type="text/javascript" src="/resources/views/manager/js/groupDashboard/groupDashboard.js"></script>
 
 <script>
 

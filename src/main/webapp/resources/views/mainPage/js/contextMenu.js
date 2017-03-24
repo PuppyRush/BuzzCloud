@@ -41,7 +41,7 @@ $(document).ready(function() {
 					"name" : "그룹 생성하기",
 					"icon" : "edit"
 				},
-				"groupDashboard" : {
+				"groupdashboard" : {
 					"name" : "그룹 보드",
 					"icon" : "edit"
 				},

@@ -651,6 +651,10 @@
 
 <div id="ohsnap"></div>
 
+	<form id="managerForm" method="GET" ACTION="/managerPage/forwading.do">
+		<input type="hidden" name="forwardPageName" id="forwardPageName">
+	</form>
+
 
 <script type="text/javascript" src="resources/lib/commanJs/clientSideLibrary.js"></script>
 <script type="text/javascript" src="/resources/views/issuePage/js/message.js"></script>

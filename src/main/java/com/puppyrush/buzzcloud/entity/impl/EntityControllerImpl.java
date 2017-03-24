@@ -73,7 +73,7 @@ public abstract class EntityControllerImpl<T extends Entity> implements EntityCo
 		try{
 			
 			if(!containsEntity(id)){
-				throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
+				return;
 			}
 			
 			T obj = getEntity(id);

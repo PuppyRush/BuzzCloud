@@ -1,5 +1,7 @@
 package com.puppyrush.buzzcloud.entity.band;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +12,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.json.simple.JSONArray;
@@ -35,6 +38,7 @@ import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
+import com.puppyrush.buzzcloud.property.enums.enumSystem;
 import com.puppyrush.buzzcloud.property.tree.Node;
 import com.puppyrush.buzzcloud.property.tree.Tree;
 
@@ -509,9 +513,11 @@ public final class BandManager {
 			
 			rs.next();
 
+			int adminId = rs.getInt("administrator");
 			ownerId = rs.getInt("owner");
 			bandName = rs.getString("name");
-
+			
+					
 			ps.close();
 			rs.close();
 
@@ -538,9 +544,10 @@ public final class BandManager {
 			int usingCapacity = rs.getInt("usingCapacity");
 			String driverPath = rs.getString("driverPath");
 			String driverNickname = rs.getString("driverNickname");
+			String contents = rs.getString("contents");
 			
 			band = new Band.Builder(bandId, ownerId, bandName).bandAuhority(bandAuthority).members(members).upperBandId(upperBandId).maxCapacity(maxCapacity)
-					.usingCapacity(usingCapacity).driverPath(driverPath).driverNickname(driverNickname).build();
+					.usingCapacity(usingCapacity).driverPath(driverPath).adminId(adminId).driverNickname(driverNickname).contents(contents).build();
 
 			if (bCtl.containsEntity(bandId) == false)
 				bCtl.addEntity(bandId, band);
@@ -556,64 +563,42 @@ public final class BandManager {
 
 	}
 
-
-
-	public boolean makeBand(JSONObject obj){
+	public boolean makeBand(BandForm form){
 		
 	
 		try{
 			
 			conn.setAutoCommit(false);
-		
-			String driverNickname = (String)obj.get("driverNickname");
-			String groupName = (String)obj.get("bandName");
-			String groupOwner = (String)obj.get("bandOwner");
-			String administrator = (String)obj.get("administrator");
-		
-			int groupCapacity = 	 ((Long)obj.get("bandCapacity")).intValue();
-			String groupContain = (String)obj.get("bandContain");
-			int upperGroupId = ((Long)obj.get("upperBand")).intValue();
 			
-			int ownerId = mDB.getIdOfNickname(groupOwner);
-			int adminId = mDB.getIdOfNickname(administrator);
-			int bandId = bDB.makeBand(groupName, ownerId, adminId);
+			int ownerId = mDB.getIdOfNickname(form.getBandOwner());
+			int adminId = mDB.getIdOfNickname(form.getAdministrator());
+			int bandId = bDB.makeBand(form.getBandName(), ownerId, adminId);
 			
-			if(upperGroupId == -1)
-				upperGroupId = bandId;
-
+			if(form.getUpperBand() == -1)
+				form.setUpperBand(bandId);
+			String driverPath = makeDirectoryAndGetPath(form.getUpperBand(),bandId);
 			
-			JSONArray memberJsonAry = (JSONArray)obj.get("members");
-			ArrayList<Integer> memberIds = new ArrayList<Integer>();
-			for(int i=0 ; i < memberJsonAry.size() ; i++){
-				Long id = (Long)memberJsonAry.get(i);
-				memberIds.add( id.intValue() );
-			}		
-			
-			
-			String driverPath =  bDB.makeBandDetail(bandId, groupCapacity, groupContain);	
-			bDB.makeBandMember(bandId, memberIds);
-			bDB.makeBandRelation(upperGroupId, bandId);
-			
-			JSONArray bandAuths = (JSONArray)obj.get("bandAuthority");
-			JSONArray fileAuths = (JSONArray)obj.get("fileAuthority");
+			bDB.makeBandDetail(bandId, form.getBandCapacity(), driverPath, form.getBandContain());	
+			bDB.makeBandMember(bandId, form.getMembers());
+			bDB.makeBandRelation(form.getUpperBand(), bandId);
 			
 			EnumMap<enumBandAuthority ,Boolean> bandAuthMap = new EnumMap<enumBandAuthority ,Boolean>(enumBandAuthority.class);
 						
-			for(int i=0 ; i < bandAuths.size(); i++){
+			for(int i=0 ; i < form.getBandAuthority().size(); i++){
 				
-				if(enumBandAuthority.valueOf((String)bandAuths.get(i)) != null)
-					bandAuthMap.put(enumBandAuthority.valueOf((String)bandAuths.get(i)), true);
+				if(enumBandAuthority.valueOf(form.getBandAuthority().get(i)) != null)
+					bandAuthMap.put(enumBandAuthority.valueOf(form.getBandAuthority().get(i)), true);
 			}
 	
 			EnumMap<enumFileAuthority ,Boolean> fileAuthMap = new EnumMap<enumFileAuthority ,Boolean>(enumFileAuthority.class);
-			for(int i=0 ; i < fileAuths.size(); i++){
-				if(enumFileAuthority.valueOf((String)fileAuths.get(i)) != null)
-					fileAuthMap.put(enumFileAuthority.valueOf((String)fileAuths.get(i)), true);
+			for(int i=0 ; i < form.getFileAuthority().size(); i++){
+				if(enumFileAuthority.valueOf(form.getFileAuthority().get(i)) != null)
+					fileAuthMap.put(enumFileAuthority.valueOf(form.getFileAuthority().get(i)), true);
 			}
 			
 			HashMap<Integer, AuthoritedMember> authoritedMap = new HashMap<Integer, AuthoritedMember>(); 
-			for(int i=0 ; i < memberIds.size() ; i++){
-				int memberId = memberIds.get(i);
+			for(int i=0 ; i < form.getMembers().size() ; i++){
+				int memberId = form.getMembers().get(i);
 				
 				Member member = mCtl.containsEntity(memberId) ? mCtl.getEntity(memberId) : mDB.getMember(memberId);
 					
@@ -638,13 +623,15 @@ public final class BandManager {
 			authCtl.addEntity(bandAuth.getAuthorityId(), bandAuth);
 			
 			Band.Builder bld = new Band.Builder();
-			bld.maxCapacity( groupCapacity );
-			bld.upperBandId(upperGroupId);
+			bld.maxCapacity( form.getBandCapacity() );
+			bld.contents(form.getBandContain());
+			bld.upperBandId(form.getUpperBand());
 			bld.usingCapacity(0);
+			bld.adminId(adminId);
 			bld.members(authoritedMap);
 			bld.bandAuhority(bandAuth);
 			bld.driverPath(driverPath);
-			bld.driverNickname(driverNickname);
+			bld.driverNickname(driverPath);
 			
 			bld.subBands(getSubBands(bandId));
 			Band band = bld.build();
@@ -697,28 +684,36 @@ public final class BandManager {
 		
 		return true;
 	}
-	
-	public void addNewBandMembers(int bandId, List<Integer> members){
+
+	public String makeDirectoryAndGetPath(int upperBand, int newBandId) throws SQLException, IOException{
 		
-		Map<String, Object> where = new HashMap<String, Object>();
-		List<Integer> exMembers = new ArrayList<Integer>();
+		String driverPath = "";
 		
-		where.put("bandId", bandId);
-		List<Map<String,Object>> memberAry = dbMng.getColumnsOfAll("bandMember", where);
-		
-		for(Map<String,Object> member : memberAry)
-			exMembers.add( (Integer)member.get("memberId"));
-		
-		ArrayList<Integer> newMembers = (ArrayList<Integer>) CollectionUtils.subtract(members,exMembers);
-		
-		
-		bDB.makeBandMember(bandId, newMembers);
-		
-		for(Integer newMemberId : newMembers){
-			
-			//추가필요
-			
-				
+		if(upperBand==newBandId){
+			driverPath = enumSystem.DEFAULT_DIRVER_PATH.toString() + UUID.randomUUID().toString();
+			File file = new File(driverPath);
+			file.mkdirs();
 		}
+		else{
+			PreparedStatement ps =  conn.prepareStatement("select driverPath from bandDetail where bandId = ?");
+			ps.setInt(1, upperBand);
+			ResultSet rs =  ps.executeQuery();
+			
+			rs.next();
+			String upperPath = rs.getString(1);
+			
+			File file = new File(upperPath);
+			if(!file.exists())
+				throw new IOException("failed make directory");
+			String newDir = UUID.randomUUID().toString();
+			
+			driverPath = upperPath+"/"+newDir;
+			
+			file = new File(driverPath);
+			file.mkdirs();
+		}
+		
+		return driverPath;
 	}
+
 }

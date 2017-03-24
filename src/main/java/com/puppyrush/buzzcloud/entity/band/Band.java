@@ -77,6 +77,9 @@ public final class Band implements Entity{
 	private int maxCapacity;
 	private int usingCapacity;
 	private int bandId;
+	private int adminId;
+	private String contents;
+	
 	private int ownerId;
 	private String bandName;
 	private BandAuthority bandAuthority;
@@ -107,6 +110,8 @@ public final class Band implements Entity{
 		private int usingCapacity;
 		private int bandId;
 		private int ownerId;
+		private int adminId;
+		private String contents;
 		private String bandName;
 		private int upperBandId;
 		private BandAuthority bandAuthority;
@@ -168,6 +173,16 @@ public final class Band implements Entity{
 			return this;
 		}
 		
+		public Builder adminId(int id){
+			this.adminId = id; 
+			return this;
+		}
+		
+		public Builder contents(String contents){
+			this.contents = contents;
+			return this;
+		}
+		
 		
 		public Builder bandAuhority(BandAuthority bandAuthority){
 			this.bandAuthority = bandAuthority;
@@ -214,6 +229,13 @@ public final class Band implements Entity{
 		return members;
 	}
 
+	public void addMember(AuthoritedMember am){
+		members.put(am.getMember().getId(), am);
+	}
+	public void removeMember(Integer id){
+		members.remove(id);
+	}
+	
 	public void setMaxCapacity(int maxCapacity) {
 		this.maxCapacity = maxCapacity;
 	}
@@ -263,4 +285,27 @@ public final class Band implements Entity{
 		this.driverNickname = driverNickname;
 	}
 	
+	public int getAdminId() {
+		return adminId;
+	}
+
+	public void setAdminId(int adminId) {
+		this.adminId = adminId;
+	}
+
+	public int getMaxCapacity() {
+		return maxCapacity;
+	}
+
+	public int getUsingCapacity() {
+		return usingCapacity;
+	}
+	public String getContents() {
+		return contents;
+	}
+
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
+
 }

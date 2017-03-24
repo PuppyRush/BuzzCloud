@@ -5,14 +5,13 @@
 <%
 {
 	request.setCharacterEncoding("UTF-8");
-				
 }
 	
 %>
     
 
 <!doctype html>
-<html><head>
+<html lang="ko"><head>
     <meta charset="utf-8">
     <title>BuzzCloud - MemberManager</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -81,8 +80,8 @@
 				<div class="col-sm-12 col-lg-12">
 					<h4><strong>그룹 정보</strong></h4>
 						<div class="cont">    
-           	<input type="text" id="groupName" name="groupName" placeholder="그룹 명">
-           	<input type="text" id="groupOwner" name="groupOwner" placeholder="소유자" readonly="readonly">
+   						<input type="text" class="groupName" id="groupName" name="groupName" placeholder="그룹 명">
+           	<input type="text" class="userName" id="groupOwner" name="groupOwner" placeholder="소유자" readonly="readonly">
            	<input type="text" id="administrator" name="administrator" placeholder="관리자">
            	<input type="text" id="groupCapacity" name="groupCapacity" placeholder="할당할 용량">
            	<div class="textarea-container">
@@ -111,29 +110,30 @@
 					<h4><strong><label>그룹 권한</label></strong></h4>
 						<div class="container">
 									
-							   <select class="form-control" id="bandAuthority" name="groupAuthority" size="4" multiple>	 
+							   <select class="form-control" id="bandAuthority" name="bandAuthority" size="4" multiple>	 
 							   </select>
 				
 				   </div>
 				</div>
 	
-				
-	
-					<div class="col-sm-3 col-lg-3">	
-						<h4><strong><label>선택할 상위 그룹</label></strong></h4>
-							<div class="container">
-										
-								   <select class="form-control" id="selectGroup" name="selectGroup" size="4"> 
-								   </select>
-					
-					   </div>
-					</div>
 						
 							<div class="col-sm-3 col-lg-3">	
 						<h4><strong><label>파일 권한 </label></strong></h4>
 							<div class="container">
 										
 								   <select class="form-control" id="fileAuthority" name="fileAuthority" size="4" multiple>
+								   </select>
+					
+					   </div>
+					</div>
+						
+						
+						
+					<div class="col-sm-3 col-lg-3">	
+						<h4><strong><label>선택할 상위 그룹</label></strong></h4>
+							<div class="container">
+										
+								   <select class="form-control" id="selectGroup" name="selectGroup" size="4"> 
 								   </select>
 					
 					   </div>
@@ -147,7 +147,7 @@
 		 			
 					</div>
 					<div class="col-sm-1 col-lg-1" id="buttonDiv">
-					<input type="button" class="btn"  id="removeMemberButton" name="removeMemberButton" value="삭제">
+					<input type="button" class="btn"  id="removeMember" name="removeMember" value="삭제">
 					</div>
 					
 				 <div class="col-sm-9 col-lg-9" id="removeDiv"></div>
@@ -166,7 +166,6 @@
 			</div>
 			
 			<div class="col-sm-4 col-lg-4"></div>
-			
 		</div>
 		
 	</div>
@@ -247,7 +246,7 @@ window.onload=function(){
 	
 		<script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>
 		<script	 src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
-		<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
+		
 				
 		<!-- Bootstrap Core JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
@@ -256,23 +255,24 @@ window.onload=function(){
     	<!-- ohsnap -->
 		<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>
 	
-<script type="text/javascript" src="/resources/lib/commanJs/commonAjax.js"></script>
-		 <script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js"></script>
+		<script type="text/javascript" src="/resources/lib/commanJs/commonAjax.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+		<script type="text/javascript" src="/resources/lib/commanJs/formValidator.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+		 <script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
    <script type="text/javascript" src="/resources/views/manager/js/jquery.js"></script>    
    <script type="text/javascript" src="/resources/views/manager/js/admin.js"></script>
 
 
 		<!-- autocomplete  -->
 		<script type="text/javascript" src="/resources/lib/include/easyautocomplete/jquery.easy-autocomplete.js"></script>
-		<script type="text/javascript" src="/resources/views/manager/js/group/autocomplete.js"></script>
+		<script type="text/javascript" src="/resources/views/manager/js/group/autocomplete.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 
 				
 		<!-- network js  -->
-		<script type="text/javascript" src="/resources/lib/include/network-1.5.0/network.js"></script>
+		<script type="text/javascript" src="/resources/lib/include/network-1.5.0/network.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-		<script type="text/javascript" src="/resources/views/manager/js/group/network.js"></script>
+		<script type="text/javascript" src="/resources/views/manager/js/group/network.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 		
-<script type="text/javascript" src="/resources/views/manager/js/group/group.js"></script>
+		<script type="text/javascript" src="/resources/views/manager/js/group/group.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 
 </body>
 

@@ -227,7 +227,7 @@ public final class AuthorityManager {
 		return mAuth;
 	}
 	
-	public BandAuthority makeBandAuthority(int bandId,  EnumMap<enumBandAuthority, Boolean> auths){
+	public BandAuthority makeBandAuthority(int bandId,  Map<enumBandAuthority, Boolean> auths){
 		
 		BandAuthority bandAuth = null;
 		
@@ -312,7 +312,7 @@ public final class AuthorityManager {
 		
 	}
 	
-	public FileAuthority makeFileAuthoirty(int memberId, int bandId,  EnumMap<enumFileAuthority, Boolean> auths){
+	public FileAuthority makeFileAuthoirty(int memberId, int bandId,  Map<enumFileAuthority, Boolean> auths){
 		
 
 		FileAuthority fAuth = null;

@@ -2,15 +2,16 @@
 			 * 
 			 */
 			
-			var fv_ajaxCallback = "";
+			
 			function ComAjax(opt_formId) {
+				var fv_ajaxCallback = "";
 				this.url = "";
 				this.formId = gfn_isNull(opt_formId) == true ? "commonForm" : opt_formId;
 				this.param = "";
 				this.type = "get";
 				this.async = true;
 				
-				this.setAsync = function async(async){
+				this.setAsync = function setAsync(async){
 					this.async = async;
 				}
 				
@@ -34,7 +35,7 @@
 					if (this.formId != "commonForm") {
 					this.param += "&" + $("#" + this.formId).serialize();
 					
-					}
+				}
 					
 					$.ajax({
 						async : this.async,
@@ -43,14 +44,15 @@
 						type : this.type,
 						data : this.param,
 						success : function(data) {
+							
 							if (typeof (fv_ajaxCallback) == "function") {
-							fv_ajaxCallback(data);
+								fv_ajaxCallback(data);
 							} else {
 							eval(fv_ajaxCallback + "(data);");
 							}
 						},
-						error : function(request, status, error) {
-							console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+						error : function(request, error) {
+							console.log("code:" + request.status + "\n" + "error:" + error);
 						}
 					
 					});

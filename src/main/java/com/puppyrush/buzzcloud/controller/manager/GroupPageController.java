@@ -19,8 +19,9 @@ import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.entity.member.MemberManager;
 import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.property.tree.Tree;
-import com.puppyrush.buzzcloud.service.band.GettingSelectedBandMembers;
-import com.puppyrush.buzzcloud.service.band.SearchedBandInfo;
+import com.puppyrush.buzzcloud.service.entity.band.GettingSelectedBandInfo;
+import com.puppyrush.buzzcloud.service.entity.band.GettingSelectedBandMembers;
+import com.puppyrush.buzzcloud.service.entity.band.SearchedBandInfo;
 import com.puppyrush.buzzcloud.service.manager.band.InitMyBandInfo;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,23 +43,9 @@ public class GroupPageController {
 	// private final Logger logger = (Logger)
 	// LoggerFactory.getLogger(MainController.class);;
 
-	@Autowired(required = false)
-	private BandManager			bandMng;
-
-	@Autowired(required = false)
-	private BandDB				bandDB;
-
-	@Autowired(required = false)
-	private MemberDB			mDB;
 
 	@Autowired(required = false)
 	private MemberController		mCtl;
-
-	@Autowired(required = false)
-	private AuthorityManager		authMng;
-
-	@Autowired(required = false)
-	private DBManager			dbAccess;
 
 	@Autowired(required = false)
 	private InitMyBandInfo			bandInfo;
@@ -69,6 +56,9 @@ public class GroupPageController {
 	@Autowired(required = false)
 	private SearchedBandInfo		searhcedBandInfo;
 
+	@Autowired(required = false)
+	private GettingSelectedBandInfo gettingBandInfo;
+	
 	public GroupPageController() {
 
 	}
@@ -90,74 +80,16 @@ public class GroupPageController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/getBandAll.ajax", method = RequestMethod.POST)
-	public Map<String, Object> getBandall(@RequestParam("bandId") int bandId) {
-
-		Map<String, Object> result = new HashMap<String, Object>();
-
-		Map<String, Object> where = new HashMap<String, Object>();
-		List<Map<String, Object>> bandInfo = new ArrayList<Map<String, Object>>();
-		List<Map<String, Object>> bandDetail = new ArrayList<Map<String, Object>>();
-
-		where.put("bandId", bandId);
-
-		bandInfo = dbAccess.getColumnsOfAll("band", where);
-		bandDetail = dbAccess.getColumnsOfAll("bandDetail", where);
-
-		result.put("bandId", bandId);
-		result.put("bandName", bandInfo.get(0).get("name"));
-		result.put("bandCapacity", bandDetail.get(0).get("maxCapacity"));
-		result.put("bandContains", bandDetail.get(0).get("bandContains"));
-
-		int ownerId = (int) bandInfo.get(0).get("owner");
-		int adminId = (int) bandInfo.get(0).get("administrator");
-		int upperBandId = bandMng.getUpperBand(bandId);
-
-		String ownerNickname = mDB.getNicknameOfId(ownerId);
-		String adminNickname = mDB.getNicknameOfId(adminId);
-		String upperBandName = bandDB.getBandNameOf(upperBandId);
-
-		result.put("ownerId", ownerId);
-		result.put("adminId", adminId);
-		result.put("upperBandId", upperBandId);
-		result.put("upperBandName", upperBandName);
-		result.put("ownerNickname", ownerNickname);
-		result.put("adminNickname", adminNickname);
-
-		List<Map<Integer, String>> memberAry = new ArrayList<Map<Integer, String>>();
-		ArrayList<Member> members = bandMng.getMembersOf(bandId);
-		for (Member member : members) {
-			HashMap<Integer, String> temp = new HashMap<Integer, String>();
-			temp.put(member.getId(), member.getNickname());
-			memberAry.add(temp);
-		}
-		result.put("bandMembers", memberAry);
-
-		BandAuthority ba = authMng.getBandAuthority(bandId);
-		List<String> bandAuth = new ArrayList<String>();
-		for (enumBandAuthority auth : ba.toArray())
-			bandAuth.add(auth.toString());
-
-		result.put("bandAuthority", bandAuth);
-
-		return result;
-
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/updateBand.ajax", method = RequestMethod.POST)
-	public Map<String, Object> updateBand(@RequestParam("memberId") int memberId) {
-
+	@RequestMapping(value = "/getBandInfo.ajax", method = RequestMethod.POST)
+	public Map<String, Object> getBandInfo(@RequestParam("bandId") int bandId) {
 		Map<String, Object> returns = new HashMap<String, Object>();
 		try {
-			returns = bandInfo.execute(memberId);
+			returns = gettingBandInfo.execute(bandId);
 		} catch (ControllerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return returns;
-
 	}
 
 	@ResponseBody

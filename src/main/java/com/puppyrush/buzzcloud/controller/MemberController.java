@@ -6,8 +6,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.puppyrush.buzzcloud.controller.form.LoginForm;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
-import com.puppyrush.buzzcloud.service.member.Login;
-import com.puppyrush.buzzcloud.service.member.Logout;
+import com.puppyrush.buzzcloud.service.entity.member.Login;
+import com.puppyrush.buzzcloud.service.entity.member.Logout;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;

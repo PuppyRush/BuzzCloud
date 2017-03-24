@@ -1,4 +1,4 @@
-package com.puppyrush.buzzcloud.service.band;
+package com.puppyrush.buzzcloud.service.entity.band;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

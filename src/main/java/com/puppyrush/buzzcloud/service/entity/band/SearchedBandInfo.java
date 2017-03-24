@@ -1,4 +1,4 @@
-package com.puppyrush.buzzcloud.service.band;
+package com.puppyrush.buzzcloud.service.entity.band;
 
 import java.util.ArrayList;
 import java.util.HashMap;

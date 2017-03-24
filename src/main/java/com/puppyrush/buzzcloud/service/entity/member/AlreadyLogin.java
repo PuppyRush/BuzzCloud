@@ -1,4 +1,4 @@
-package com.puppyrush.buzzcloud.service.member;
+package com.puppyrush.buzzcloud.service.entity.member;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

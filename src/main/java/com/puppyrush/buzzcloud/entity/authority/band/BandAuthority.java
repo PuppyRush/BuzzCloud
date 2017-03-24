@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -12,14 +13,14 @@ import com.puppyrush.buzzcloud.entity.authority.Authority;
 //@Repository("bandAuthority")
 final public class BandAuthority extends Authority{
 
-	private EnumMap<enumBandAuthority,Boolean> authorityType;
+	private Map<enumBandAuthority,Boolean> authorityType;
 	
-	public BandAuthority(int id, Timestamp date,  EnumMap<enumBandAuthority,Boolean> type){
+	public BandAuthority(int id, Timestamp date,  Map<enumBandAuthority,Boolean> type){
 		super(id,date);
 		authorityType = type;
 	}
 
-	public EnumMap<enumBandAuthority, Boolean> getAuthorityType() {
+	public Map<enumBandAuthority, Boolean> getAuthorityType() {
 		return authorityType;
 	}
 
@@ -36,7 +37,7 @@ final public class BandAuthority extends Authority{
 		
 	}
 	
-	public void setAuthorityType(EnumMap<enumBandAuthority, Boolean> authorityType) {
+	public void setAuthorityType(Map<enumBandAuthority, Boolean> authorityType) {
 		this.authorityType = authorityType;
 	}
 

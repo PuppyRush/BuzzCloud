@@ -17,9 +17,9 @@ import com.puppyrush.buzzcloud.property.tree.Tree;
 import com.puppyrush.buzzcloud.service.autocomplete.GettingBandNames;
 import com.puppyrush.buzzcloud.service.autocomplete.GettingMemberNames;
 import com.puppyrush.buzzcloud.service.autocomplete.GettingSearchedBandInfo;
-import com.puppyrush.buzzcloud.service.band.GettingSelectedBandMembers;
-import com.puppyrush.buzzcloud.service.band.InitBandMap;
-import com.puppyrush.buzzcloud.service.band.SearchedBandInfo;
+import com.puppyrush.buzzcloud.service.entity.band.GettingSelectedBandMembers;
+import com.puppyrush.buzzcloud.service.entity.band.InitializingBandMap;
+import com.puppyrush.buzzcloud.service.entity.band.SearchedBandInfo;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,9 +65,9 @@ public class AutoCompleteController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getMemberNames.ajax", method = RequestMethod.GET)
-	public List<Map<String, Object>> getMemberNames(@RequestParam("memberName") String memberName) {
+	public List<Map<String, Object>> getMemberNames(@RequestParam("nickname") String nickname) {
 
-		return getMemberNames.excute(memberName);
+		return getMemberNames.excute(nickname);
 
 	}
 	

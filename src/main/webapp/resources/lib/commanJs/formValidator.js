@@ -1,4 +1,16 @@
 
+	function isValidateString(str){
+
+		var regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\+<>@\#$%&\\\=\(\'\"]/gi;
+		
+		if(str =="and" || str == "or" || str == "=" )
+			return false;
+		else if(regExp.test(str))
+			return false;
+		return true;
+	}	
+
+
  function checkFullForm(form)
  {
 	 
@@ -112,3 +124,47 @@
 	     return false;
 	   	}
  }
+ 
+ 	function checkBandName(name){
+ 		
+ 		if(name.length<4){
+ 				ohSnap("그룹 이름은 4자 이상이어야 합니다. ",{color:"red"});
+ 				return false;
+ 		}
+ 		
+ 		if(!isValidateString(name)){
+ 			ohSnap("이름에 특수문자가 들어갈 수 없습니다.",{color:"red"});
+ 			return false;
+ 		}
+ 		
+ 		return true;
+ 	}
+ 
+ 	function checkBandForm(form,maxCapacity){
+ 		
+ 		
+ 		 if(groupName.length<4){
+	 		 ohSnap('그룹 이름은 네자 이상어야 합니다.', {color: 'red'});
+			 	return false;
+		  }
+
+		 if(!isValidateString(form.bandName)){
+		 		ohSnap('변경할 값에 and or = 혹은 특수문자가 들어갈 수 없습니다.', {color: 'red'});
+		 		return false;
+		 	}
+		 if(!isValidateString(form.bandContain)){
+	 		ohSnap('변경할 값에 and or = 혹은 특수문자가 들어갈 수 없습니다.', {color: 'red'});
+	 		return false;
+	 	}
+		 
+		 if( isNaN(Number(form.bandCapacity)) ){
+		 			ohSnap('허용 용량엔 숫자만 입력바랍니다.', {color: 'red'});
+		 			return false;
+		 	}
+		 if(form.bandCapacity > maxCapacity){
+		 		ohSnap('허용용량이 최대용량보다 클 수 없습니다.', {color: 'red'});
+		 		return false;
+		 	}
+ 		
+		 return true;
+ 	}

@@ -46,6 +46,9 @@ h4{
 }
 
 
+.selected_option{
+	font-weight:bold;
+}
 
 #removeMember{
 	

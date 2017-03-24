@@ -227,43 +227,49 @@ public final class DBManager {
 		
 	}
 	
-	public void insertColumn(String tableName, Map<String,Object> values){
+	public void insertColumn(String tableName, List<String> columns, List<List<Object>> values){
 		
-		ArrayList<Object> valuesAry = new ArrayList<Object>();
-		StringBuilder sql = new StringBuilder("insert into ").append(tableName).append("(");
-		
-		Iterator<String> it = values.keySet().iterator();
+		StringBuilder sql = new StringBuilder("insert into ").append(tableName).append(" (");
+	
+		Iterator<String> it = columns.iterator();
 		while(it.hasNext()){
 			String str = it.next();
-			valuesAry.add(values.get(str));
-			
 			sql.append(str);
 			
 			if(it.hasNext())
-				sql.append(" AND ");			
+				sql.append(" , ");			
 			else
-				sql.append(") ");
+				sql.append(")");
 		}
 		
-		sql.append(" values (");
-		for(int i=0 ; i < values.size() ; i++){
+		sql.append(" VALUES (");
+		for(int i=0; i < values.size() ; i++){
 			
-			sql.append("?");
-			
+			for(int l=0 ; l < values.get(i).size() ; l++){
+				if(l==values.get(i).size()-1)
+					sql.append("?");
+				else
+					sql.append("?,");
+			}
 			if(i==values.size()-1)
-				continue;			
+				sql.append(")");
 			else
-				sql.append(" AND ");
+				sql.append("),(");
 		}
-		sql.append(") ");
+		
 		
 		try {
 			
 			conn.setAutoCommit(false);
 			
 			PreparedStatement ps = conn.prepareStatement(sql.toString());
-			for(int i=0 ; i < valuesAry.size() ; i++)
-				ps.setObject(i+1, valuesAry.get(i));
+			
+			int count = 1;
+			for(int i=0; i < values.size() ; i++){
+				for(int l=0 ; l < values.get(i).size() ; l++){
+					ps.setObject(count++, values.get(i).get(l));
+				}
+			}
 				
 			ps.executeUpdate();
 			
@@ -297,7 +303,7 @@ public final class DBManager {
 				Iterator<String> it = where.keySet().iterator();
 				while(it.hasNext()){
 					String str = it.next();
-					whereAry.add(where.get(where));
+					whereAry.add(where.get(str));
 					sql.append(str).append(" = ? ");
 					
 					if(it.hasNext()){
@@ -312,8 +318,8 @@ public final class DBManager {
 			conn.setAutoCommit(false);
 			
 			PreparedStatement ps = conn.prepareStatement(sql.toString());
-			for(int i=0 ; i < where.size() ; i++)
-				ps.setObject(i+1, where.get(i));
+			for(int i=0 ; i < whereAry.size() ; i++)
+				ps.setObject(i+1, whereAry.get(i));
 				
 			ps.executeUpdate();
 			

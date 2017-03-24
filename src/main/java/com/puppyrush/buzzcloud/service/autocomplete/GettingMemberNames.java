@@ -19,7 +19,7 @@ public class GettingMemberNames {
 	
 	public List<Map<String,Object>> excute(String nickname){
 		
-		List<String> partOfNicknames = new ArrayList<String>();
+		List<List<Object>> partOfNicknames = new ArrayList<List<Object>>();
 		
 
 		String partOfNickname = nickname + "%";
@@ -27,14 +27,15 @@ public class GettingMemberNames {
 			try{
 			
 			Connection conn = ConnectMysql.getConnector();
-			PreparedStatement ps = conn.prepareStatement("select nickname from member where nickname like ?");
+			PreparedStatement ps = conn.prepareStatement("select nickname, memberId from member where nickname like ?");
 			ps.setString(1, partOfNickname);
 			ResultSet rs = ps.executeQuery();
-			
-			
-			
+						
 			while(rs.next()){				
-				partOfNicknames.add(rs.getString(1));					
+				List<Object> ary = new ArrayList<Object>();
+				ary.add(rs.getString("nickname") );
+				ary.add(rs.getInt("memberId"));
+				partOfNicknames.add(ary);
 			}
 	
 			rs.close();
@@ -47,9 +48,12 @@ public class GettingMemberNames {
 			
 		List<Map<String,Object>> returns = new ArrayList<Map<String,Object>>();
 		
-		for(String str : partOfNicknames){
+		for(List<Object> ary : partOfNicknames){
 			Map<String,Object> map = new HashMap<String,Object>();
-			map.put("name",str);
+			for(int i=0; i < ary.size() ; i++){
+				map.put("name",(String)ary.get(0));
+				map.put("id",(int)ary.get(1));
+			}
 			returns.add(map);
 		}
 		

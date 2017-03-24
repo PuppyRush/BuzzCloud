@@ -89,23 +89,8 @@
 
 <script>
 
-	var error_color;
-	var id = "<%=session.getId() %>";
-	var from = "<%=(String)session.getAttribute("from") %>";
-	var message = "<%=(String)session.getAttribute("message") %>";
-	
 	window.onload=function(){
 			
-
-		<% if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
-			enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
-		%>
-		  message = "<%=(String)request.getAttribute("message")%>";
-		  popup_color = "<%=(String)kind.getString()%>";
-		  ohSnap(message,{color:popup_color});
-		<%
-		}
-		%>
 		
 	}
 	function match_Password(){

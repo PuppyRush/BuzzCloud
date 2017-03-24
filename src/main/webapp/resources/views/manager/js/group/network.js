@@ -17,16 +17,19 @@
 		}	
 
 		
-		$(document).ready(function() 
-		{
-				var comAjax = new ComAjax();
-				comAjax.setUrl("/mainPage/initBandMap.ajax");
-				comAjax.setCallback("callback_drawNetwork");
-				comAjax.setType("post");
-				comAjax.setAsync(false)
-				comAjax.ajax();
+		$(document).ready(function()	{
+			initNetwork();
 		});
 	
+		function initNetwork(){
+			var comAjax = new ComAjax();
+			comAjax.setUrl("/mainPage/initBandMap.ajax");
+			comAjax.setCallback("callback_drawNetwork");
+			comAjax.setType("post");
+			comAjax.setAsync(false)
+			comAjax.ajax();
+		}
+		
 		
 		function callback_drawNetwork(data){
 			
@@ -60,14 +63,43 @@
 			
 				drawVisualization();
 		}
-		
-		
-		 
+				 
+
+		var selectedBandId=-1
+		function onselect(){
+			
+		  	var sel = network.getSelection();
+		  	selectedBandId = network.nodesTable[sel[0].row].id;
+		  	
+
+
+				var comAjax2 = new ComAjax();
+				comAjax2.setUrl("/managerPage/groupConfig/getBandInfo.ajax");
+				comAjax2.addParam("bandId", selectedBandId);
+				comAjax2.setCallback("callback_setSelectedBandInfo");
+				comAjax2.setType("post");
+				comAjax2.setAsync("false")
+				comAjax2.ajax();
+		  	
+				var comAjax = new ComAjax();
+				comAjax.setUrl("/managerPage/groupConfig/getSelectedBandMembers.ajax");
+				comAjax.addParam("bandId", selectedBandId);
+				comAjax.setCallback("callback_setSelectedBandMembers");
+				comAjax.setType("post");
+				comAjax.setAsync("false")
+				comAjax.ajax();
 	
-		   
-		function callback_setSelectedBandMembers(data){
-			selectedBandInfo = data;
-    		selectedBandInfo.upperBandId = selectedBandId;
+			  	
+	  	}
+		
+		
+   var nowUpperBandId;
+		function callback_setSelectedBandInfo(data){
+			
+				var sel = network.getSelection();
+		  	var selectedBandId = network.nodesTable[sel[0].row].id;
+		  		
+	  		nowUpperBandId = Number(data["upperBandId"]); 
     		$("#makeGroupForm #groupName").val(data["bandName"]);
     		$("#makeGroupForm #groupOwner").val(data["ownerNickname"]);
     		$("#makeGroupForm #administrator").val(data["adminNickname"]);
@@ -75,38 +107,50 @@
     		$("#makeGroupForm #groupContain").val(data["bandContains"]);
     		
     		$("#groupMember").empty();
-  		members = data["bandMembers"];
-  		for(i=0 ; i< members.length ; i++)
-  			for(var key in members[i])
-  				$("#groupMember").append('<option>'+members[i][key]);	   			
+	  		members = data["bandMembers"];
+	  		for(i=0 ; i< members.length ; i++)
+	  			for(var key in members[i])
+	  				$("#groupMember").append('<option>'+members[i][key]);	   			
     			
+  		bandAuths = data["bandAuthority"];
+    $("#bandAuthority option").each(function(){
+				for(i=0 ; i < bandAuths.length ; i++){
+					
+					if(bandAuths[i] == $(this).val()){				
+						$(this).prop("class", "selected_option");
+						$(this).attr("selected","selected");
+					}
+				}
+		    	 
+		    });
+	  		
+    fileAuths = data["fileAuthority"];
+    $("#fileAuthority option").each(function(){
+			for(i=0 ; i < fileAuths.length ; i++){
+				
+				if(fileAuths[i] == $(this).val()){
+					$(this).prop("class", "selected_option");
+					$(this).attr("selected","selected");
+				}
+			}
+	    	 
+	    });
+    
+    $("#selectGroup option").each(function(){
+    			if( data["upperBandName"] == $(this).val() ){
+    				$(this).prop("class", "selected_option");
+    				$(this).attr("selected","selected");
+    				return;
+    				}
+    	
+    		});
+    
 				$("#makeSubmit").val("그룹 정보 변경하기");
-				changeBand = true;
+				isChangingBand = true;
 		}
 
-		function onselect(){
-			
-		  	var sel = network.getSelection();
-		  	var selectedBandId = network.nodesTable[sel[0].row].id;
-		  	
-				var comAjax = new ComAjax();
-				comAjax.setUrl("/managerPage/groupConfig/getSelectedBandMembers.ajax");
-				comAjax.addParam("bandId", selectedBandId);
-				comAjax.setCallback("callback_setSelectedBandMembers");
-				comAjax.setType("post");
-				comAjax.ajax();
-		  		
-				var comAjax = new ComAjax();
-				comAjax.setUrl("/managerPage/groupConfig/searhcedBandInfo.ajax");
-				comAjax.addParam("bandId", selectedBandId);
-				comAjax.setCallback("callback_searchedBandInfo");
-				comAjax.setType("post");
-				comAjax.ajax();
-		  	
-			  	
-	  	}
 		
-		function callback_searchedBandInfo(data){
+		function callback_setSelectedBandMembers(data){
  			$("#memberTable").find("tbody").html("");
 		    
 			var i=0;
@@ -132,9 +176,6 @@
     			
 	    		}
 		}
-		
-		
-		
 	  	
 	  var network = null;
 		var GROUP_IMG_PATH = "image/groupImage.jpg";
@@ -185,7 +226,7 @@
 		// Instantiate our network object.
 		network = new links.Network(document.getElementById("mynetwork"));
 		google.visualization.events.addListener(network, 'select', onselect);
-		
+				
 		// Draw our network with the created data and options
 				network.draw(nodesTable, linksTable, options);
 				
@@ -196,3 +237,4 @@
 		  	network.redraw();
 	      };
 		  	
+	      

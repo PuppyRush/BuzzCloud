@@ -4,7 +4,7 @@ import com.puppyrush.buzzcloud.property.enums.enumSystem;
 
 public enum enumPage {
 
-	ROOT("http://114.129.212.30:"+enumSystem.PORT.toString()),
+	ROOT(enumSystem.URL_ROOT.toString()),
 	
 	ERROR404("/error/404error"),
 	ERROR403("/error/403error"),

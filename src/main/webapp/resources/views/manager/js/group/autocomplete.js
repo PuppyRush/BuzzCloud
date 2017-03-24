@@ -1,30 +1,6 @@
 
 		  
-		  
-	  $('#administrator').keyup(function() {
-		  
-		    var str = $(this).val();
-		    		
-		    		if(str.length>=4){
-		    		
-		    		 $.ajax({
-		    		    url:'/configPage/groupCnfig/getMembersOfPart.jsp',
-		    		    data: { nickname: str },
-		    		    dataType:'json',
-		    		    success:function(data){
-		    		    	
-		    		    	/* var members = new Array();*/
-			    		    for (var key in data) {	    			
-			    		    	mebersOfPart.push(key); 
-			    		    			}
 
-		    	           		  }
-		    		 	})
-    			}
-		    
-		});
-	
-	
 		var options = {
 
 			  url: function(phrase) {
@@ -37,33 +13,42 @@
 
 				  ajaxSettings: {
 				    dataType: "json",
-				    method: "POST",
+				    method: "GET",
 				    data: {
 				      nickname:   $('#searchMember').val()
 				    }
 				  },
 
+			  theme:"round",
+				  
 				  preparePostData: function(data) {
 				    data.phrase = $("#searchMember").val();
 				    return data;
 				  },
 
 			  list: {
-			  	maxNumberOfElements : 10,
+			  	maxNumberOfElements : 15,
 			  	match :{enabled:true},
 					onClickEvent: function() {
 						var index = $("#searchMember").getSelectedItemIndex();
 						var nick = $("#searchMember").getItemData(index).name;
+						var id = $("#searchMember").getItemData(index).id;
 						
-						$("#groupMember").each(function(){
-								if( $(this).val == nick){
-										return;
+						var isDup=false
+						$("#groupMember option").each(function(){
+								if( this.value == nick){
+									isDup = true
+									return;
 								} 
 						});
 						
-						$("#groupMember").append('<option>'+nick);
+						if(!isDup){
+							$("#groupMember").append('<option>'+nick);
+							bandMembers[nick] = id;
+						}
 											
-					}	
+					},
+			
 				},
 				  
 				  requestDelay: 400
@@ -72,10 +57,12 @@
 		$("#searchMember").easyAutocomplete(options);
 		
 		
+		
+		
 		var options = {
 
 				  url: function(phrase) {
-					    return '/configPage/groupCnfig/getMembersOfPart.jsp';
+					    return '/autocomplete/getMemberNames.ajax';
 					  },
 
 					  getValue: function(element) {
@@ -84,12 +71,14 @@
 
 					  ajaxSettings: {
 					    dataType: "json",
-					    method: "POST",
+					    method: "GET",
 					    data: {
 					      nickname:   $('#administrator').val()
 					    }
 					  },
 
+				  theme:"round",
+					  
 					  preparePostData: function(data) {
 					    data.phrase = $("#administrator").val();
 					    return data;
@@ -101,13 +90,6 @@
 						onClickEvent: function() {
 							var index = $("#administrator").getSelectedItemIndex();
 							var nick = $("#administrator").getItemData(index).name;
-							
-							$("#groupMember").each(function(){
-									if( $(this).val == nick){
-											return;
-									} 
-							});
-							
 							$("#administrator").val(nick);
 												
 						}	

@@ -1,6 +1,7 @@
 package com.puppyrush.buzzcloud.entity.band;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -17,6 +18,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.puppyrush.buzzcloud.controller.form.BandForm;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
@@ -28,8 +30,11 @@ public class BandDB {
 
 	protected Connection conn = ConnectMysql.getConnector();
 
-	@Autowired
+	@Autowired(required = false)
 	private DBManager dbMng;	
+	
+	@Autowired(required = false)
+	private BandManager bMng;
 	
 	public int makeBand(String name, int owner, int admin){
 		
@@ -60,26 +65,17 @@ public class BandDB {
 		return key;
 	}
 	
-	/**
-	 * 
-	 * @param bandId
-	 * @param maxCapacity
-	 * @param contents
-	 * @return	driverPath를 반환함.
-	 */
-	public String makeBandDetail(int bandId, int maxCapacity, String contents){
-		
-		String driverFolderPath = enumSystem.DEFAULT_DIRVER_PATH + UUID.randomUUID().toString()+"/";
-		makeDirverFolder(driverFolderPath);
-		
+
+	public void makeBandDetail(int newBandId, int maxCapacity,String driverPath, String contents) throws SQLException, IOException{
+								
 		try {
 			conn.setAutoCommit(false);
 			
 			String sql = "insert into bandDetail (bandId, maxCapacity, driverPath, contents) values(?,?,?,?)";
 			PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-			ps.setInt(1, bandId);
+			ps.setInt(1, newBandId );
 			ps.setInt(2, maxCapacity);
-			ps.setString(3, driverFolderPath);
+			ps.setString(3, driverPath);
 			ps.setString(4, contents);
 			ps.executeUpdate();
 			
@@ -90,28 +86,8 @@ public class BandDB {
 			e.printStackTrace();
 		}
 		
-		return driverFolderPath;
 	}
-			 
-	private void makeDirverFolder(String folderName){
-		
-		File file = new File(folderName);
-		
-		do{
-			if(file.exists())
-				folderName =  enumSystem.DEFAULT_DIRVER_PATH + UUID.randomUUID().toString()+"/";
-			else{
-				file.mkdirs();
-				break;
-			}
-				
-			
-			
-		}while(true);
-		
-		
-	}
-	
+
  	public void makeBandRelation(int fromId, int toId){
 		
 		try {
@@ -190,9 +166,7 @@ public class BandDB {
 		}
 	}
 
- 	
- 	
-	public void makeBandMember(int bandId, ArrayList<Integer> memberIds){
+	public void makeBandMember(int bandId, List<Integer> memberIds){
 		
 		try{		
 			conn.setAutoCommit(false);
@@ -212,6 +186,41 @@ public class BandDB {
 		}
 	}
 
+	
+	public int getRootMemberOf(int bandId) throws SQLException{
+		
+		int rootId = bMng.getRootBandOf(bandId);
+		
+		PreparedStatement ps = conn.prepareStatement("select owner from band where bandId = ?");
+		ps.setInt(1, rootId);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		
+		return rs.getInt(1);
+		
+	}
+	
+	public int getOwnerMemberOf(int bandId) throws SQLException{
+		
+		PreparedStatement ps = conn.prepareStatement("select owner from band where bandId = ?");
+		ps.setInt(1, bandId);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		
+		return rs.getInt(1);
+		
+	}
+
+	public int getAdminMemberOf(int bandId) throws SQLException{
+		
+		PreparedStatement ps = conn.prepareStatement("select administrator from band where bandId = ?");
+		ps.setInt(1, bandId);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		
+		return rs.getInt(1);
+	}
+	
 	public String getBandNameOf(int bandId){
 		
 		String name=null;

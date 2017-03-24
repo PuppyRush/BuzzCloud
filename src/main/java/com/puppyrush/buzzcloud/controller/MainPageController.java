@@ -16,9 +16,9 @@ import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.page.enums.enumPageError;
 import com.puppyrush.buzzcloud.property.tree.Tree;
-import com.puppyrush.buzzcloud.service.band.GettingSelectedBandMembers;
-import com.puppyrush.buzzcloud.service.band.InitBandMap;
-import com.puppyrush.buzzcloud.service.band.SearchedBandInfo;
+import com.puppyrush.buzzcloud.service.entity.band.GettingSelectedBandMembers;
+import com.puppyrush.buzzcloud.service.entity.band.InitializingBandMap;
+import com.puppyrush.buzzcloud.service.entity.band.SearchedBandInfo;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +41,7 @@ public class MainPageController {
 	// LoggerFactory.getLogger(MainController.class);;
 
 	@Autowired(required = false)
-	private InitBandMap		bandMapInfo;
-
-	@Autowired(required = false)
-	private SearchedBandInfo	searchedBandInfo;
-
-
+	private InitializingBandMap		bandMapInfo;
 	
 	public MainPageController() {
 
@@ -73,13 +68,6 @@ public class MainPageController {
 		return returns;
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/getSerachedBandInfo.ajax", method = RequestMethod.GET)
-	public Map<String, Object> getSerachedBandInfo(@RequestParam("bandId") int bandId) {
-
-		return searchedBandInfo.execute(bandId);
-
-	}
 
 	
 }

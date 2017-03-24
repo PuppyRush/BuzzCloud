@@ -14,9 +14,7 @@ $(document).ready(function() {
 						break;
 						
 					case "searchBand":
-													
-							wrapSerachModal();
-
+						wrapSerachModal();
 						break;
 					
 					case "myaccount":
@@ -44,7 +42,7 @@ $(document).ready(function() {
 					"icon" : "edit"
 				},
 				"groupDashboard" : {
-					"name" : "그룹 관리",
+					"name" : "그룹 보드",
 					"icon" : "edit"
 				},
 				"member" : {

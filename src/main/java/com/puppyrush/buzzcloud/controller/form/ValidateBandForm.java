@@ -1,9 +1,8 @@
 package com.puppyrush.buzzcloud.controller.form;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class BandForm {
+public class ValidateBandForm {
 
 	private String bandName;
 	private String bandOwner;
@@ -11,14 +10,11 @@ public class BandForm {
 	private int bandCapacity;
 	private String bandContain;
 	private int upperBand;
-	private int exUpperBand;
 	private List<Integer> members;
 	private List<String> bandAuthority;
 	private List<String> fileAuthority;
-	private List<String> memberAuthority;
-
-
-	private BandForm(){
+	
+	private ValidateBandForm(){
 		
 		bandName = null;
 		bandOwner = null;
@@ -26,19 +22,12 @@ public class BandForm {
 		bandCapacity = -1;
 		bandContain = null;
 		upperBand = -1;
-		members = new ArrayList<Integer>();
-		bandAuthority = new ArrayList<String>();
-		fileAuthority = new ArrayList<String>();
-		memberAuthority = new ArrayList<String>();
+		members = null;
+		bandAuthority = null;
+		fileAuthority = null;
+		
 	}
 	
-	public List<String> getMemberAuthority() {
-		return memberAuthority;
-	}
-
-	public void setMemberAuthority(List<String> memberAuthority) {
-		this.memberAuthority = memberAuthority;
-	}
 	public String getBandName() {
 		return bandName;
 	}
@@ -73,12 +62,6 @@ public class BandForm {
 		return upperBand;
 	}
 	public void setUpperBand(int upperBand) {
-		this.exUpperBand = upperBand;
-	}
-	public int getExUpperBand() {
-		return exUpperBand;
-	}
-	public void setExUpperBand(int upperBand) {
 		this.upperBand = upperBand;
 	}
 	public List<Integer> getMembers() {

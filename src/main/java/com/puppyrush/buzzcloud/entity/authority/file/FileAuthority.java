@@ -3,23 +3,23 @@ package com.puppyrush.buzzcloud.entity.authority.file;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.EnumMap;
-
-import org.springframework.stereotype.Repository;
+import java.util.List;
+import java.util.Map;
 
 import com.puppyrush.buzzcloud.entity.authority.Authority;
 
 //@Repository("fileAuthority")
 public class FileAuthority extends Authority{
 
-	private EnumMap<enumFileAuthority,Boolean> authorityType;
+	private Map<enumFileAuthority,Boolean> authorityType;
 		
-	public FileAuthority(int id, Timestamp date,  EnumMap<enumFileAuthority,Boolean> type){
+	public FileAuthority(int id, Timestamp date,  Map<enumFileAuthority,Boolean> type){
 		super(id,date);
 		authorityType = type;
 
 	}
 
-	public EnumMap<enumFileAuthority, Boolean> getAuthorityType() {
+	public Map<enumFileAuthority, Boolean> getAuthorityType() {
 		return authorityType;
 	}
 
@@ -51,5 +51,20 @@ public class FileAuthority extends Authority{
 		
 	}
 
+	
+	public static Map<enumFileAuthority, Boolean> getFileEnumMap(List<String> list){
+		
+		Map<enumFileAuthority, Boolean> map = new EnumMap<enumFileAuthority, Boolean>(enumFileAuthority.class);
+		
+		for(enumFileAuthority e : enumFileAuthority.values()){
+			map.put(e, false);
+		}
+		
+		for(String s : list){
+			map.put(enumFileAuthority.valueOf(s),true);
+		}
+		
+		return map;
+	}
 	
 }

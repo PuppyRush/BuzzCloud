@@ -37,9 +37,12 @@ public class GettingMyAccountInfo{
 		memberInfo.put("nickname", member.getNickname());
 		memberInfo.put("email", member.getEmail());
 		
-		String fullPath = enumSystem.MEMBERS_FOLDER_PATH.toString() + member.getId() + "/" + memberDetail.get(0).get("representiveImage");
+		String fullPath = new StringBuilder(enumSystem.RESOURCE_FOLDER_RAT_PATH.toString())
+				.append(enumSystem.MEMBERS_FOLDER_NAME.toString()).append("/")
+				.append(String.valueOf(member.getId())).append("/").append((String)memberDetail.get(0).get("image")).toString();
 		
-		memberInfo.put("representiveImage", fullPath);
+		
+		memberInfo.put("image", fullPath);
 		memberInfo.put("firstname", memberDetail.get(0).get("firstname") );
 		memberInfo.put("lastname", memberDetail.get(0).get("lastname"));
 

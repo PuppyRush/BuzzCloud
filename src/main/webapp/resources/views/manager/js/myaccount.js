@@ -1,6 +1,6 @@
 	
 	$(document).ready(function() {
-
+		
 		setMyAccount();
 
 	});
@@ -17,7 +17,7 @@
 	
 	function callback_setMyAccount(data){
 		
-		$("#memberImage").attr("src", data["representiveImage"]);
+		$("#memberImage").attr("src", data["image"]);
 		
 		$(".cont3 #email").text("");
 		$(".cont3 #email").append("<ok>Email: </ok> " + ' ' +data["email"]);
@@ -60,6 +60,23 @@
  
  
  
+/* $("#imageForm").on("click", function(){
+		
+		var comAjax = new ComAjax();
+		comAjax.setUrl("/managerPage/myAccount/registerMemberFace.ajax");
+		comAjax.setCallback("callback_setImage")
+		comAjax.setType("post");
+		comAjax.ajax();
+
+	});
+
+	function callback_setImage(data){
+		ohSnap(data["message"], {color:data["messageKind"]});
+		$("memberImage").prop("src",data["imagePath"]);
+	}
+*/
+ 
+
  $("#navPages li").on("click", function(){
 
 			$("#managerForm #forwardPageName").val($(this).attr('id'));

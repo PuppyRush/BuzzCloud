@@ -21,7 +21,6 @@ public enum enumPage {
 	CERTIFICATE_FAILED_PASSWORD("member/CertificatePassword"),
 	INPUT_CERTIFICATION_NUMBER("member/CheckAuthNum"),
 	INPUT_MAIL("member/InputMail"),
-	REGSTRY_DEVELOPER("member/RegistryDeveloper"),
 	CHANGE_OLD_PWD("member/ChangeOldPasswodjsp"),
 	
 	BROWSER("fileBrowser/FileBrowser"),

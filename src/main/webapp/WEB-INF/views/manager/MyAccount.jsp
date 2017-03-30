@@ -16,7 +16,7 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link rel="stylesheet" type="text/css" href="/resources/views/manager/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     
     <link href="/resources/views/manager/css/main.css" rel="stylesheet">
     <link href="/resources/views/manager/css/font-style.css" rel="stylesheet">
@@ -26,9 +26,6 @@
 			<link href="/resources/lib/include/notificator/ohsnap.css" rel="stylesheet">
 		
 
-
-	<!-- <script type="text/javascript" src="/resources/views/manager/js/jquery.js"></script> -->    
-    <script type="text/javascript" src="/resources/views/manager/bootstrap/js/bootstrap.min.js"></script>
 
     <style type="text/css">
       body {
@@ -83,11 +80,12 @@
         			<div id="register-info">
         				<div class="cont2">
         					<div class="thumbnail">
-											<img src="" id="memberImage" name="memberImage" alt="Marcel Newman" class="img-rectagle">
+											<img src="" id="memberImage" name="memberImage" alt="Marcel Newman" class="img-rectagle" >
 											 <div class="footer">
 											 		<br>
-									 				<form id="upload-form" method="post" action="registerMemberFace.do"	enctype="multipart/form-data">
-			 		          		  <button type="submit" class="btn btn-register">등록하기</button>
+									 				<form id="imageForm" method="post" action="/managerPage/myAccount/registerMemberFace.ajax" enctype="multipart/form-data">
+									 					<input class="btn" type="file" id="file" name="file" accept="file_extension|image/*">
+			 		          		  <button type="submit" id="submitImage" class="btn btn-register">등록하기</button>
 				          		  </form>
 			  		        </div>
 							</div><!-- /thumbnail -->
@@ -177,24 +175,20 @@
 	
 	
 	</script>
-		
-	<!-- jQuery and jQuery UI (REQUIRED) -->
-	
-		<script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>
-		<script	 src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
-		<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
-				
-		<!-- Bootstrap Core JavaScript -->
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 
+				
+		<script type="text/javascript" src="/resources/bower_components/jquery/jquery.js"></script>    
+		</script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script	 src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
+		
     
  	<!-- ohsnap -->
 	<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>
 	
-	<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/commonAjax.js"></script>
-	<script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js"></script>
-	<script type="text/javascript" src="/resources/lib/commanJs/formValidator.js"></script>
-	<script type="text/javascript" src="/resources/views/manager/js/myaccount.js"></script>
+	<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/commonAjax.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+	<script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+	<script type="text/javascript" src="/resources/lib/commanJs/formValidator.j?<?=filemtime(\'./css/readizgen.css\')?s"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/myaccount.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 		
 	
 </body>

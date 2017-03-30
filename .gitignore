@@ -1,5 +1,6 @@
 *.class
 /build
+src/main/webapp/resources/member
 /WebContent/org/
 /target/
 enumMysql.java

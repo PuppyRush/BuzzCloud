@@ -690,7 +690,7 @@ public final class BandManager {
 		String driverPath = "";
 		
 		if(upperBand==newBandId){
-			driverPath = enumSystem.DEFAULT_DIRVER_PATH.toString() + UUID.randomUUID().toString();
+			driverPath = enumSystem.DEFAULT_DIRVER_ABS_PATH.toString() + UUID.randomUUID().toString();
 			File file = new File(driverPath);
 			file.mkdirs();
 		}

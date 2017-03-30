@@ -31,7 +31,7 @@
 			<link href="/resources/lib/include/notificator/ohsnap.css" rel="stylesheet">
 		
 			<!-- context menu css  -->
-    <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css"/>
+     <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css"/>
     
     <!--  autocomplete -->
 		<link href="/resources/lib/include/easyautocomplete/easy-autocomplete.min.css" rel="stylesheet"/>
@@ -155,16 +155,14 @@
 
 </script>
 
-	<script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>			
-	<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.co/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
-
-
-	<!-- Bootstrap Core JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
-
-
-
-	<!-- context menu js  -->
+<script type="text/javascript" src="/resources/bower_components/jquery/jquery.js"></script>    
+</script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script	 src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
+<!-- 	<!-- context menu js  
+  <script src="/resources/bower_components/jQuery-contextMenu/dist/jquery.contextMenu.min.js" type="text/javascript"></script>
+  <script src="/resources/bower_components/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
+		 -->
+<!-- context menu js  -->
   <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.js" type="text/javascript"></script>
   <script src="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.ui.position.min.js" type="text/javascript"></script>
   <script src="https://swisnl.github.io/jQuery-contextMenu/js/main.js" type="text/javascript"></script>

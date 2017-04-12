@@ -1,0 +1,79 @@
+@CHARSET "UTF-8";
+@font-face {font-family:ngttf; src:url(NanumGothic.ttf);}
+@font-face {font-family:ngeot; src:url(NanumGothic.eot);}
+
+#mask{  
+	  position:absolute;  
+	  z-index:9000;  
+	  background-color:#000;  
+	  display:none;  
+	  left:0;
+	  top:0;
+}
+
+
+	.groupModal{
+	  display: none;
+	  position:absolute;  
+	  left:30%;
+	  top:10%;
+	  z-index:10000;
+	}
+	
+#contain{
+	resize:none;
+}
+
+#bandContain{
+	width:100%;
+	max-width:100%;
+	max-height:100%;
+}
+
+.eac-square {
+	min-height:100%;
+	width:100%;
+  background-image: url("/resources/image/icon/icon_search.png");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+/*  .modal-header{
+ 		background-color:#ccb23a;
+ 	}
+	.modal-content{
+		background-color:#edd150;
+	} */
+
+/* Button Common */
+.button,
+.button *{ position:relative; margin:0; padding:0; display:inline-block; text-decoration:none !important; border:0; font-size:12px; white-space:nowrap; background:url(button.gif) no-repeat; vertical-align:top; overflow:visible; color:#333;}
+.button { margin-right:4px;}
+.button *{ left:4px; cursor:pointer; _cursor:hand;}
+.button.medium, .button.medium *{ height:24px; line-height:21px;}/* 맑은고딕을 사용할 경우 21px, 돋움을 사용할 경우 24px 사용 */
+.button.medium { background-position:left 0;}
+.button.medium *{ padding:0 10px 0 6px; font-size:12px; background-position:right top;}
+/* Button Hover */
+.button *:hover,
+.button *:active,
+.button *:focus{ color:#06a;}
+/* Button Icon Variation */
+.button.icon *{ padding-left:20px;}
+.button.icon span{ width:20px; margin-right:-20px; padding:0 !important;}
+.button.medium .check{ background-position:4px -150px;}
+.button.medium .add{ background-position:-16px -150px;}
+.button.medium .delete{ background-position:-34px -150px;}
+.button.medium .calendar{ background-position:-56px -150px;}
+.button.medium .refresh{ background-position:-76px -150px;}
+.button.medium .download{ background-position:-96px -151px;}
+
+/* Common Class */
+.iText{ border:1px solid #b7b7b7; border-right-color:#e1e1e1; border-bottom-color:#e1e1e1; background:transparent;}
+.iCheck, .iRadio{ width:13px; height:13px; margin:0; padding:0; vertical-align:middle;}
+.hide{ position:absolute; left:0; top:0; width:1px; height:1px; font-size:0; line-height:0; visibility:hidden;}
+
+/* Popup Layer */
+.layer {display:none; position:fixed; _position:absolute; top:0; left:0; width:100%; height:100%; z-index:10000;}
+.open {display:block;}
+.layer .bg {position:absolute; top:0; left:0; width:100%; height:100%; background:#000; opacity:.7; filter:alpha(opacity=70);}
+	

@@ -99,7 +99,11 @@ public final class Band implements Entity{
 		subBands = b.subBands;
 		members = b.members;		
 		driverPath = b.driverPath;
-	
+		adminId = b.adminId;
+		this.contents = b.contents;
+		this.bandAuthority = b.bandAuthority;
+		this.driverNickname = b.driverNickname;
+		
 	}
 	
 	public static class Builder{

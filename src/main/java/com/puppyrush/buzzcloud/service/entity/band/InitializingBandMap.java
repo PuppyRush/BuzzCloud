@@ -55,7 +55,7 @@ public class InitializingBandMap{
 		
 	
 		try{
-			List<Band> bands = bandMng.getAdministeredBandsOfRoot(memberId);
+			List<Band> bands = bandMng.getRootOfOwneredBands(memberId);
 			
 			if(bands.size()>0){
 			
@@ -90,7 +90,7 @@ public class InitializingBandMap{
 
 		try {
 
-			List<Band> bands = bandMng.getAdministeredBandsOfRoot(memberId);
+			List<Band> bands = bandMng.getRootOfOwneredBands(memberId);
 			if (bands.size() > 0) {
 
 				for (int i = 0; i < bands.size(); i++) {

@@ -101,7 +101,7 @@ public final class DBManager {
 					sql.append(select);
 					
 					if(it.hasNext()){
-						sql.append(" AND ");
+						sql.append(" , ");
 					}
 				}
 				

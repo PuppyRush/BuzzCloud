@@ -69,7 +69,7 @@ public final class BandManager {
 	private DBManager dbMng;
 	
 	
-	public ArrayList<Band> getOwneredBands(int memberId) throws EntityException {
+	public ArrayList<Band> getOwneredBands(int memberId) throws EntityException, ControllerException {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -90,6 +90,8 @@ public final class BandManager {
 					Band band = getBand(owneredBandId);
 					ownerdBands.add(band);
 				}
+				else
+					ownerdBands.add(bCtl.getEntity(owneredBandId));
 			}
 
 		} catch (SQLException e) {
@@ -150,7 +152,7 @@ public final class BandManager {
 		
 	}
 	
-	public ArrayList<Band> getAdministeredBandsOfRoot(int memberId) throws EntityException {
+	public ArrayList<Band> getRootOfOwneredBands(int memberId) throws EntityException {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -159,7 +161,7 @@ public final class BandManager {
 
 			ArrayList<Integer> bandsAry = new ArrayList<Integer>();
 
-			ps = conn.prepareStatement("select bandId from band where administrator = ?");
+			ps = conn.prepareStatement("select bandId from band where owner = ?");
 			ps.setInt(1, memberId);
 			rs = ps.executeQuery();
 

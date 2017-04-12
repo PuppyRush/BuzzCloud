@@ -186,6 +186,18 @@ public class BandDB {
 		}
 	}
 
+	public List<Integer> getBandMembers(int bandId) throws SQLException{
+		
+		List<Integer> members = new ArrayList<Integer>();
+		
+		PreparedStatement ps = conn.prepareStatement("select memberId from bandMember where bandId = ?");
+		ps.setInt(1, bandId);
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()){
+			members.add(rs.getInt(1));
+		}
+		return members;		
+	}
 	
 	public int getRootMemberOf(int bandId) throws SQLException{
 		

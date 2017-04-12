@@ -148,7 +148,9 @@
 
 
 	window.onload=function(){		
-			ohSnap("${message}",{'color': "${messageKind}" });
+		if("${message}"=="")
+			return;
+		ohSnap("${message}",{'color': "${messageKind}" });
 		
 	}
 

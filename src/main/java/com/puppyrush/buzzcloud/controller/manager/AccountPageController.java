@@ -52,7 +52,7 @@ public class AccountPageController {
 	private SettingProfile		settingProfile;
 
 	@Autowired(required = false)
-	private RegisteMemberFace		registerImage;
+	private RegisteMemberFace		registeImage;
 	
 	
 	public AccountPageController() {
@@ -95,11 +95,11 @@ public class AccountPageController {
 	}
 
 	@RequestMapping(value = "/registerMemberFace.ajax", method = RequestMethod.POST)
-	public ModelAndView registerMemberFace(HttpServletRequest request) {
+	public ModelAndView registeMemberFace(HttpServletRequest request) {
 
 		ModelAndView mv = new ModelAndView(enumPage.MY_ACCOUNT.toString());
 		try {
-			mv.addAllObjects(registerImage.execute(request.getRequestedSessionId(), (MultipartHttpServletRequest)request));
+			mv.addAllObjects(registeImage.execute(request.getRequestedSessionId(), (MultipartHttpServletRequest)request));
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

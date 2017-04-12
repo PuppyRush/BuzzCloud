@@ -85,7 +85,7 @@ final public class InitMyBandInfo {
 									
 			Member member = mCtl.getEntity(memberId);
 			
-			ArrayList<Band> bands = bandMng.getAdministeredBandsOfRoot(member.getId());
+			ArrayList<Band> bands = bandMng.getRootOfOwneredBands(member.getId());
 			if(bands.size()>0){
 				for(int i=0 ; i < bands.size() ; i++){
 					

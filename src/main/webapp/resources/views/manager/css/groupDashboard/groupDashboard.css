@@ -1,0 +1,10 @@
+
+.col-centered{
+	text-align : center;
+	float : none;
+	margin : 0 auto;
+}
+
+body {
+        padding-top: 60px;
+}

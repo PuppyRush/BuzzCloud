@@ -5,7 +5,6 @@
 <%
 
 	request.setCharacterEncoding("UTF-8");
-
 	
 %>
 
@@ -18,62 +17,20 @@
     <meta name="author" content="Carlos Alvarez - Alvarez.is">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+			
+			<link href="/resources/bower_components/highcharts/css/highcharts.css" rel="stylesheet">
+			<link href="/resources/lib/include/notificator/ohsnap.css" rel="stylesheet">
+			<link href="/resources/views/manager/css/groupDashboard/form.css" rel="stylesheet">
+    <link href="/resources/views/manager/css/groupDashboard/main.css?<?=filemtime(\'./css/readizgen.css\')?"" rel="stylesheet">
+    <link href="/resources/views/manager/css/groupDashboard/font-style.css" rel="stylesheet">
+    <link href="/resources/views/manager/css/groupDashboard/flexslider.css" rel="stylesheet">
+    <link href="/resources/views/manager/css/groupDashboard/groupDashboard.css" rel="stylesheet">
 
-
-    <link href="/resources/views/manager/css/main.css" rel="stylesheet">
-    <link href="/resources/views/manager/css/font-style.css" rel="stylesheet">
-    <link href="/resources/views/manager/css/flexslider.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-
-		
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-      }
-    </style>
-
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-   
 
   	<!-- Google Fonts call. Font Used Open Sans & Raleway -->
 	<link href="http://fonts.googleapis.com/css?family=Raleway:400,300" rel="stylesheet" type="text/css">
   	<link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        $("#btn-blog-next").click(function () {
-            $('#blogCarousel').carousel('next')
-        });
-        $("#btn-blog-prev").click(function () {
-            $('#blogCarousel').carousel('prev')
-        });
-
-        $("#btn-client-next").click(function () {
-            $('#clientCarousel').carousel('next')
-        });
-        $("#btn-client-prev").click(function () {
-            $('#clientCarousel').carousel('prev')
-        });
-
-    });
-
-    $(window).load(function () {
-
-        $('.flexslider').flexslider({
-            animation: "slide",
-            slideshow: true,
-            start: function (slider) {
-                $('body').removeClass('loading');
-            }
-        });
-    });
-
-</script>    
+ 
   </head>
   <body>
   
@@ -105,8 +62,59 @@
 		
 	<div id="mask"></div>
 
-		<div id="mynetwork"></div>
+	<div class="groupModal">
+
+		<div class="text-vertical-center" tabindex="-1" role="dialog"	 aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"	aria-hidden="true">×</button>
+						<h3 class="text-center">그룹 가입하기</h3>
+					</div>
+					<div class="modal-body">
+
+						<form class="form col-md-12 center-block" id="innerJoinForm"	>
+																	
+						
+									
+										<div class="form-group">
+											<input type="text" name="bandAdminName" id="bandAdminName" title="관리자 명" class="form-control input-md"  readonly>
+										</div>
+									
+										<div class="form-group">
+											<input type="text" name="bandCreatedDate" id="bandCreatedDate" class="form-control input-md"	readonly>
+										</div>
+									
+										<div class="form-group">
+											<input type="text" name="subBandNumber" id="subBandNumber" class="form-control input-md"	readonly>
+										</div>
+										
+										<div class="form-group">
+											<input type="text" name="bandMembersAll" id="bandMembersAll" class="form-control input-md"	readonly>
+										</div>
+										
+										
+											<textarea id="bandContain" name="bandContain" placeholder="그룹 설명" rows="3" readonly ></textarea>
+																												
+										
+										<div class="form-group">
+											<button class="btn btn-primary btn-md btn-block" id="joinBandButton" type="button"	>닫기 </button>
+										
+										</div>
 			
+										<input type="hidden" id="idType" name="idType" value="NOTHING">
+						</form>
+
+					</div>
+					<div class="modal-footer">
+						<div class="col-md-12">
+							<button class="close" data-dismiss="modal" aria-hidden="true">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 	</div>
 
 
@@ -120,16 +128,22 @@
       <!-- GROUP PROFILE BLOCK -->
         <div class="col-sm-3 col-lg-3">
       		<div class="dash-unit">
-	      		<dtitle>User Profile</dtitle>
-	      		<hr>
-				<div class="thumbnail">
-					<img src=/resources/views/manager/images/face80x80.jpg" alt="Marcel Newman" class="img-circle">
-				</div><!-- /thumbnail -->
-				<h1>Marcel Newman</h1>
-				<h3>Max Capcity : 3GB</h3>
-				<br>
-				
-				</div>
+      		<dtitle>소유 그룹 목록</dtitle>
+      		<hr>
+      		<div class="framemail">
+    				<div class="window">
+			        <ul class="mail" id="groups">
+	
+			        </ul>
+    			</div>
+    			  					
+			</div>
+			<br>
+			<div id="groupPageNumber" class="col-centered">
+	    					
+ 			</div>
+		</div><!-- /dash-unit -->
+		
         </div>
 
 
@@ -140,55 +154,9 @@
       		<hr>
       		<div class="framemail">
     				<div class="window">
-			        <ul class="mail">
-			            <li>
-			                <i class="unread"></i>
-			                <img class="avatar" src="/resources/views/manager/images/photo01.jpg" alt="avatar">
-			                <p class="sender">Adam W.</p>
-			                <p class="message"><strong>Working</strong> - This is the last...</p>
-			                <div class="actions">
-			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/undo.png" alt="reply"></a>
-			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/star_fav.png" alt="favourite"></a>
-			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/tag.png" alt="label"></a>
-			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/trash.png" alt="delete"></a>
-			                </div>
-			            </li>
-			            <li>
-			                <i class="read"></i>
-			                <img class="avatar" src="/resources/views/manager/images/photo02.jpg" alt="avatar">
-			                <p class="sender">Dan E.</p>
-			                <p class="message"><strong>Hey man!</strong> - You have to taste ...</p>
-			                <div class="actions">
-			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/undo.png" alt="reply"></a>
-			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/star_fav.png" alt="favourite"></a>
-			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/tag.png" alt="label"></a>
-			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/trash.png" alt="delete"></a>
-			                </div>
-			            </li>
-			            <li>
-			                <i class="read"></i>
-			                <img class="avatar" src="/resources/views/manager/images/photo03.jpg" alt="avatar">
-			                <p class="sender">Leonard N.</p>
-			                <p class="message"><strong>New Mac :D</strong> - So happy with ...</p>
-			                <div class="actions">
-			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/undo.png" alt="reply"></a>
-			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/star_fav.png" alt="favourite"></a>
-			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/tag.png" alt="label"></a>
-			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/trash.png" alt="delete"></a>
-			                </div>
-			            </li>
-			            <li>
-			                <i class="read"></i>
-			                <img class="avatar" src="/resources/views/manager/images/photo04.jpg" alt="avatar">
-			                <p class="sender">Peter B.</p>
-			                <p class="message"><strong>Thank you</strong> - Finally I can ...</p>
-			                <div class="actions">
-			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/undo.png" alt="reply"></a>
-			                    <a><img src="http://png-1.findicons.com/files//icons/2232/wireframe_mono/16/star_fav.png" alt="favourite"></a>
-			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/tag.png" alt="label"></a>
-			                    <a><img src="http://png-4.findicons.com/files//icons/2232/wireframe_mono/16/trash.png" alt="delete"></a>
-			                </div>
-			            </li>
+			        <ul class="mail" id="joins">
+			           
+			       
 			        </ul>
     			</div>
 			</div>
@@ -201,8 +169,8 @@
       		<div class="dash-unit">
 		  		<dtitle>사용중인 그룹용량</dtitle>
 		  		<hr>
-	        	<div id="space"></div>
-	        	<h2>65%</h2>
+	        	<div id="usage"></div>
+	        	<h2 id="usageText">usage : 65%</h2>
 						</div>
         </div>
         
@@ -613,37 +581,40 @@
 	</form>
 	
 
-<script type="text/javascript" src="/resources/bower_components/jquery/jquery.js"></script>    
-</script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="/resources/bower_components/jquery/jquery.js?<?=filemtime(\'./css/readizgen.css\')?"></script>    
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
+	<script type="text/javascript" src="/resources/views/manager/js/lineandbars.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
     
-    
-
-	<script type="text/javascript" src="/resources/views/manager/js/lineandbars.js"></script>
-    
-	<script type="text/javascript" src="/resources/views/manager/js/dash-charts.js"></script>
-	<script type="text/javascript" src="/resources/views/manager/js/gauge.js"></script>
+	
+	<script type="text/javascript" src="/resources/views/manager/js/gauge.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 	
 	<!-- NOTY JAVASCRIPT -->
-	<script type="text/javascript" src="/resources/views/manager/js/noty/jquery.noty.js"></script>
-	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/top.js"></script>
-	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topLeft.js"></script>
-	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topRight.js"></script>
-	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topCenter.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/jquery.noty.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/top.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topLeft.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topRight.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/layouts/topCenter.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 	
 	<!-- You can add more layouts if you want -->
-	<script type="text/javascript" src="/resources/views/manager/js/noty/themes/default.js"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/noty/themes/default.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
     <!-- <script type="text/javascript" src="assets/js/dash-noty.js"></script> This is a Noty bubble when you init the theme-->
-	<script type="text/javascript" src="/resources/bower_components/highcharts/highcharts.src.js"></script>
+	<script type="text/javascript" src="/resources/bower_components/highcharts/highcharts.js"></script>
 	<script src="/resources/views/manager/js/jquery.flexslider.js" type="text/javascript"></script>
 
-    <script type="text/javascript" src="/resources/views/manager/js/admin.js"></script>
-      
+ <script type="text/javascript" src="/resources/views/manager/js/admin.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+	<script type="text/javascript" src="/resources/views/issuePage/js/message.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 
-<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>		
-<script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js"></script>
-<script type="text/javascript" src="/resources/views/issuePage/js/message.js"></script>
-<script type="text/javascript" src="/resources/views/manager/js/groupDashboard/groupDashboard.js"></script>
+
+    	<!-- ohsnap -->
+		<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>
+	
+		<script type="text/javascript" src="/resources/lib/commanJs/commonAjax.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+		<script type="text/javascript" src="/resources/lib/commanJs/formValidator.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+		 <script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+		 <script type="text/javascript" src="/resources/views/manager/js/groupDashboard/charts.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+		<script type="text/javascript" src="/resources/views/manager/js/groupDashboard/groupDashboard.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+		<script type="text/javascript" src="/resources/views/manager/js/groupDashboard/form.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 
 <script>
 

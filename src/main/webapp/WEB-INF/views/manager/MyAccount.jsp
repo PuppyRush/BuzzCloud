@@ -84,7 +84,9 @@
 											 <div class="footer">
 											 		<br>
 									 				<form id="imageForm" method="post" action="/managerPage/myAccount/registerMemberFace.ajax" enctype="multipart/form-data">
-									 					<input class="btn" type="file" id="file" name="file" accept="file_extension|image/*">
+									 					<br>
+									 					<input class="btn center-block" type="file" id="file" name="file" accept=".jpg, .jpeg, .png, .bmp">
+									 					<br>
 			 		          		  <button type="submit" id="submitImage" class="btn btn-register">등록하기</button>
 				          		  </form>
 			  		        </div>
@@ -170,6 +172,8 @@
 	<script>
 	
 	window.onload=function(){
+		if("${message}"=="")
+			return;
 		ohSnap("${message}",{'color': "${messageKind}" });
 	}
 	

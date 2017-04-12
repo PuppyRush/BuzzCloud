@@ -28,6 +28,7 @@ import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
+import com.puppyrush.buzzcloud.property.PathUtils;
 import com.puppyrush.buzzcloud.property.enums.enumSystem;
 
 @Service("registeMemberFace")
@@ -88,13 +89,10 @@ public class RegisteMemberFace {
 			throw new SQLException("이미지 등록 DB내부오류. 관리자에게 문의하세요.");
 		}
 
-		String savedPath = (String) res.get(0).get("image");
-		if (!savedPath.equals("") || !savedPath.contains("defaultImage")) {
+		String savedImageName = (String) res.get(0).get("image");
+		if (!savedImageName.equals("") || !savedImageName.contains("defaultImage")) {
 
-			File oldFile = new File(new StringBuilder(enumSystem.RESOURCE_FOLDER_ABS_PATH.toString())
-					.append(enumSystem.MEMBERS_FOLDER_NAME.toString()).append("/")
-					.append(String.valueOf(member.getId())).append("/").append(savedPath)
-					.toString());
+			File oldFile = new File(PathUtils.toAbsolutePathFromImage(member.getId(), savedImageName));
 			if (oldFile.exists() && !oldFile.isDirectory()) {
 				oldFile.delete();
 			}
@@ -109,10 +107,8 @@ public class RegisteMemberFace {
 
 	private File getFile(MultipartFile multiFile) {
 
-		StringBuilder sb = new StringBuilder(enumSystem.RESOURCE_FOLDER_ABS_PATH.toString())
-				.append(enumSystem.MEMBERS_FOLDER_NAME.toString()).append("/")
-				.append(String.valueOf(member.getId())).append("/").append(newfileName).append(ext);
-		File file = new File(sb.toString());
+	
+		File file = new File(PathUtils.toAbsolutePathFromImage(member.getId(), newfileName+ext));
 		file.mkdirs();
 		return file;
 	}
@@ -138,17 +134,17 @@ public class RegisteMemberFace {
 		
 		Image oldImage = ImageIO.read(img);
 		Image newImage = null;
+		final int maxWidth = enumSystem.MAX_MEMBER_IMAGE_WIDTH.toInt();
+		final int maxHeight = enumSystem.MAX_MEMBER_IMAGE_HEIGHT.toInt();
 		final int oldWidth = oldImage.getWidth(null);
 		final int oldHeight = oldImage.getHeight(null);
 		int newHeight = 0;
 		int newWidth = 0;
 
-		if (oldHeight < enumSystem.MAX_MEMBER_IMAGE_HEIGHT.toInt()
-				|| oldWidth < enumSystem.MAX_MEMBER_IMAGE_WIDTH.toInt())
+		if (oldHeight < maxHeight	|| oldWidth < maxWidth)
 			return oldImage;
 
-		if (oldHeight >= enumSystem.MAX_MEMBER_IMAGE_HEIGHT.toInt()
-				|| oldWidth >= enumSystem.MAX_MEMBER_IMAGE_WIDTH.toInt()) {
+		if (oldHeight >= maxHeight	|| oldWidth >= maxWidth) {
 			int longer = Math.max(oldHeight, oldWidth);
 			float ratio = Math.round((120f / (float) longer) * 100f) / 100f;
 			newHeight = (int) (oldHeight * ratio);

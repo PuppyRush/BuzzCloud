@@ -32,57 +32,39 @@
 				comAjax.ajax();
 			}
 		})
+	
+		$(".contactModal #send").click(function() {
+			var comAjax = new ComAjax();
+			comAjax.setUrl("/entryPage/contact.ajax");
+			comAjax.addParam("from", $(".contactModal #email").val());
+			comAjax.addParam("contain", $(".contactModal #contain").val());
+			comAjax.addParam("subject", $(".contactModal #subject").val());
+			comAjax.setCallback("callback_contact");
+			comAjax.setType("post");
+			comAjax.ajax();			
+		});
 		
-		$(document).ready(function() {
-			$('#loginTobuzzCloud').click(function(e) {
-				e.preventDefault();
-				wraploginModal();
-				
-			});
-			
-			$('.joinToBuzzCloud').click(function(e) {
-				e.preventDefault();
-				wrapJoinModal();
-				
-			});
-			
-			//닫기 버튼을 눌렀을 때
-			$('.loginModal .close').click(function(e) {
-				//링크 기본동작은 작동하지 않도록 한다.
-				e.preventDefault();
-				$('#mask, .loginModal').hide();
-			});
-			
-			//닫기 버튼을 눌렀을 때
-			$("#joinButton").click(function(e) {
-				//링크 기본동작은 작동하지 않도록 한다.
-				e.preventDefault();
-				$('#mask, .joinModal').hide();
-			});
-			
-			$('.joinModal .close').click(function(e) {
-				//링크 기본동작은 작동하지 않도록 한다.
-				e.preventDefault();
-				$('#mask, .joinModal').hide();
-			});
-			
-			//검은 wraploginModal 눌렀을 때
-			$('#mask').click(function() {
-				$(this).hide();
-				$('.loginModal').hide();
-				$('.joinModal').hide();
-			});
-		})
+		function callback_contact(data) {
+			ohSnap(data["message"], {		color : data["messageKind"]});
+		}
+		
+		
+		$(".findPassword").on("click", function() {
+			$("#forwardPage #page").val("LOST_PASSWORD");
+			$("#forwardPage").submit();			
+		});
+		
+		
 		
 		$("#joinButton").click(function() {
 			
 			var idType = "NOTHING";
-			var email = $("#innerJoinForm #email").val();
-			var nickname = $("#innerJoinForm #nickname").val();
-			var password = $("#innerJoinForm #password").val();
+			var email = $("#joinForm #email").val();
+			var nickname = $("#joinForm #nickname").val();
+			var password = $("#joinForm #password").val();
 			
 			var comAjax = new ComAjax();
-			comAjax.setUrl("/entryPage/join.ajax'");
+			comAjax.setUrl("/member/join.ajax");
 			comAjax.addParam("idType", idType);
 			comAjax.addParam("email", email);
 			comAjax.addParam("nickname", nickname);
@@ -102,47 +84,13 @@
 		function callback_join(data) {
 			
 			if (data["message"] != undefined)
-				ohSnap(data["message"], {
-					color : "green"
-				});
+				ohSnap(data["message"], {color:data["messageKind"]} );
 			
 			if (data["isSuccess"]) {
 			$("#preLoginForm").submit();
 			}
 		}
 		
-		function wraploginModal() {
-			//화면의 높이와 너비를 구한다.
-			var maskHeight = $(document).height();
-			var maskWidth = $(window).width();
-			
-			//마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채운다.
-			$('#mask, .joinModal').hide();
-			$('#mask').css({
-				'width' : maskWidth,
-				'height' : maskHeight
-			});
-			$('#mask').fadeTo("slow", 0.8);
-			
-			$('.loginModal').show();
-			
-		}
-		
-		function wrapJoinModal() {
-			//화면의 높이와 너비를 구한다.
-			var maskHeight = $(document).height();
-			var maskWidth = $(window).width();
-			
-			//마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채운다.
-			$('#mask, .loginModal').hide();
-			$('#mask').css({
-				'width' : maskWidth,
-				'height' : maskHeight
-			});
-			$('#mask').fadeTo("slow", 0.8);
-			$('.joinModal').show();
-			
-		}
 		
 		function setHiddenForm() {
 			

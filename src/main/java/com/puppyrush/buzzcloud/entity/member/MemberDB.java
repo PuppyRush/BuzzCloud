@@ -15,8 +15,8 @@ import com.puppyrush.buzzcloud.entity.enumEntityState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberAbnormalState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
-import com.puppyrush.buzzcloud.mail.PostMan;
 import com.puppyrush.buzzcloud.mail.enumMailType;
+import com.puppyrush.buzzcloud.mail.postman.CeriticationJoin;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
@@ -24,6 +24,9 @@ import com.puppyrush.buzzcloud.property.ConnectMysql;
 public class MemberDB {
 
 	private static Connection conn = ConnectMysql.getConnector();
+	
+	@Autowired
+	private CeriticationJoin postman;
 	
 	@Autowired
 	private MemberController mCtl;
@@ -346,7 +349,7 @@ public class MemberDB {
 			_ps.setInt(1, uId);
 			_ps.executeQuery();			
 			
-			PostMan.sendWithdraw(nickname, email, reason);
+			postman.sendWithdraw(nickname, email, reason);
 			
 			conn.commit();
 		}finally{

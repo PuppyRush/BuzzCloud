@@ -4,8 +4,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.puppyrush.buzzcloud.controller.form.ContactForm;
 import com.puppyrush.buzzcloud.controller.form.JoinForm;
 import com.puppyrush.buzzcloud.controller.form.LoginForm;
+import com.puppyrush.buzzcloud.mail.postman.CeriticationJoin;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.service.entity.member.AlreadyLogin;
 import com.puppyrush.buzzcloud.service.entity.member.Join;
@@ -40,26 +42,14 @@ public class EntryPageController {
 	@Autowired(required=true)
 	private AlreadyLogin alreadyLogin;
 	
+	@Autowired(required=true)
+	private CeriticationJoin postman;
+	
 	public EntryPageController() {
 
 	}
 
-	@RequestMapping (value="/login.do" , method = RequestMethod.POST)
-	public ModelAndView login(LoginForm form, HttpServletRequest rq) {
 
-		ModelAndView mv = new ModelAndView();
-		Map<String, Object> returns = new HashMap<String, Object>();
-
-		form.setSessionId(rq.getRequestedSessionId());
-		
-		returns = login.execute(form);
-		
-		mv.addAllObjects(returns);
-		mv.addObject("id", returns.get("id"));
-		mv.setViewName((String)returns.get("view"));
-		
-		return mv;
-	}
 
 	@RequestMapping(value = "/alreadyLogin.ajax", method = RequestMethod.GET)
 	public @ResponseBody Map<String, Object> alreadyLogin(HttpServletRequest rq){
@@ -67,6 +57,7 @@ public class EntryPageController {
 		return alreadyLogin.execute(rq.getRequestedSessionId());
 
 	}
+	
 	
 	
 	@RequestMapping("/postAlreadyLogin.do")
@@ -79,15 +70,10 @@ public class EntryPageController {
 
 	}		
 	
-	@RequestMapping(value="/join.do", method = RequestMethod.POST )
-	public ModelAndView join(JoinForm form, HttpServletRequest rq) {
-			
-		form.setSessionId(rq.getRequestedSessionId());		
-	
-		
-		Map<String, Object> returns = join.execute(form);
-		
-		return new ModelAndView( (String)returns.get("view"), returns);
-
+	@RequestMapping(value = "/contact.ajax", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> alreadyLogin(ContactForm form){
+		return postman.sendToDeveloper(form);
 	}
+	
+
 }

@@ -157,8 +157,6 @@ public final class Member implements Entity {
 	}
 
 	
-
-	
 	////getter setter////
 	
 	public int getId() {
@@ -200,7 +198,6 @@ public final class Member implements Entity {
 			
 		return isJoin;
 	}
-
 
 	public enumMemberType getUserType() {
 		return registrationKind;

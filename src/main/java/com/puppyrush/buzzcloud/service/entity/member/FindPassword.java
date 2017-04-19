@@ -1,0 +1,98 @@
+package com.puppyrush.buzzcloud.service.entity.member;
+
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import javax.management.InstanceAlreadyExistsException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.puppyrush.buzzcloud.controller.form.LoginForm;
+import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.entity.member.MemberDB;
+import com.puppyrush.buzzcloud.entity.member.MemberManager;
+import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
+import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
+import com.puppyrush.buzzcloud.mail.postman.CeriticationJoin;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
+
+
+
+@Service("findPassword")
+final public class FindPassword{
+	
+	@Autowired(required=false)
+	private MemberDB mDB;
+	
+	@Autowired(required=false)
+	private MemberManager mMng;
+	
+	@Autowired(required=false)
+	private CeriticationJoin postman;
+	
+	@Autowired(required=false)
+	private DBManager dbMng;
+	
+	public Map<String,Object> execute(String email) throws SQLException{
+				
+		Map<String,Object> returns = new HashMap<String,Object>();
+		
+	
+		if(mDB.isJoin(email)==false){
+			returns.putAll(new InstanceMessage("가입하지 않은 메일 입니다.", InstanceMessageType.ERROR).getMessage());
+			
+		}
+		else{
+			if(!isOnSiteAccount(email)){
+				returns.putAll(new InstanceMessage("분실 비밀번호는 사이트 가입자만 찾을 수 있습니다.", InstanceMessageType.ERROR).getMessage());
+				
+			}else{						
+				String temp = getTemporaryPassword();
+				postman.sendLostPassword(email, temp);
+				mMng.setLostPassword(email,0, temp);
+				returns.putAll(new InstanceMessage("임시비밀번호를 메일로 보냈습니다. 메일을 확인하세요.", InstanceMessageType.SUCCESS).getMessage());
+			}
+		}
+		returns.put("view",enumPage.ENTRY.toString());
+		return returns;		
+	}
+	
+	private boolean isOnSiteAccount(String email){
+		
+		Map<String, Object> where = new HashMap<String, Object>();
+		List<String> sel = new ArrayList<String>();
+		int id = mDB.getIdOfEmail(email);
+		where.put("memberId", id);
+		sel.add("registrationKind");
+		List<Map<String,Object>> res = dbMng.getColumnsOfPart("member", sel, where);
+		
+		if(res.isEmpty())
+			return false;
+		else if(enumMemberType.valueOf((String)res.get(0).get("registrationKind")).equals(enumMemberType.NOTHING)){
+			return true;
+		}
+		return false;
+		
+	}
+	
+	private String getTemporaryPassword(){
+		final int numbers = '9'-'0'+1;
+		final int letters = 'Z'-'A'+1;
+		StringBuilder tempPW = new StringBuilder("");
+		for(int i=0 ; i < 6; i++){
+			if(new Random().nextBoolean()){
+				tempPW.append((char)(new Random().nextInt(letters)+'A'));
+			}
+			else
+				tempPW.append((char)(new Random().nextInt(numbers)+'0'));
+		}
+		return tempPW.toString();
+	}
+}

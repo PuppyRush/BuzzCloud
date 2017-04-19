@@ -15,7 +15,11 @@ import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberStandard;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.mail.PostMan;
+import com.puppyrush.buzzcloud.mail.PostManImpl;
+import com.puppyrush.buzzcloud.mail.enumMail;
 import com.puppyrush.buzzcloud.mail.enumMailType;
+import com.puppyrush.buzzcloud.mail.postman.CeriticationJoin;
+import com.puppyrush.buzzcloud.mail.postman.CeriticationJoin.Builder;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
@@ -32,6 +36,12 @@ public final class MemberManager {
 
 	@Autowired
 	private DBManager dbMng;
+	
+	@Autowired
+	private CeriticationJoin ce;
+	
+	@Autowired
+	private PostMan postman;
 	
 	/**
 	 * 
@@ -187,11 +197,20 @@ public final class MemberManager {
 				ps.setInt(1, _id);
 				ps.setInt(2, Integer.parseInt(enumMailType.JOIN.toString()));
 				ps.executeUpdate();
+				ps.close();
 				
 				ps = conn.prepareStatement("update memberState set joinCertification = 0 where memberId = ?");
 				ps.setInt(1, _id);
 				ps.executeUpdate();
-
+				ps.close();
+				
+				ps = conn.prepareStatement("select nickname from member where memberId = ?");
+				ps.setInt(1, member.getId());
+				rs = ps.executeQuery();
+				rs.next();
+				String name = rs.getString(1);
+				member.setNickname(name);
+				
 				
 				////////userDetail table
 				
@@ -206,7 +225,7 @@ public final class MemberManager {
 				ps.close();
 				rs.close();
 				
-				PostMan.sendWelcomeMail(member.getNickname(), member.getEmail());
+				postman.sendWelcomeMail(member.getNickname(), member.getEmail());
 				
 				conn.commit();
 			}else
@@ -249,20 +268,14 @@ public final class MemberManager {
 			ps.executeUpdate();
 		
 			
-			String _fullUrl = new StringBuilder(enumPage.ROOT.toString()).append(enumPage.MAIL.toString()).append("?email=").append(member.getEmail()).
-					append("&number=").append(hashedUUID).append("&kind=").append(enumMailType.JOIN.toString()).toString();
+			String _fullUrl = new StringBuilder(enumPage.ROOT.toString()).append("/mail/join.do")
+			.append("?email=").append(member.getEmail()).append("&number=").append(hashedUUID).toString();
 			
 			ps.close();
+			PostMan man = new CeriticationJoin.Builder(enumMail.gmailID.toString(), member.getEmail()).url(_fullUrl).build();
+			man.send();
 			
-			if(PostMan.sendCeriticationJoin(member.getEmail(), _fullUrl )){
-				conn.commit();
-				
-			}
-			else{
-				conn.rollback();
-				
-				return false;
-			}
+			
 		}catch(SQLException e){
 			e.printStackTrace();
 			return false;
@@ -292,7 +305,41 @@ public final class MemberManager {
 		
 	}
 
-
+	public void setLostPassword(String email, int mailId, String tempPW) throws SQLException{
+		
+		
+		Map<String, Object> where = new HashMap<String, Object>();
+		Map<String, Object> set = new HashMap<String, Object>();
+		String hashedPw = BCrypt.hashpw(tempPW, BCrypt.gensalt());
+		
+		int id = mDB.getIdOfEmail(email);
+		where.put("memberId", id);
+		set.put("isAbnormal", 1);
+		set.put("LostPassword", 1);
+		
+		dbMng.updateColumn("memberState", set, where);		
+		set.clear();
+		
+		set.put("password", hashedPw);
+		dbMng.updateColumn("member", set, where);
+		
+		List<String> col = new ArrayList<String>();
+		List<List<Object>> values = new ArrayList<List<Object>>();
+		col.add("memberId");
+		col.add("mailId");
+		col.add("temporaryPassword");
+		col.add("date");
+		
+		List<Object> val = new ArrayList<Object>();
+		val.add(id);
+		val.add(hashedPw);
+		val.add(mailId);
+		val.add(new Timestamp(System.currentTimeMillis()));
+		values.add(val);
+		dbMng.insertColumn("lostPassword", col, values);
+		
+		
+	}
 }
 
 

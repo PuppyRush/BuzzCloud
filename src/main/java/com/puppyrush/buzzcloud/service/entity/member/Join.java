@@ -3,11 +3,15 @@ package com.puppyrush.buzzcloud.service.entity.member;
 
 import com.puppyrush.buzzcloud.controller.form.JoinForm;
 import com.puppyrush.buzzcloud.entity.EntityException;
+import com.puppyrush.buzzcloud.entity.enumEntityState;
+import com.puppyrush.buzzcloud.entity.interfaces.EnumEntity;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.entity.member.MemberManager;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
+import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
 import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.page.enums.enumPageError;
@@ -37,76 +41,59 @@ public class Join{
 	@Autowired(required=false)
 	private MemberManager mMng;
 			
-	public Map<String,Object> execute(JoinForm joinForm){
+	public Map<String,Object> execute(JoinForm form) throws SQLException, EntityException, Throwable{
 			
 		Map<String, Object> returns = new HashMap<String,Object>();
-		
-		try{
-
-			enumMemberType type = enumMemberType.valueOf(joinForm.getIdType());
-			
-			switch (type) {
-					
-				case GOOGLE:
-				case NAVER:			
-					joinForm.setPassword("");
-					
-					break;
-		
-				case NOTHING:
-					
-					if(joinForm.getPassword()==null || joinForm.getPassword().length()<7)
-						throw new PageException(enumPageError.NO_PARAMATER, enumPage.ERROR404); 
-					
-					break;
-		
-				default:
-					throw new PageException(enumPageError.UNKNOWN_PARA_VALUE, enumPage.ERROR404);
-										
-			}	
-			
-			returns = join(joinForm);
+		Member member=null;
 	
-		}
-		catch(PageException e){
-			returns.put("isSuccess", false);
-			returns.put("message", e.getMessage());
-			
-		}catch(Exception e){
-			returns.put("isSuccess", false);
-			returns.put("message", e.getMessage());
-		}
-		catch(Throwable e){
-			returns.put("isSuccess", false);
-			returns.put("message", e.getMessage());
-		}
-					
+
+		enumMemberType type = enumMemberType.valueOf(form.getIdType());
+		
+		switch (type) {
+				
+			case GOOGLE:
+			case NAVER:			
+				form.setPassword("");
+				member = new Member.Builder(form.getEmail()).registrationKind(type).planePassword(form.getPassword()).build();
+				break;
+	
+			case NOTHING:
+				member = new Member.Builder(form.getEmail()).registrationKind(type).planePassword(form.getPassword()).nickname(form.getNickname()).build();
+				if(form.getPassword()==null || form.getPassword().length()<7)
+					throw new PageException(enumPageError.NO_PARAMATER, enumPage.ERROR404); 
+				
+				break;
+	
+			default:
+				throw new PageException(enumPageError.UNKNOWN_PARA_VALUE, enumPage.ERROR404);
+									
+		}	
+		
+		join(member);
+		returns.putAll(new InstanceMessage("가입에 성공하였습니다. 메일인증을 하신 후 로그인하세요.", InstanceMessageType.SUCCESS).getMessage());
+		returns.put("isSuccess", true);
 		return returns;
 	}
 	
-	private Map<String,Object> join(JoinForm form) throws SQLException, EntityException, Throwable{
+	
+	
+	private void join(Member member) throws SQLException, EntityException, Throwable{
 		
-		Map<String, Object> returns = new HashMap<String, Object>();
-		Member tempMember = new Member.Builder(form.getEmail()).registrationKind(enumMemberType.valueOf(form.getIdType())).planePassword(form.getPassword()).build();
-		
-		if(mDB.isJoin(tempMember.getEmail()) ){
-			
-			returns.put("isSuccess", false);
-			returns.put("message", "이미 가입한 유저입니다.");
-			
-		}
-		else{
-			
-			tempMember.doJoin();
-			mMng.requestCertificateJoin(tempMember);					
-			
-			returns.put("isSuccess", true);
-			returns.put("message", "가입에 성공하였습니다. 메일인증을 하신 후 로그인하세요.");
+		checkJoinAndDuplicated(member);
 				
-		}
+		member.doJoin();
+		mMng.requestCertificateJoin(member);					
 		
-		return returns;
+	}
+	
+	private void checkJoinAndDuplicated(Member member) throws SQLException, PageException{
+			
+		if(mDB.isJoin(member.getEmail()) )
+			throw new PageException("이미 가입한 유저입니다.",enumPageError.WRONG_PARAMATER,enumPage.ENTRY);
+		else if(mDB.isExistNickname(member.getNickname()))
+			throw new PageException("닉네임이 중복됩니다.",enumPageError.WRONG_PARAMATER,enumPage.ENTRY);
 		
+	
 	}
 }
 	

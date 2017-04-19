@@ -16,7 +16,7 @@ public enum enumPage {
 	CERTIFICATE("verifyRegistration.do"),
 	LOGIN("member/Login"),
 	JOIN("member/Join"),
-	LOST_PASSWORD("member/Lostpassword"),
+	LOST_PASSWORD("member/FindPassword"),
 	RESET_PASSWORD("member/ResetPassword"),
 	CERTIFICATE_FAILED_PASSWORD("member/CertificatePassword"),
 	INPUT_CERTIFICATION_NUMBER("member/CheckAuthNum"),
@@ -33,7 +33,7 @@ public enum enumPage {
 	
 	SETTINGS("/Settings"),
 	
-	MAIL("/buzzCloudMail.do"),
+	MAIL("/mail"),
 	
 	LOGIN_MANAGER("/AdminPage/AdminLogin");
 		

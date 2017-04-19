@@ -2,10 +2,16 @@ package com.puppyrush.buzzcloud.controller;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.puppyrush.buzzcloud.controller.form.JoinForm;
 import com.puppyrush.buzzcloud.controller.form.LoginForm;
+import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
+import com.puppyrush.buzzcloud.service.entity.member.FindPassword;
+import com.puppyrush.buzzcloud.service.entity.member.Join;
 import com.puppyrush.buzzcloud.service.entity.member.Login;
 import com.puppyrush.buzzcloud.service.entity.member.Logout;
 
@@ -13,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,9 +37,33 @@ public class MemberController {
 
 	@Autowired(required = false)
 	private Login login;		
+	
+	@Autowired(required = false)
+	private Join join;		
 
+	@Autowired(required = false)
+	private FindPassword findPassword;
+	
+	@RequestMapping(value="/join.ajax", method = RequestMethod.POST )
+	public @ResponseBody Map<String, Object> join(JoinForm form, HttpServletRequest rq) {
+			
+		
+		form.setSessionId(rq.getRequestedSessionId());		
+			
+		Map<String, Object> returns = new HashMap<String, Object>();
+		try {
+			returns = join.execute(form);
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			returns.putAll(new InstanceMessage(e.getMessage(), InstanceMessageType.ERROR).getMessage());
+		}
+		
+		return returns;
+	}
+	
 	@RequestMapping (value="/login.do" , method = RequestMethod.POST)
-	public ModelAndView login(@RequestParam("postPage") String postPage, LoginForm form, HttpServletRequest rq) {
+	public ModelAndView login(LoginForm form, HttpServletRequest rq) {
 
 		ModelAndView mv = new ModelAndView();
 		Map<String, Object> returns = new HashMap<String, Object>();
@@ -42,7 +73,8 @@ public class MemberController {
 		returns = login.execute(form);
 		
 		mv.addAllObjects(returns);
-		mv.setViewName(postPage);
+		mv.addObject("id", returns.get("id"));
+		mv.setViewName((String)returns.get("view"));
 		
 		return mv;
 	}
@@ -52,6 +84,25 @@ public class MemberController {
 
 		ModelAndView mv = new ModelAndView();
 		Map<String,Object> returns = logout.execute(request.getRequestedSessionId());
+		
+		
+		mv.setViewName((String)returns.get("view"));
+		mv.addAllObjects(returns);
+		return mv;
+	}
+	
+	@RequestMapping(value = "/findPassword.do", method = RequestMethod.GET)
+	public ModelAndView findPassword(@RequestParam("email") String email) {
+
+		ModelAndView mv = new ModelAndView();
+		Map<String, Object> returns = new HashMap<String, Object>();
+		try {
+			returns = findPassword.execute(email);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			returns.putAll(new InstanceMessage("임시비밀번호를 메일로 보냈습니다. 메일을 확인하세요.", InstanceMessageType.SUCCESS).getMessage());
+		}
 		
 		
 		mv.setViewName((String)returns.get("view"));

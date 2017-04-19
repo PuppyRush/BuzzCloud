@@ -5,6 +5,8 @@ package com.puppyrush.buzzcloud.entity.member;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+
+import javax.mail.MessagingException;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +17,9 @@ import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberStandard;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.mail.PostMan;
-import com.puppyrush.buzzcloud.mail.PostManImpl;
+import com.puppyrush.buzzcloud.mail.PostManImple;
 import com.puppyrush.buzzcloud.mail.enumMail;
 import com.puppyrush.buzzcloud.mail.enumMailType;
-import com.puppyrush.buzzcloud.mail.postman.CeriticationJoin;
-import com.puppyrush.buzzcloud.mail.postman.CeriticationJoin.Builder;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
@@ -37,8 +37,7 @@ public final class MemberManager {
 	@Autowired
 	private DBManager dbMng;
 	
-	@Autowired
-	private CeriticationJoin ce;
+	
 	
 	@Autowired
 	private PostMan postman;
@@ -225,7 +224,11 @@ public final class MemberManager {
 				ps.close();
 				rs.close();
 				
-				postman.sendWelcomeMail(member.getNickname(), member.getEmail());
+				String subject = "버즈클라우드에 가입하실것을 환영합니다.";
+				String content = member.getNickname() + "의 버즈클라우드 가입을 축하드립니다. 버즈클라우드 서비스의 사용방법은 사이트를 참고해주세요. 감사합니다.";
+				
+				PostMan man = new PostManImple.Builder(enumMail.gmailID.toString(), member.getEmail()).subject(subject).content(content).build();
+				man.send();
 				
 				conn.commit();
 			}else
@@ -271,14 +274,22 @@ public final class MemberManager {
 			String _fullUrl = new StringBuilder(enumPage.ROOT.toString()).append("/mail/join.do")
 			.append("?email=").append(member.getEmail()).append("&number=").append(hashedUUID).toString();
 			
-			ps.close();
-			PostMan man = new CeriticationJoin.Builder(enumMail.gmailID.toString(), member.getEmail()).url(_fullUrl).build();
-			man.send();
+			String subject = "버즈클라우드의 가입 인증메일 입니다.";
+			String content = new StringBuilder(
+					"안녕하세요.  회원님의 가입 인증을 위해 다음 url에 접속하시면 가입이 마무리됩니다. 만일 가입하지 않으셨는데 메일이 도착하셨다면 관리자에 문의 하시기 바랍니다.\n\n인증URL : ")
+							.append(_fullUrl).toString();
 			
+			ps.close();
+			
+			PostMan man = new PostManImple.Builder(enumMail.gmailID.toString(), member.getEmail()).subject(subject).content(content).build();
+			man.send();
 			
 		}catch(SQLException e){
 			e.printStackTrace();
 			return false;
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return true;

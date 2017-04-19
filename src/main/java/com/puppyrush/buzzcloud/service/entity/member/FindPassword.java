@@ -8,19 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.management.InstanceAlreadyExistsException;
-
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.puppyrush.buzzcloud.controller.form.LoginForm;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.entity.member.MemberManager;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
 import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
-import com.puppyrush.buzzcloud.mail.postman.CeriticationJoin;
+import com.puppyrush.buzzcloud.mail.PostManImple;
+import com.puppyrush.buzzcloud.mail.PostMan;
+import com.puppyrush.buzzcloud.mail.enumMail;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 
 
@@ -34,13 +35,11 @@ final public class FindPassword{
 	@Autowired(required=false)
 	private MemberManager mMng;
 	
-	@Autowired(required=false)
-	private CeriticationJoin postman;
 	
 	@Autowired(required=false)
 	private DBManager dbMng;
 	
-	public Map<String,Object> execute(String email) throws SQLException{
+	public Map<String,Object> execute(String email) throws SQLException, AddressException, MessagingException{
 				
 		Map<String,Object> returns = new HashMap<String,Object>();
 		
@@ -55,7 +54,7 @@ final public class FindPassword{
 				
 			}else{						
 				String temp = getTemporaryPassword();
-				postman.sendLostPassword(email, temp);
+				sendMail(temp, email);
 				mMng.setLostPassword(email,0, temp);
 				returns.putAll(new InstanceMessage("임시비밀번호를 메일로 보냈습니다. 메일을 확인하세요.", InstanceMessageType.SUCCESS).getMessage());
 			}
@@ -79,6 +78,17 @@ final public class FindPassword{
 			return true;
 		}
 		return false;
+		
+	}
+	
+	private void sendMail(String temporaryPw, String to) throws AddressException, MessagingException{
+		
+		String subject = "[BuzzCloud]요청하신 임시비밀 번호 입니다.";
+		String content = "비밀번호 분실로 임시 비밀번호를 보냅니다. 유효기간은 하루동안이니 이 안에 로그인 하시기 바랍니다.\n임시비밀번호 : " + temporaryPw; 
+		
+		PostMan man = new PostManImple.Builder(enumMail.gmailID.toString(), to).subject(subject).content(content).build();
+		man.send();
+		
 		
 	}
 	

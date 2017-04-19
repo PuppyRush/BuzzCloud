@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.EnumMap;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -18,11 +21,14 @@ import com.puppyrush.buzzcloud.entity.member.enums.enumMemberAbnormalState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberStandard;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
+import com.puppyrush.buzzcloud.mail.PostMan;
+import com.puppyrush.buzzcloud.mail.PostManImple;
+import com.puppyrush.buzzcloud.mail.enumMail;
 import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.page.enums.enumPageError;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
-import com.puppyrush.buzzcloud.property.enums.enumSystem;
+import com.puppyrush.buzzcloud.property.enumSystem;
 /**
  * member에 대한 객체 정보는 sessionId,email을 이용해  getMember를 통해서만 얻을 수 있으며
  * member객체를 생성하기 위한 생성자는 private이며 Builder를 통해서만 생성이 가능하다.
@@ -294,13 +300,14 @@ public final class Member implements Entity {
 			ps.setInt(1, enumBand.DEFAULT_CAPACITY.toInteger());			
 			conn.commit();
 			
-			
+
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
 
 		return true;
 	}
+
 
 	/**
 	 * @throws Exception 

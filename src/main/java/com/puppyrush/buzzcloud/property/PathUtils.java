@@ -1,7 +1,5 @@
 package com.puppyrush.buzzcloud.property;
 
-import com.puppyrush.buzzcloud.property.enums.enumSystem;
-
 public class PathUtils {
 
 	private PathUtils(){

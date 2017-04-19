@@ -13,7 +13,7 @@ import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.property.PathUtils;
-import com.puppyrush.buzzcloud.property.enums.enumSystem;
+import com.puppyrush.buzzcloud.property.enumSystem;
 
 @Service("gettingMyAccountInfo")
 public class GettingMyAccountInfo{

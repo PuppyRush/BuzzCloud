@@ -30,7 +30,7 @@ import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.entity.member.MemberManager;
-import com.puppyrush.buzzcloud.property.enums.enumSystem;
+import com.puppyrush.buzzcloud.property.enumSystem;
 import com.puppyrush.buzzcloud.entity.band.Band.AuthoritedMember;
 import com.puppyrush.buzzcloud.entity.band.BandController;
 import com.puppyrush.buzzcloud.entity.band.BandDB;

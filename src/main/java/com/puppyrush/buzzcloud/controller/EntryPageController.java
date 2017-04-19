@@ -5,25 +5,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.puppyrush.buzzcloud.controller.form.ContactForm;
-import com.puppyrush.buzzcloud.controller.form.JoinForm;
-import com.puppyrush.buzzcloud.controller.form.LoginForm;
-import com.puppyrush.buzzcloud.mail.postman.CeriticationJoin;
+import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
+import com.puppyrush.buzzcloud.property.enumSystem;
 import com.puppyrush.buzzcloud.service.entity.member.AlreadyLogin;
-import com.puppyrush.buzzcloud.service.entity.member.Join;
-import com.puppyrush.buzzcloud.service.entity.member.Login;
-import com.puppyrush.buzzcloud.service.entity.member.Logout;
+import com.puppyrush.buzzcloud.service.entry.Contact;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller("entryPage")
@@ -34,17 +30,11 @@ public class EntryPageController {
 	// LoggerFactory.getLogger(MainController.class);;
 
 	@Autowired(required=true)
-	private Login login;
-	
-	@Autowired(required=true)
-	private Join join;
+	private Contact contact;
 	
 	@Autowired(required=true)
 	private AlreadyLogin alreadyLogin;
-	
-	@Autowired(required=true)
-	private CeriticationJoin postman;
-	
+
 	public EntryPageController() {
 
 	}
@@ -72,7 +62,16 @@ public class EntryPageController {
 	
 	@RequestMapping(value = "/contact.ajax", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> alreadyLogin(ContactForm form){
-		return postman.sendToDeveloper(form);
+		Map<String, Object> returns = new HashMap<String, Object>();
+		try {
+			returns = contact.execute(form);
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), InstanceMessageType.ERROR).getMessage());
+			e.printStackTrace();
+			
+		}
+		return returns;
 	}
 	
 

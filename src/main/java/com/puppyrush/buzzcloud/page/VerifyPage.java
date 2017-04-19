@@ -14,7 +14,7 @@ import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
 import com.puppyrush.buzzcloud.page.enums.enumCautionKind;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.commandAction;
-import com.puppyrush.buzzcloud.property.enums.enumSystem;
+import com.puppyrush.buzzcloud.property.enumSystem;
 
 public class VerifyPage {
 

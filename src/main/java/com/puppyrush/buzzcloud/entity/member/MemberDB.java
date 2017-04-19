@@ -6,6 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.EnumMap;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +19,10 @@ import com.puppyrush.buzzcloud.entity.enumEntityState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberAbnormalState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
+import com.puppyrush.buzzcloud.mail.PostManImple;
+import com.puppyrush.buzzcloud.mail.PostMan;
+import com.puppyrush.buzzcloud.mail.enumMail;
 import com.puppyrush.buzzcloud.mail.enumMailType;
-import com.puppyrush.buzzcloud.mail.postman.CeriticationJoin;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
@@ -25,8 +31,6 @@ public class MemberDB {
 
 	private static Connection conn = ConnectMysql.getConnector();
 	
-	@Autowired
-	private CeriticationJoin postman;
 	
 	@Autowired
 	private MemberController mCtl;
@@ -337,7 +341,7 @@ public class MemberDB {
 		
 	}
 
-	public  void withdrawMember(int uId, String nickname, String email, String reason) throws SQLException{
+	public  void withdrawMember(int uId, String nickname, String email, String reason) throws SQLException, AddressException, MessagingException{
 		
 		PreparedStatement _ps= null;
 		try{
@@ -349,7 +353,14 @@ public class MemberDB {
 			_ps.setInt(1, uId);
 			_ps.executeQuery();			
 			
-			postman.sendWithdraw(nickname, email, reason);
+			String subject = "[WidetStore] 탈퇴 ";
+			String content = new StringBuilder("안녕하세요.  버즈클라우드에서 알립니다. ").append(nickname)
+					.append("님이 버즈클라우드에서 탈퇴 됐습니다.\n 만일 탈퇴를 요청하지 않은 경우면 관리자에게 문의하세요.\n").append("탈퇴사유 : ")
+					.append(reason).toString();
+			
+			PostMan man = new PostManImple.Builder(enumMail.gmailID.toString(), email).subject(subject).content(content).build();
+			man.send();
+			
 			
 			conn.commit();
 		}finally{

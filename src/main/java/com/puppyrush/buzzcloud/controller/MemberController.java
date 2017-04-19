@@ -10,6 +10,7 @@ import com.puppyrush.buzzcloud.controller.form.LoginForm;
 import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
+import com.puppyrush.buzzcloud.property.enumSystem;
 import com.puppyrush.buzzcloud.service.entity.member.FindPassword;
 import com.puppyrush.buzzcloud.service.entity.member.Join;
 import com.puppyrush.buzzcloud.service.entity.member.Login;
@@ -23,6 +24,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller("memberPage")
@@ -101,7 +104,11 @@ public class MemberController {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			returns.putAll(new InstanceMessage("임시비밀번호를 메일로 보냈습니다. 메일을 확인하세요.", InstanceMessageType.SUCCESS).getMessage());
+			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), InstanceMessageType.ERROR).getMessage());
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), InstanceMessageType.ERROR).getMessage());
 		}
 		
 		

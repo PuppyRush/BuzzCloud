@@ -1,6 +1,6 @@
 package com.puppyrush.buzzcloud.page.enums;
 
-import com.puppyrush.buzzcloud.property.enums.enumSystem;
+import com.puppyrush.buzzcloud.property.enumSystem;
 
 public enum enumPage {
 

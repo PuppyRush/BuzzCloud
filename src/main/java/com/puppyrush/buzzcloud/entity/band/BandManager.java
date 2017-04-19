@@ -38,7 +38,7 @@ import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
-import com.puppyrush.buzzcloud.property.enums.enumSystem;
+import com.puppyrush.buzzcloud.property.enumSystem;
 import com.puppyrush.buzzcloud.property.tree.Node;
 import com.puppyrush.buzzcloud.property.tree.Tree;
 

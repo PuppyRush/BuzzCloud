@@ -23,7 +23,7 @@ import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
-import com.puppyrush.buzzcloud.property.enums.enumSystem;
+import com.puppyrush.buzzcloud.property.enumSystem;
 
 @Service("bandDB")
 public class BandDB {

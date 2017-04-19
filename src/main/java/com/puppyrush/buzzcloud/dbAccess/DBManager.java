@@ -227,10 +227,11 @@ public final class DBManager {
 		
 	}
 	
-	public void insertColumn(String tableName, List<String> columns, List<List<Object>> values){
+	public List<Integer>  insertColumn(String tableName, List<String> columns, List<List<Object>> values){
 		
+		List<Integer> keys = new ArrayList<Integer>();
 		StringBuilder sql = new StringBuilder("insert into ").append(tableName).append(" (");
-	
+		
 		Iterator<String> it = columns.iterator();
 		while(it.hasNext()){
 			String str = it.next();
@@ -262,7 +263,7 @@ public final class DBManager {
 			
 			conn.setAutoCommit(false);
 			
-			PreparedStatement ps = conn.prepareStatement(sql.toString());
+			PreparedStatement ps = conn.prepareStatement(sql.toString(),PreparedStatement.RETURN_GENERATED_KEYS);
 			
 			int count = 1;
 			for(int i=0; i < values.size() ; i++){
@@ -272,6 +273,16 @@ public final class DBManager {
 			}
 				
 			ps.executeUpdate();
+			ResultSet rs = ps.getGeneratedKeys();
+						
+			
+			while(rs.next()){
+				java.sql.ResultSetMetaData rsmd = rs.getMetaData();
+				int keyCount = rsmd.getColumnCount();
+				for(int i=0 ; i < keyCount ; i++)
+					keys.add(rs.getInt(i));
+				
+			}
 			
 			conn.commit();
 			conn.setAutoCommit(true);
@@ -281,6 +292,7 @@ public final class DBManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return keys;
 		
 	}
 

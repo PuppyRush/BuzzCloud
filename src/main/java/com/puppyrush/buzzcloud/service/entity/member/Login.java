@@ -55,11 +55,11 @@ final public class Login{
 			Member member = mCtl.getMember(form);
 			member.setSessionId(form.getSessionId());
 			
-			returns.putAll(isInvalidate(member));
+			returns.putAll(doLoginAsCase(member));
 					
-			returns.put("nickname", member.getNickname());
+			/*returns.put("nickname", member.getNickname());
 			returns.put("id", String.valueOf(member.getId()));
-			returns.put("email", member.getEmail());
+			returns.put("email", member.getEmail());*/
 			returns.putAll(new InstanceMessage("로그인에 성공하셨습니다.", InstanceMessageType.SUCCESS).getMessage());
 		}catch(PageException e){
 			e.printStackTrace();
@@ -93,9 +93,9 @@ final public class Login{
 		return returns;
 	}
 	
-	public Map<String,String> isInvalidate(Member member) throws Throwable{
+	public Map<String,Object> doLoginAsCase(Member member) throws Throwable{
 		
-		Map<String,String> returns = new HashMap<String,String>();
+		Map<String, Object> returns = new HashMap<String, Object>();
 		
 		switch(member.getUserType()){
 			case NOTHING:
@@ -116,14 +116,15 @@ final public class Login{
 			
 		}
 		
+		returns.put("view", enumPage.MAIN.toString());		
 		return returns;
 		
 	}
 	
-	private Map<String,String> oauthCase(Member member) throws Throwable{
+	private Map<String,Object> oauthCase(Member member) throws Throwable{
 		
 		
-		Map<String,String> returns = new HashMap<String,String>();
+		Map<String, Object> returns = new HashMap<String, Object>();
 	
 		if(mDB.isJoin(member.getEmail()))
 			member.doLogin();
@@ -137,16 +138,16 @@ final public class Login{
 			
 		}
 			
-		returns.put("view", enumPage.MAIN.toString());		
+		
 		
 		
 		return returns;
 	}
 
-	private Map<String,String> nothingCase(Member member) throws Throwable{
+	private Map<String,Object> nothingCase(Member member) throws Throwable{
 		
 		
-		Map<String,String> returns = new HashMap<String,String>();
+		Map<String, Object> returns = new HashMap<String, Object>();
 		
 		checkJoinAndPreLogin(member);
 
@@ -187,7 +188,7 @@ final public class Login{
 		
 		
 		//아직 가입 인증을 안한경우.
-		if(state.containsKey(enumMemberAbnormalState.JOIN_CERTIFICATION) && state.get( enumMemberAbnormalState.JOIN_CERTIFICATION))
+		if(state.get(enumMemberAbnormalState.JOIN_CERTIFICATION))
 			throw new EntityException(enumMemberState.NOT_JOIN_CERTIFICATION, enumPage.ENTRY);
 			
 		//비밀번호 분실상태인가?

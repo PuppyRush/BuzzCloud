@@ -1,5 +1,4 @@
 
-<%@page import="com.puppyrush.buzzcloud.page.enums.*, com.puppyrush.buzzcloud.page.* , java.util.HashMap" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -33,33 +32,23 @@
 <script src="/resources/lib/include/notificator/ohsnap.js" type="text/javascript"	charset="utf-8"></script>
 <link rel="stylesheet" type="text/css"	href="/resources/lib/include/notificator/ohsnap.css" />
 
-<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-		        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-		        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-		    <![endif]-->
-
 </head>
 
 <body>
 
 	<div id="mask"></div>
-
 	<div class="joinModal">
 
-		<div class="text-vertical-center" tabindex="-1" role="dialog"
-			aria-hidden="true">
+		<div class="text-vertical-center" tabindex="-1" role="dialog"		aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal"
-							aria-hidden="true">×</button>
+						<button type="button" class="close" data-dismiss="modal"	aria-hidden="true">×</button>
 						<h1 class="text-center">버즈클라우드에 가입하기</h1>
 					</div>
 					<div class="modal-body">
 
-						<form class="form col-md-12 center-block" id="join.do"		method="POST" ACTION="/entryPage/join.do">
+						<form class="form col-md-12 center-block" id="joinForm"		method="POST" ACTION="/member/join.do">
 										<div class="form-group">
 											<input type="text" name="email" id="email" class="form-control input-lg"	placeholder="Email">
 										</div>
@@ -94,18 +83,16 @@
 	</div>
 
 	<div class="loginModal">
-		<div class="text-vertical-center" tabindex="-1" role="dialog"
-			aria-hidden="true">
+		<div class="text-vertical-center" tabindex="-1" role="dialog"		aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal"
-							aria-hidden="true">×</button>
+						<button type="button" class="close" data-dismiss="modal"				aria-hidden="true">×</button>
 						<h1 class="text-center">버즈클라우드에 로그인</h1>
 					</div>
 					<div class="modal-body">
 
-						<form class="form col-md-12 center-block" id="loginForm"	method="POST" ACTION="/entryPage/login.do">
+						<form class="form col-md-12 center-block" id="loginForm"	method="POST" ACTION="/member/login.do">
 							<div class="form-group">
 								<input type="text" name="email"	 id="email"		class="form-control input-lg" placeholder="Email">
 							</div>
@@ -114,7 +101,8 @@
 							</div>
 							<div class="form-group">
 								<button class="btn btn-primary btn-lg btn-block" type="submit"	>로그인하기</button>
-								<span class="pull-right"><a href="#" class="joinToBuzzCloud">가입하기</a></span>
+								<span class="pull-right"><a href="#" class="joinToBuzzCloud">가입하기  </a></span>  
+								<span class="pull-right"><a href="#" class="findPassword">비밀번호 찾기  /</a></span>
 							</div>
 
 							<input type="hidden"  id="idType" name="idType" value="NOTHING">
@@ -131,6 +119,42 @@
 			</div>
 		</div>
 	</div>
+	
+	<div class="contactModal">
+		<div class="text-vertical-center" tabindex="-1" role="dialog"		aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h1 class="text-center">무엇을 도와드릴까요?!</h1>
+					</div>
+					<div class="modal-body">
+
+						<form class="form col-md-12 center-block" id="contactForm"	method="POST" ACTION="/entryPage/contact.ajax">
+							<div class="form-group">
+								<input type="text" name="email"	 id="email"		class="form-control input-lg" placeholder="email">
+							</div>
+							<div class="form-group">
+								<input type="text" name="subject"	 id="subject"		class="form-control input-lg" placeholder="subject">
+							</div>												
+							<textarea id="contain" name="contain" rows="4"></textarea>
+							<div class="form-group">
+								<button class="btn btn-primary btn-lg btn-block" type="button"	id="send">메일 보내기</button>
+							</div>
+						</form>
+						
+
+					</div>
+					<div class="modal-footer">
+						<div class="col-md-12">
+							<button class="close" data-dismiss="modal" aria-hidden="true">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
 	<!-- Navigation -->
 
 	<nav class="navbar navbar-inverse navbar-fixed-bottom"	role="navigation">
@@ -147,13 +171,11 @@
 				<a class="navbar-brand" href="#">BuzzCloud</a>
 			</div>
 			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="collapse navbar-collapse"
-				id="bs-example-navbar-collapse-1">
+			<div class="collapse navbar-collapse"			id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
 					<li><a href="#">버즈클라우드?</a></li>
 					<li><a href="#">어떻게 사용하죠?</a></li>
-					<li><a href="#">문제점보고와 건의사항</a></li>
-					<li><a href="#">개발자와 연락하기</a></li>
+					<li><a href="#" id="contact">개발자와 연락하기</a></li>
 					<li><a href="#" class="joinToBuzzCloud">버즈클라우드에 가입하기 </a></li>
 				</ul>
 			</div>
@@ -183,6 +205,10 @@
 
 	<form id="alreadyLoginForm" method="GET" action="/entryPage/postAlreadyLogin.do">
 	</form>  
+	
+	<form id="forwardPage" method="GET" action="/forwardPage.do">
+		<input type="hidden"  id="page" name="page" >
+	</form>  
 
 	<!--  static library -->
 
@@ -198,6 +224,7 @@
 <script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/commonAjax.js"></script>
 	<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/clientSideLibrary.js"></script>
 	<script type="text/javascript" charset="utf-8" src="/resources/views/entryPage/js/entryPage.js"></script>
+	<script type="text/javascript" charset="utf-8" src="/resources/views/entryPage/js/form.js"></script>
 	
 
 
@@ -207,7 +234,7 @@
 		
 		message = "${message}";
 		if(message !="" ){
-			popup_color = ${messageKind}
+			popup_color = "${messageKind}";
 			ohSnap(message,{color:popup_color});
 		}
 				

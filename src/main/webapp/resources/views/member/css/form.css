@@ -10,22 +10,6 @@
 	src: url(NanumGothic.eot);
 }
 
-#mask {
-	position: absolute;
-	z-index: 9000;
-	background-color: #000;
-	display: none;
-	left: 0;
-	top: 0;
-}
-
-.contactModal {
-	display: none;
-	position: absolute;
-	left: 22%;
-	top: 10%;
-	z-index: 10000;
-}
 
 .loginModal {
 	display: none;
@@ -35,20 +19,6 @@
 	z-index: 10000;
 }
 
-.joinModal {
-	display: none;
-	position: absolute;
-	left: 20%;
-	top: 10%;
-	z-index: 10000;
-}
-
-.contactModal #contain {
-	resize: none;
-	width: 100%;
-	max-width: 100%;
-	max-height: 100%;
-}
 
 /* Button Common */
 .button, .button * {

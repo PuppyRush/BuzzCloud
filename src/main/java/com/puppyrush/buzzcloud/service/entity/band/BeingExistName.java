@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
-import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
-import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
 
 @Service("isExistBandName")
 public class BeingExistName {

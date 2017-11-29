@@ -1,6 +1,8 @@
-package com.puppyrush.buzzcloud.entity.message.enums;
+package com.puppyrush.buzzcloud.entity.message.issue;
 
-public enum IssueType {
+import com.puppyrush.buzzcloud.entity.message.MessageEnum;
+
+public enum IssueType implements MessageEnum {
 	
 	NOTIFICATION("NOTIFICATION"),
 	GROUP_ISSUE("GROUP_ISSUE");

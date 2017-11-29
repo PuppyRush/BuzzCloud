@@ -26,8 +26,7 @@ import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
-import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
-import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
 import com.puppyrush.buzzcloud.property.PathUtils;
 import com.puppyrush.buzzcloud.property.enumSystem;
 

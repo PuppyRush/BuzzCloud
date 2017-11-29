@@ -1,8 +1,9 @@
 package com.puppyrush.buzzcloud.entity.member.enums;
 
+import com.puppyrush.buzzcloud.entity.member.MemberEnum;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 
-public enum enumMemberAbnormalState {
+public enum enumMemberAbnormalState implements MemberEnum  {
 
 
 	LOST_PASSWORD("lostPassword"),

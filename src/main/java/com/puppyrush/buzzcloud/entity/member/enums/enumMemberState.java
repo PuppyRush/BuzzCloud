@@ -1,8 +1,9 @@
 package com.puppyrush.buzzcloud.entity.member.enums;
 
 import com.puppyrush.buzzcloud.entity.interfaces.EnumEntity;
+import com.puppyrush.buzzcloud.entity.member.MemberEnum;
 
-public enum enumMemberState implements EnumEntity
+public enum enumMemberState implements MemberEnum
 {
 	LOGOUT("로그아웃했습니다."),
 	NOT_LOGIN("로그인후 사용 가능합니다."),
@@ -18,12 +19,23 @@ public enum enumMemberState implements EnumEntity
 	LOST_PASSWORD("비밀번호를 분실하신 상태입니다."),
 	EXCEED_FAILD_LOGIN("비밀번호를 "+enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString()+"회 이상 초과 하셨습니다."),
 	PASSING_CHANGE_PWD("비밀번호를 변경하지 않은지 "+enumMemberStandard.PASSWD_CHANGE_DATE_OF_MONTH+"되셨습니다."),
-	ERROR("unknow error");
+	ERROR("unknow error"),
 	
+	RESOLVE_JOIN(0);
+
+	private int value;
 	private String enumStr;
 	 
 	enumMemberState(String str){
 		enumStr = str;
+	}
+	
+	enumMemberState(int i){
+		value = i;
+	}
+	
+	public int toInt(){
+		return value;
 	}
 	
 	public String toString(){

@@ -11,7 +11,10 @@ public enum enumSystem {
 	DEFAULT_FOLDER_NAME("upload"),
 	MEMBERS_FOLDER_NAME("member"),
 	ADMIN("gooddaumi@naver.com"),
+	ADMIN_ID(0),
 	MAX_CAPACITY(1024), //MB
+	
+	
 	
 	MAX_MEMBER_IMAGE_WIDTH(120),
 	MAX_MEMBER_IMAGE_HEIGHT(120),

@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 
 import com.puppyrush.buzzcloud.entity.message.Message;
 
-import com.puppyrush.buzzcloud.entity.message.enums.IssueType;
 
 public final class Issue extends Message{
 

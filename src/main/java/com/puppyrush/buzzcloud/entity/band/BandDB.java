@@ -20,8 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.puppyrush.buzzcloud.controller.form.BandForm;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
-import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
-import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 import com.puppyrush.buzzcloud.property.enumSystem;
 

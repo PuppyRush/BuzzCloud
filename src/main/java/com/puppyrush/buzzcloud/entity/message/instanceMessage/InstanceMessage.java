@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.puppyrush.buzzcloud.entity.message.Message;
-import com.puppyrush.buzzcloud.entity.message.enums.IssueType;
-import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
 
 public final class InstanceMessage extends Message{
 

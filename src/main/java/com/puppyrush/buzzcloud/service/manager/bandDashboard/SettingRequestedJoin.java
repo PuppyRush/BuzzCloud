@@ -1,16 +1,10 @@
 package com.puppyrush.buzzcloud.service.manager.bandDashboard;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.crypto.CipherInputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,16 +12,10 @@ import org.springframework.stereotype.Service;
 import com.puppyrush.buzzcloud.controller.form.RequestedJoinForm;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.entity.EntityException;
-import com.puppyrush.buzzcloud.entity.band.Band;
-import com.puppyrush.buzzcloud.entity.band.Band.BundleBand;
 import com.puppyrush.buzzcloud.entity.band.BandDB;
 import com.puppyrush.buzzcloud.entity.band.BandManager;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
-import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
-import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
-import com.puppyrush.buzzcloud.property.ConnectMysql;
-import com.puppyrush.buzzcloud.property.tree.Node;
-import com.puppyrush.buzzcloud.property.tree.Tree;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
 
 @Service("settingRequestedJoin")
 public class SettingRequestedJoin {

@@ -7,8 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.puppyrush.buzzcloud.controller.form.JoinForm;
 import com.puppyrush.buzzcloud.controller.form.LoginForm;
-import com.puppyrush.buzzcloud.entity.message.enums.InstanceMessageType;
-import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.enumSystem;
 import com.puppyrush.buzzcloud.service.entity.member.FindPassword;

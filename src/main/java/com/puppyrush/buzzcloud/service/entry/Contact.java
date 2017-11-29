@@ -35,8 +35,8 @@ public class Contact {
 				
 		Map<String,Object> returns = new HashMap<String,Object>();
 		
-		PostMan man = new PostManImple.Builder(enumMail.gmailID.toString(),form.getFrom()).subject(form.getSubject()).content(form.getContain()).build();
-		man.send();
+		PostMan man = new PostManImple();
+		man.send(new PostManImple.Builder(enumMail.gmailID.toString(),form.getFrom()).subject(form.getSubject()).content(form.getContain()).build());
 		
 		
 		returns.putAll(new InstanceMessage("관리자에게 메일을 보냈습니다.", InstanceMessageType.SUCCESS).getMessage());

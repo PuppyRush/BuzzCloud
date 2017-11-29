@@ -85,9 +85,9 @@ final public class FindPassword{
 		String subject = "[BuzzCloud]요청하신 임시비밀 번호 입니다.";
 		String content = "비밀번호 분실로 임시 비밀번호를 보냅니다. 유효기간은 하루동안이니 이 안에 로그인 하시기 바랍니다.\n임시비밀번호 : " + temporaryPw; 
 		
-		PostMan man = new PostManImple.Builder(enumMail.gmailID.toString(), to).subject(subject).content(content).build();
-		man.send();
-		
+		PostMan man = new PostManImple();
+		man.send(new PostManImple.Builder(enumMail.gmailID.toString(), to).subject(subject).content(content).build());
+	
 		
 	}
 	

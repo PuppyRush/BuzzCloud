@@ -28,7 +28,7 @@
 	<bean id="memberManager" class="com.puppyrush.buzzcloud.entity.member.MemberManager"/>
 	<bean id="member" class="com.puppyrush.buzzcloud.entity.member.Member"/>
 
-		
+	<bean id="postman" class="com.puppyrush.buzzcloud.mail.PostManImple" scope="singleton"/>
 
 		
 	

@@ -8,7 +8,7 @@
 		
 
 	<import resource="classpath:entityBean.xml"/>
-		<import resource="classpath:DBAccess.xml"/>
+	<import resource="classpath:DBAccess.xml"/>
 	<context:annotation-config/>
 		
 	<bean id="settingProfile" class="com.puppyrush.buzzcloud.service.config.account.SettingProfile" scope="singleton"/>

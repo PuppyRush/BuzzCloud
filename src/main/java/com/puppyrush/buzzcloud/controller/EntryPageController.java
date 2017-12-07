@@ -66,7 +66,7 @@ public class EntryPageController {
 			returns = contact.execute(form);
 		} catch (MessagingException e) {
 			// TODO Auto-generated catch block
-			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), InstanceMessageType.ERROR).getMessage());
+			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), enumInstanceMessage.ERROR).getMessage());
 			e.printStackTrace();
 			
 		}

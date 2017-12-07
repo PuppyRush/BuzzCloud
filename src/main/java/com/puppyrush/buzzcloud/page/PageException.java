@@ -1,36 +1,29 @@
 package com.puppyrush.buzzcloud.page;
 
+import java.util.Map;
+
+import com.puppyrush.buzzcloud.bzexception.BZException;
+import com.puppyrush.buzzcloud.bzexception.enumBZExceptionInterface;
+import com.puppyrush.buzzcloud.mail.MailException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.page.enums.enumPageError;
 
-public class PageException extends Exception {
+public class PageException extends BZException {
 
-	enumPageError err;
-	enumPage page;
+	private PageException(String errString, Map<enumBZExceptionInterface,Boolean> errors, enumPage toPage){
+		super(errString,errors,toPage);
+	}
+	public static class Builder extends BZException.Builder<PageException>{
+		
+		public Builder(enumPage toPage) {
+			super(toPage);
+			// TODO Auto-generated constructor stub
+		}
 
-	public PageException(enumPageError err){
-		super(err.getString());
-		this.err = err;
-		page = enumPage.ERROR404;
-	}
-	
-	public PageException(enumPageError err, enumPage page){
-		super(err.getString());
-		this.err = err;
-		this.page = page;
-	}
-	
-	public PageException(String errMsg, enumPageError err, enumPage page){
-		super(errMsg);
-		this.err = err;
-		this.page = page;
-	}
-	
-	public enumPage getPage(){
-		return page;
-	}
-	
-	public String toString(){
-		return err.getString();
+
+		@Override		
+		public PageException build(){
+			return new PageException(errString,errCodeMap,toPage);
+		}
 	}
 }

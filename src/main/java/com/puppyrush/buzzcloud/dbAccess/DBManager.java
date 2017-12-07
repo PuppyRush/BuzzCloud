@@ -243,7 +243,7 @@ public final class DBManager {
 				sql.append(")");
 		}
 		
-		sql.append(" VALUES (");
+		sql.append(" values (");
 		for(int i=0; i < values.size() ; i++){
 			
 			for(int l=0 ; l < values.get(i).size() ; l++){
@@ -273,13 +273,12 @@ public final class DBManager {
 			}
 				
 			ps.executeUpdate();
-			ResultSet rs = ps.getGeneratedKeys();
-						
+			ResultSet rs = ps.getGeneratedKeys();		
 			
 			while(rs.next()){
 				java.sql.ResultSetMetaData rsmd = rs.getMetaData();
 				int keyCount = rsmd.getColumnCount();
-				for(int i=0 ; i < keyCount ; i++)
+				for(int i=1 ; i <= keyCount ; i++)
 					keys.add(rs.getInt(i));
 				
 			}
@@ -287,7 +286,7 @@ public final class DBManager {
 			conn.commit();
 			conn.setAutoCommit(true);
 			ps.close();
-			
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

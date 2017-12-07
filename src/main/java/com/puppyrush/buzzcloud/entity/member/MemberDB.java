@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -14,12 +17,17 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
+import com.puppyrush.buzzcloud.entity.enumController;
 import com.puppyrush.buzzcloud.entity.enumEntityState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberAbnormalState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage;
 import com.puppyrush.buzzcloud.mail.PostManImple;
+import com.puppyrush.buzzcloud.mail.PostManImple.Builder;
 import com.puppyrush.buzzcloud.mail.PostMan;
 import com.puppyrush.buzzcloud.mail.enumMail;
 import com.puppyrush.buzzcloud.mail.enumMailType;
@@ -31,21 +39,18 @@ public class MemberDB {
 
 	private static Connection conn = ConnectMysql.getConnector();
 	
+	@Autowired
+	private PostManImple postman;
 	
 	@Autowired
 	private MemberController mCtl;
 	
-	public static void setConn(Connection conn) {
-		MemberDB.conn = conn;
-	}
-
-
-	public void setMemberController(MemberController mCtl) {
-		this.mCtl = mCtl;
-	}
+	@Autowired
+	private DBManager dbMng;
 	
 	
-	public  EnumMap<enumMemberAbnormalState, Boolean> getMemberAbnormalStates(int memberId) throws Throwable{
+	
+	public  EnumMap<enumMemberAbnormalState, Boolean> getMemberAbnormalStates(int memberId) throws SQLException{
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -83,7 +88,9 @@ public class MemberDB {
 			ps.setInt(1, memberId);
 			rs = ps.executeQuery();
 			if(!rs.next())
-				throw new EntityException(enumEntityState.NOT_EXIST_IN_MAP);
+				throw (new EntityException.Builder(enumPage.LOGIN_MANAGER))
+				.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build();
+				
 			
 			String email = rs.getString("email");
 			EnumMap<enumMemberAbnormalState, Boolean> state = getMemberAbnormalStates(memberId);
@@ -116,19 +123,22 @@ public class MemberDB {
 		return member;
 	}
 	
-	public Member getMember(String email){
+	public Member getMember(String email) throws EntityException, ControllerException{
 			
 		PreparedStatement ps = null;
 		ResultSet rs= null;
 		Member member = null;
 		
 		try{
-			
 			ps = conn.prepareStatement("select * from member where email = ?");
 			ps.setString(1, email);
 			rs = ps.executeQuery();
 			if(!rs.next())
-				throw new EntityException(enumEntityState.NOT_EXIST_IN_MAP);
+				throw (new EntityException.Builder(enumPage.JOIN))
+				.errorString("가입 후 로그인 바랍니다")
+				.instanceMessage(enumInstanceMessage.ERROR)
+				.errorCode(enumMemberState.NOT_JOIN).build();
+				
 			
 			int memberId= rs.getInt("memberId");
 			EnumMap<enumMemberAbnormalState, Boolean> state = getMemberAbnormalStates(memberId);
@@ -144,9 +154,6 @@ public class MemberDB {
 		}catch(SQLException e){
 			e.printStackTrace();
 			
-		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}finally{
 			
 			try {
@@ -357,9 +364,9 @@ public class MemberDB {
 			String content = new StringBuilder("안녕하세요.  버즈클라우드에서 알립니다. ").append(nickname)
 					.append("님이 버즈클라우드에서 탈퇴 됐습니다.\n 만일 탈퇴를 요청하지 않은 경우면 관리자에게 문의하세요.\n").append("탈퇴사유 : ")
 					.append(reason).toString();
-			
-			PostMan man = new PostManImple.Builder(enumMail.gmailID.toString(), email).subject(subject).content(content).build();
-			man.send();
+						
+			Builder bld = new PostManImple.Builder(enumMail.gmailID.toString(), email).subject(subject).content(content).build();
+			postman.send(bld);
 			
 			
 			conn.commit();
@@ -401,10 +408,10 @@ public class MemberDB {
 					else
 						state.put(enumMemberAbnormalState.LOST_PASSWORD, false);
 					
-					if(__rs.getInt(enumMemberAbnormalState.FAILD_LOGIN.getString())==1)
-						state.put(enumMemberAbnormalState.FAILD_LOGIN, true);
+					if(__rs.getInt(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT.getString())==1)
+						state.put(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT, true);
 					else
-						state.put(enumMemberAbnormalState.FAILD_LOGIN, false);
+						state.put(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT, false);
 					
 					if(__rs.getInt(enumMemberAbnormalState.SLEEP.getString())==1)
 						state.put(enumMemberAbnormalState.SLEEP, true);
@@ -468,16 +475,16 @@ public class MemberDB {
 			ResultSet rs = ps.executeQuery();
 			
 			if(!rs.next())
-				throw new EntityException(enumMemberState.NOT_JOIN, enumPage.JOIN);
+				throw (new EntityException.Builder(enumPage.JOIN))
+				.errorCode(enumMemberState.NOT_JOIN).build();
 						
 			if(rs.getInt("joinCertification")==1){
 				
 				ps.close();
 				rs.close();
 				
-				ps = conn.prepareStatement("select * from mail where memberId = ? and certificationKind = ?");
+				ps = conn.prepareStatement("select * from joinCertification where memberId = ?");
 				ps.setInt(1, uId);
-				ps.setInt(2, Integer.valueOf(enumMailType.JOIN.toString()));
 				rs = ps.executeQuery();
 				
 				if(rs.next())					
@@ -486,8 +493,11 @@ public class MemberDB {
 					isDoing = false;
 				
 			}else
-				throw new EntityException("가입 인증 메일을 보낸 상태입니다. 인증메일을 다시 요청하고 싶으시면 같은 메일로 다시 가입 하세요.",
-						enumMemberState.ALREADY_CERTIFICATION, enumPage.LOGIN);
+				throw (new EntityException.Builder(enumPage.LOGIN))
+				.instanceMessage(enumInstanceMessage.ERROR)
+				.errorString("가입 인증 메일을 보낸 상태입니다. 인증메일을 다시 요청하고 싶으시면 같은 메일로 다시 가입 하세요.")
+				.errorCode(enumMemberState.ALREADY_CERTIFICATION).build();
+
 
 			
 		}catch(SQLException e){
@@ -500,6 +510,23 @@ public class MemberDB {
 	}
 
 
+	public boolean isOnSiteAccount(String email){
+		
+		Map<String, Object> where = new HashMap<String, Object>();
+		List<String> sel = new ArrayList<String>();
+		int id = getIdOfEmail(email);
+		where.put("memberId", id);
+		sel.add("registrationKind");
+		List<Map<String,Object>> res = dbMng.getColumnsOfPart("member", sel, where);
+		
+		if(res.isEmpty())
+			return false;
+		else if(enumMemberType.valueOf((String)res.get(0).get("registrationKind")).equals(enumMemberType.NOTHING)){
+			return true;
+		}
+		return false;
+		
+	}
 	
 }
 

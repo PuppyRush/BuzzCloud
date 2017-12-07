@@ -27,7 +27,7 @@ import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
-import com.puppyrush.buzzcloud.property.PathUtils;
+import com.puppyrush.buzzcloud.property.CommFunc;
 import com.puppyrush.buzzcloud.property.enumSystem;
 
 @Service("registeMemberFace")
@@ -66,7 +66,7 @@ public class RegisteMemberFace {
 				saveFile(file);
 				confirmImageSizeAndResize(file);
 
-				returns.putAll(new InstanceMessage("이미지가 등록되었습니다.", InstanceMessageType.SUCCESS)
+				returns.putAll(new InstanceMessage("이미지가 등록되었습니다.", enumInstanceMessage.SUCCESS)
 						.getMessage());
 				break;
 			}
@@ -91,7 +91,7 @@ public class RegisteMemberFace {
 		String savedImageName = (String) res.get(0).get("image");
 		if (!savedImageName.equals("") || !savedImageName.contains("defaultImage")) {
 
-			File oldFile = new File(PathUtils.toAbsolutePathFromImage(member.getId(), savedImageName));
+			File oldFile = new File(CommFunc.toAbsolutePathFromImage(member.getId(), savedImageName));
 			if (oldFile.exists() && !oldFile.isDirectory()) {
 				oldFile.delete();
 			}
@@ -107,7 +107,7 @@ public class RegisteMemberFace {
 	private File getFile(MultipartFile multiFile) {
 
 	
-		File file = new File(PathUtils.toAbsolutePathFromImage(member.getId(), newfileName+ext));
+		File file = new File(CommFunc.toAbsolutePathFromImage(member.getId(), newfileName+ext));
 		file.mkdirs();
 		return file;
 	}

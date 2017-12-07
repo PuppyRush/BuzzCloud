@@ -5,10 +5,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.puppyrush.buzzcloud.bzexception.BZException;
 import com.puppyrush.buzzcloud.controller.form.JoinForm;
 import com.puppyrush.buzzcloud.controller.form.LoginForm;
+import com.puppyrush.buzzcloud.entity.ControllerException;
+import com.puppyrush.buzzcloud.entity.EntityException;
+import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
+import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
+import com.puppyrush.buzzcloud.page.enums.enumPageError;
 import com.puppyrush.buzzcloud.property.enumSystem;
 import com.puppyrush.buzzcloud.service.entity.member.FindPassword;
 import com.puppyrush.buzzcloud.service.entity.member.Join;
@@ -58,7 +64,7 @@ public class MemberController {
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			returns.putAll(new InstanceMessage(e.getMessage(), InstanceMessageType.ERROR).getMessage());
+			returns.putAll(new InstanceMessage(e.getMessage(), enumInstanceMessage.ERROR).getMessage());
 		}
 		
 		return returns;
@@ -85,8 +91,25 @@ public class MemberController {
 	public ModelAndView logout(HttpServletRequest request) {
 
 		ModelAndView mv = new ModelAndView();
-		Map<String,Object> returns = logout.execute(request.getRequestedSessionId());
+		Map<String, Object> returns = new HashMap<String, Object>();
 		
+		try{
+			returns = logout.execute(request.getRequestedSessionId());
+		}
+		catch( EntityException e){
+			returns.putAll(e.getReturns());
+		}
+		catch(ControllerException e){
+			returns.putAll(e.getReturns());
+		}
+		catch (BZException e) {
+			returns.putAll(e.getReturns());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			//..
+			
+		}
+	
 		
 		mv.setViewName((String)returns.get("view"));
 		mv.addAllObjects(returns);
@@ -103,11 +126,11 @@ public class MemberController {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), InstanceMessageType.ERROR).getMessage());
+			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), enumInstanceMessage.ERROR).getMessage());
 		} catch (MessagingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), InstanceMessageType.ERROR).getMessage());
+			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), enumInstanceMessage.ERROR).getMessage());
 		}
 		
 		

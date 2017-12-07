@@ -1,6 +1,8 @@
 package com.puppyrush.buzzcloud.page.enums;
 
-public enum enumPageError {
+import com.puppyrush.buzzcloud.bzexception.enumBZExceptionInterface;
+
+public enum enumPageError implements enumBZExceptionInterface{
 
 	NO_PARAMATER("파라메터가 모두 전달 되지 않았습니다. "),
 	UNKNOWN_PARAMATER("파라메터의 이름이 잘못되었습니"),

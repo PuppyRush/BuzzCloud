@@ -1,8 +1,8 @@
 package com.puppyrush.buzzcloud.entity.member.enums;
 
-import com.puppyrush.buzzcloud.entity.member.MemberEnum;
+import com.puppyrush.buzzcloud.entity.member.enumMember;
 
-public enum enumMemberType implements MemberEnum{
+public enum enumMemberType implements enumMember{
 	
 	NOTHING("NOTHING"),
 	NAVER("NAVER"),

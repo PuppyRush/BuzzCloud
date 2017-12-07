@@ -8,6 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.authority.AuthorityManager;
+import com.puppyrush.buzzcloud.entity.authority.enumAuthorityState;
 import com.puppyrush.buzzcloud.entity.authority.band.BandAuthority;
 import com.puppyrush.buzzcloud.entity.authority.band.enumBandAuthority;
 import com.puppyrush.buzzcloud.entity.band.Band;
@@ -49,7 +50,8 @@ public class PageForwadingController {
 	public ModelAndView manager(@RequestParam("forwardPageName") String forwardPageName) {
 
 		ModelAndView mv = new ModelAndView();
-	
+		Map<String, Object> returns = new HashMap<String, Object>();
+		
 		switch(forwardPageName){
 		
 			case "groupdashboard":
@@ -76,14 +78,17 @@ public class PageForwadingController {
 				
 			default:
 				try {
-					throw new PageException(enumPageError.UNKNOWN_PARA_VALUE);
+					throw (new PageException.Builder(enumPage.ERROR404))
+					.errorString("비 정상적인 접근입니다.")
+					.errorCode(enumPageError.UNKNOWN_PARA_VALUE).build(); 
 				} catch (PageException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					returns.putAll(e.getReturns());
 				}
 				
 		
 		}
+		mv.addAllObjects(returns);
+		mv.setViewName((String)returns.get("view"));
 		
 		return mv;
 	}

@@ -19,7 +19,7 @@ public class MakingBand{
 	public Map<String, Object> execute(BandForm form) {
 		Map<String, Object> returns = new HashMap<String, Object>();
 		if(bMng.makeBand(form))
-			returns.putAll(new InstanceMessage("그룹생성에 성공하였습니다.", InstanceMessageType.SUCCESS).getMessage());
+			returns.putAll(new InstanceMessage("그룹생성에 성공하였습니다.", enumInstanceMessage.SUCCESS).getMessage());
 		
 		return returns;
 	}

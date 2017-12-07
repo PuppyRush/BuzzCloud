@@ -1,5 +1,6 @@
 package com.puppyrush.buzzcloud.service.entity.band;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class GettingSelectedBandMembers{
 	@Autowired(required=false)
 	private AuthorityManager authMng;
 
-	public Map<String, Object> execute(int bandId) {
+	public Map<String, Object> execute(int bandId) throws SQLException {
 				
 		ArrayList<Member> members = new ArrayList<Member>();
 		members = bandMng.getMembersOf(bandId);

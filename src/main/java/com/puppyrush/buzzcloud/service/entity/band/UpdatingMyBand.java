@@ -195,7 +195,7 @@ public class UpdatingMyBand{
 				
 	}
 	
-	void updateMembers() throws ControllerException, EntityException{
+	void updateMembers() throws ControllerException, EntityException, SQLException{
 		
 		Map<String, Object> where = new HashMap<String, Object>();
 		where.put("bandId", bandId);

@@ -59,11 +59,11 @@ public class SettingRequestedJoin {
 			dbMng.insertColumn("bandMember", col, values);
 			
 			
-			returns.putAll(new InstanceMessage("구성원"+name+" 에 대하여 가입요청을 승인하였습니다.", InstanceMessageType.SUCCESS).getMessage());
+			returns.putAll(new InstanceMessage("구성원"+name+" 에 대하여 가입요청을 승인하였습니다.", enumInstanceMessage.SUCCESS).getMessage());
 			
 		}
 		else{
-			returns.putAll(new InstanceMessage("구성원"+name+" 에 대하여 가입요청을 거절하였습니다.", InstanceMessageType.WARNING).getMessage());
+			returns.putAll(new InstanceMessage("구성원"+name+" 에 대하여 가입요청을 거절하였습니다.", enumInstanceMessage.WARNING).getMessage());
 		}
 		
 		

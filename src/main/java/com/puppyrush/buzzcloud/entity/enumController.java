@@ -2,7 +2,7 @@ package com.puppyrush.buzzcloud.entity;
 
 import com.puppyrush.buzzcloud.entity.interfaces.EntityController;
 
-public enum enumController {
+public enum enumController implements enumEntityState{
 
 	NOT_EXIST_MEMBER_FROM_MAP("맵에 객체가 존재하지 않습니다."),
 	ALREAY_EXIST_MEMBER_FROM_MAP("맵에 객체가 이미 존재합니다.");

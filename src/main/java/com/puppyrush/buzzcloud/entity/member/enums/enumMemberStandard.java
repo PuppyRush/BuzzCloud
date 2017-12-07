@@ -1,10 +1,10 @@
 package com.puppyrush.buzzcloud.entity.member.enums;
 
-import com.puppyrush.buzzcloud.entity.member.MemberEnum;
+import com.puppyrush.buzzcloud.entity.member.enumMember;
 
-public enum enumMemberStandard implements MemberEnum{
+public enum enumMemberStandard implements enumMember{
 	
-	RESEND_STANDRATE_DATE("24"),				//hour
+	
 	PASSWD_CHANGE_DATE_OF_MONTH("3"),		//day
 	POSSIBILLTY_FAILD_LOGIN_NUM("5"),
 	NAME_LENGTH(4);

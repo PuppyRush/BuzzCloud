@@ -1,30 +1,30 @@
 package com.puppyrush.buzzcloud.entity;
 
+import java.util.Map;
+
+import com.puppyrush.buzzcloud.bzexception.BZException;
+import com.puppyrush.buzzcloud.bzexception.enumBZExceptionInterface;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 
-public class ControllerException extends Exception {
+public class ControllerException extends BZException {
 	
-	public final static enumPage toPage = enumPage.ERROR404;
-	
-	private final enumController ERR_CODE;// 생성자를 통해 초기화 한다.
-	
-	public ControllerException(String msg, enumController errcode){ //생성자
-		super(msg);
-		ERR_CODE=errcode;
-		
-	}
-	
-	public ControllerException(enumController errcode){// 생성자
-		this(errcode.toString(), errcode);// ERR_CODE를 100(기본값)으로 초기화한다.
 
+	private ControllerException(String errString, Map<enumBZExceptionInterface,Boolean> errors, enumPage toPage){
+		super(errString,errors,toPage);
 	}
-	
-	public enumPage getToPage(){
-		return toPage;
+	public static class Builder extends BZException.Builder<ControllerException>{
+		
+		public Builder(enumPage toPage) {
+			super(toPage);
+			// TODO Auto-generated constructor stub
+		}
+
+
+		@Override		
+		public ControllerException build(){
+			return new ControllerException(errString,errCodeMap,toPage);
+		}
 	}
-	
-	public enumController getErrCode(){
-		return ERR_CODE;
-	}
+
 }

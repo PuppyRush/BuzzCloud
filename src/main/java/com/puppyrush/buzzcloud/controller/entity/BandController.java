@@ -58,13 +58,13 @@ public class BandController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			returns.put("isSuccess", false);
-			InstanceMessage msg = new InstanceMessage("그룹가입 요청에 실패하였습니다.  관리자에게 문의하세요",InstanceMessageType.ERROR);
+			InstanceMessage msg = new InstanceMessage("그룹가입 요청에 실패하였습니다.  관리자에게 문의하세요",enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			returns.put("isSuccess", false);
-			InstanceMessage msg = new InstanceMessage("그룹가입 요청에 실패하였습니다.  관리자에게 문의하세요",InstanceMessageType.ERROR);
+			InstanceMessage msg = new InstanceMessage("그룹가입 요청에 실패하였습니다.  관리자에게 문의하세요",enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
 		}
 		return returns;
@@ -79,27 +79,27 @@ public class BandController {
 		
 		try {
 			returns = updateBand.execute(bandId,bandForm);
-			InstanceMessage msg = new InstanceMessage("그룹정보 변경에 성공하였습니다.", InstanceMessageType.SUCCESS);
+			InstanceMessage msg = new InstanceMessage("그룹정보 변경에 성공하였습니다.", enumInstanceMessage.SUCCESS);
 			returns.putAll(msg.getMessage());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			InstanceMessage msg = new InstanceMessage("그룹정보 변경에 실패하였습니다.  관리자에게 문의하세요",InstanceMessageType.ERROR);
+			InstanceMessage msg = new InstanceMessage("그룹정보 변경에 실패하였습니다.  관리자에게 문의하세요",enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
 			e.printStackTrace();
 		} catch (ControllerException e) {
-			InstanceMessage msg = new InstanceMessage(e.getMessage(),InstanceMessageType.ERROR);
+			InstanceMessage msg = new InstanceMessage(e.getMessage(),enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
 			e.printStackTrace();
 		} catch (EntityException e) {
-			InstanceMessage msg = new InstanceMessage(e.getMessage(),InstanceMessageType.ERROR);
+			InstanceMessage msg = new InstanceMessage(e.getMessage(),enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
 			e.printStackTrace();
 		} catch ( IllegalArgumentException e){
-			InstanceMessage msg = new InstanceMessage(e.getMessage(),InstanceMessageType.ERROR);
+			InstanceMessage msg = new InstanceMessage(e.getMessage(),enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
 			e.printStackTrace();
 		} catch( Exception e){
-			InstanceMessage msg = new InstanceMessage(e.getMessage(),InstanceMessageType.ERROR);
+			InstanceMessage msg = new InstanceMessage(e.getMessage(),enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
 			e.printStackTrace();
 		}

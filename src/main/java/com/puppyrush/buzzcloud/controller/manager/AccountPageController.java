@@ -100,7 +100,7 @@ public class AccountPageController {
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			mv.addAllObjects(new InstanceMessage(e.getMessage(),InstanceMessageType.SUCCESS).getMessage());
+			mv.addAllObjects(new InstanceMessage(e.getMessage(),enumInstanceMessage.SUCCESS).getMessage());
 			e.printStackTrace();
 			mv.setViewName(enumPage.ERROR404.toString());
 		}

@@ -17,7 +17,7 @@ import com.puppyrush.buzzcloud.entity.band.BandManager;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
-import com.puppyrush.buzzcloud.property.PathUtils;
+import com.puppyrush.buzzcloud.property.CommFunc;
 
 @Service("gettingMyGroups")
 public class GettingMyGroups{
@@ -68,7 +68,7 @@ public class GettingMyGroups{
 		sel.add("image");
 		
 		String imageName =  (String)dbMng.getColumnsOfPart("memberDetail", sel,where).get(0).get("image");
-		return PathUtils.toRelativePathFromImage(memberId, imageName);
+		return CommFunc.toRelativePathFromImage(memberId, imageName);
 		
 	}
 	

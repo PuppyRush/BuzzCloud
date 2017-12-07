@@ -248,10 +248,11 @@ public final class Member implements Entity {
 	 * @param member  가입할 유저의 정보의 객체 
 	 * @param request jsp페이지로부터  넘어온 attribute값을 이용하기 위함 
 	 * @return 가입이 무사히 성사됐는지 여부를 반환
+	 * @throws SQLException 
 	 * @throws Throwable 
 	 */
 	@SuppressWarnings("resource")
-	public boolean doJoin() throws Throwable {
+	public boolean doJoin() throws SQLException {
 		
 		conn.setAutoCommit(false);
 		ResultSet rs = null;
@@ -310,13 +311,14 @@ public final class Member implements Entity {
 
 
 	/**
+	 * @throws PageException 
 	 * @throws Exception 
 	 * @param member  가입할 유저의 정보의 객체 
 	 * @param request jsp페이지로부터  넘어온 attribute값을 이용하기 위함 
 	 * @return 로그인 무사히 성사됐는지 여부를 반환
 	 * @throws  
 	 */
-	public boolean doLogin() throws Exception {
+	public boolean doLogin() throws PageException {
 		
 		PreparedStatement _ps =null;
 		ResultSet _rs = null;
@@ -423,7 +425,10 @@ public final class Member implements Entity {
 					break;
 				
 				default:
-					throw new PageException(enumPageError.UNKNOWN_PARA_VALUE,enumPage.ERROR404);
+					throw (new PageException.Builder(enumPage.LOGIN))
+					.errorString("로그인 중 시스템 에러가 발생했습니다. 관리자에게 문의하세요.")
+					.errorCode(enumPageError.UNKNOWN_PARA_VALUE).build(); 
+
 	
 			}
 			
@@ -446,7 +451,9 @@ public final class Member implements Entity {
 		try {	
 
 			if(!email.equals(enumSystem.ADMIN.toString()))
-				throw new EntityException(enumMemberState.NOT_ADMIN, enumPage.LOGIN_MANAGER);
+				throw (new EntityException.Builder(enumPage.LOGIN_MANAGER))
+				.errorCode(enumMemberState.NOT_ADMIN).build();
+				
 			
 			ps = conn.prepareStatement("select password from member where email=? ");
 			ps.setString(1,email);
@@ -516,9 +523,10 @@ public final class Member implements Entity {
 	/**
 	 * 	로그아웃을 위한 처리를 합니다.
 	 * @param member
+	 * @throws SQLException 
 	 * @throws Throwable 
 	 */
-	public void doLogout() throws Throwable {
+	public void doLogout() throws SQLException  {
 			
 		PreparedStatement _ps = conn.prepareStatement("update memberDetail set lastLogoutDate = ? where memberId = ?");
 		_ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()) ) ;

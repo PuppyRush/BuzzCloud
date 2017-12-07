@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.puppyrush.buzzcloud.controller.form.LoginForm;
 import com.puppyrush.buzzcloud.entity.ControllerException;
+import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.enumController;
 import com.puppyrush.buzzcloud.entity.impl.EntityControllerImpl;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
 @Service("memberController")
@@ -51,12 +53,13 @@ public final class MemberController extends EntityControllerImpl<Member>{
 			}
 		}			
 		
-		throw new ControllerException("비 정상적인 접근입니다.",enumController.NOT_EXIST_MEMBER_FROM_MAP);
+		throw (new ControllerException.Builder(enumPage.ERROR404))
+		.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
 		
 	}
 	
 	
-	public Member getMember(LoginForm form) throws ControllerException{
+	public Member getMember(LoginForm form) throws ControllerException, EntityException{
 		
 		if(form.getSessionId()==null)
 			throw new NullPointerException();
@@ -105,7 +108,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		
 	}
 	
-	public Member newMember(String sessionId, String email) throws ControllerException{
+	public Member newMember(String sessionId, String email) throws Throwable{
 		Member member = null;
 		if(containsEntity(sessionId)){
 			member = getMember(sessionId);
@@ -184,8 +187,9 @@ public final class MemberController extends EntityControllerImpl<Member>{
 				sessionIdMap.remove(sId);
 				
 		}
-			
-		throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
+		else	
+			throw (new ControllerException.Builder(enumPage.ERROR404))
+			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
 		
 	}
 

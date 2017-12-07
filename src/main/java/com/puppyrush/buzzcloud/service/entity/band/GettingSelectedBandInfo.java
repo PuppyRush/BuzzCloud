@@ -46,7 +46,7 @@ public class GettingSelectedBandInfo{
 	@Autowired(required = false)
 	private DBManager	dbAccess;
 	
-	public Map<String, Object> execute(int bandId) throws ControllerException {
+	public Map<String, Object> execute(int bandId) throws ControllerException, SQLException {
 
 		Map<String, Object> result = new HashMap<String, Object>();
 

@@ -11,8 +11,11 @@ import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
+import com.puppyrush.buzzcloud.mail.enumMailState;
 import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
+
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,59 +34,30 @@ final public class Logout {
 	@Autowired(required=false)
 	private MemberController mCtl;
 		
-	public Map<String,Object> execute(String sId){
+	public Map<String,Object> execute(String sId) throws ControllerException, EntityException, SQLException{
 		
 		Map<String , Object> returns = new HashMap<String , Object>();
 		Member member = null;
 		
-		try{
-					
-			if(!mCtl.containsEntity(sId))
-				throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
-			
-			member = mCtl.getMember(sId);
-			
-			if(member.isLogin()==false)
-				throw new EntityException("로그인 한 유저가 아닙니다.", enumMemberState.NOT_LOGIN, enumPage.ENTRY);
-			
-			member.doLogout();
-			
-			mCtl.removeMember(sId);
-			
-			returns.put("view", enumPage.ENTRY.toString());	
-			returns.putAll(new InstanceMessage( "로그아웃에 성공하셨습니다.", InstanceMessageType.SUCCESS).getMessage());			
-		}catch( PageException e){
-			returns.put("view", enumPage.ENTRY.toString());		
-			returns.putAll(new InstanceMessage( "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.", InstanceMessageType.ERROR).getMessage());
-			e.printStackTrace();
-		}
-		catch( EntityException e){
-			if(e.getErrCode() instanceof enumMemberState)
-				switch((enumMemberState)e.getErrCode()){
-					case NOT_LOGIN:
-					case NOT_JOIN:
-						returns.put("initSession", true);
-						returns.put("view", e.getToPage().toString());		
-						returns.putAll(new InstanceMessage( "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.", InstanceMessageType.ERROR).getMessage());
-						break;
-					default:
-						returns.put("view", e.getToPage().toString());		
-						returns.putAll(new InstanceMessage( "로그아웃에 실패하셨습니다. 관리자에게 문의하세요.", InstanceMessageType.ERROR).getMessage());
-						break;
-				}
-				
-			e.printStackTrace();
-			
-		}catch(ControllerException e){
-			returns.put("view", e.getToPage().toString());		
-			
-		}
+		if(!mCtl.containsEntity(sId))
+			throw (new ControllerException.Builder(enumPage.ENTRY))
+			.errorString("로그인 한 유저가 아닙니다.")
+			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
 		
-		catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
+		member = mCtl.getMember(sId);
+		
+		if(member.isLogin()==false)
+			throw (new EntityException.Builder(enumPage.ENTRY))
+			.errorString("로그인 한 유저가 아닙니다.")
+			.errorCode(enumMemberState.NOT_LOGIN).build(); 
+		
+		member.doLogout();
+		
+		mCtl.removeMember(sId);
+		
+		returns.put("view", enumPage.ENTRY.toString());	
+		returns.putAll(new InstanceMessage( "로그아웃에 성공하셨습니다.", enumInstanceMessage.SUCCESS).getMessage());			
+		
 		
 		return returns;
 	}

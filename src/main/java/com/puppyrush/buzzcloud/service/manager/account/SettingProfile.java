@@ -36,7 +36,7 @@ public class SettingProfile{
 		HashMap<String, Object> where = new HashMap<String, Object>();
 		
 		if(mDB.isExistNickname(form.getNickname())){
-			returns.putAll(new InstanceMessage("닉네임이 중복됩니다.",InstanceMessageType.ERROR).getMessage());
+			returns.putAll(new InstanceMessage("닉네임이 중복됩니다.",enumInstanceMessage.ERROR).getMessage());
 		}
 		else{
 			where.clear();
@@ -67,7 +67,7 @@ public class SettingProfile{
 				
 			}*/
 			
-			returns.putAll(new InstanceMessage("변경에 성공하였습니다",InstanceMessageType.SUCCESS).getMessage());
+			returns.putAll(new InstanceMessage("변경에 성공하였습니다",enumInstanceMessage.SUCCESS).getMessage());
 		}
 		
 		return returns;

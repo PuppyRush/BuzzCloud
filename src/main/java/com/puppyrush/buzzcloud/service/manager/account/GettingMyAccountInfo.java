@@ -12,7 +12,7 @@ import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
-import com.puppyrush.buzzcloud.property.PathUtils;
+import com.puppyrush.buzzcloud.property.CommFunc;
 import com.puppyrush.buzzcloud.property.enumSystem;
 
 @Service("gettingMyAccountInfo")
@@ -41,7 +41,7 @@ public class GettingMyAccountInfo{
 	
 		
 		
-		memberInfo.put("image", PathUtils.toRelativePathFromImage(member.getId(), (String)memberDetail.get(0).get("image")));
+		memberInfo.put("image", CommFunc.toRelativePathFromImage(member.getId(), (String)memberDetail.get(0).get("image")));
 		memberInfo.put("firstname", memberDetail.get(0).get("firstname") );
 		memberInfo.put("lastname", memberDetail.get(0).get("lastname"));
 

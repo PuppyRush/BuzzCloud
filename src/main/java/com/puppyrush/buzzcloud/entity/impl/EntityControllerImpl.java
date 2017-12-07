@@ -14,6 +14,9 @@ import com.puppyrush.buzzcloud.entity.band.BandController;
 import com.puppyrush.buzzcloud.entity.interfaces.Entity;
 import com.puppyrush.buzzcloud.entity.interfaces.EntityController;
 import com.puppyrush.buzzcloud.entity.member.Member;
+import com.puppyrush.buzzcloud.page.PageException;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
+import com.puppyrush.buzzcloud.page.enums.enumPageError;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
 public abstract class EntityControllerImpl<T extends Entity> implements EntityController{
@@ -42,7 +45,10 @@ public abstract class EntityControllerImpl<T extends Entity> implements EntityCo
 		if(entityMap.containsKey(id))
 			return (T) entityMap.get(id);
 		
-		throw new ControllerException("비 정상적인 접근입니다.",enumController.NOT_EXIST_MEMBER_FROM_MAP);
+		throw (new ControllerException.Builder(enumPage.LOGIN))
+		.errorString("비 정상적인 접근입니다.")
+		.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
+		
 		
 	}
 
@@ -50,7 +56,8 @@ public abstract class EntityControllerImpl<T extends Entity> implements EntityCo
 	public <V extends Entity> void addEntity(int id, V obj) throws ControllerException {
 		
 		if(entityMap.containsKey(obj))
-			throw new ControllerException(enumController.ALREAY_EXIST_MEMBER_FROM_MAP);
+			throw (new ControllerException.Builder(enumPage.LOGIN))
+			.errorCode(enumController.ALREAY_EXIST_MEMBER_FROM_MAP).build(); 
 		
 		entityMap.put(id, (T)obj);
 		
@@ -60,7 +67,9 @@ public abstract class EntityControllerImpl<T extends Entity> implements EntityCo
 	public void removeEntity(int id) throws ControllerException {
 		
 		if(!entityMap.containsKey(id))
-			throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
+			throw (new ControllerException.Builder(enumPage.LOGIN))
+			.errorString("비 정상적인 접근입니다.")
+			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
 		
 		entityMap.remove(id);
 		
@@ -70,14 +79,16 @@ public abstract class EntityControllerImpl<T extends Entity> implements EntityCo
 	public void updateProperty(int id, String propertyName, Object newValue) {
 		// TODO Auto-generated method stub
 		
+		T obj=null; 
+		Field field = null;
 		try{
 			
 			if(!containsEntity(id)){
 				return;
 			}
 			
-			T obj = getEntity(id);
-			Field field = obj.getClass().getDeclaredField(propertyName);
+			obj = getEntity(id);
+			field = obj.getClass().getDeclaredField(propertyName);
 			field.setAccessible(true);
 			Object value = field.get(obj);
 						
@@ -85,7 +96,8 @@ public abstract class EntityControllerImpl<T extends Entity> implements EntityCo
 				throw new NoSuchFieldException("두 타입이 일치하지 않습니다.");
 			}
 			else{
-				field.set(obj, newValue);				
+				field.set(obj, newValue);	
+				
 			}
 			
 		}catch(NoSuchFieldException e){
@@ -94,6 +106,10 @@ public abstract class EntityControllerImpl<T extends Entity> implements EntityCo
 			e.printStackTrace();
 		}catch(Exception e){
 			e.printStackTrace();
+		}
+		finally{
+			if(field!=null)
+				field.setAccessible(false);
 		}
 	}
 }

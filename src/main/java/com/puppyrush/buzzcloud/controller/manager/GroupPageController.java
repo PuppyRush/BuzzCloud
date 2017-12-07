@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +88,10 @@ public class GroupPageController {
 			returns = gettingBandInfo.execute(bandId);
 		} catch (ControllerException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			returns.putAll(e.getReturns());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			
 		}
 		return returns;
 	}
@@ -97,7 +101,12 @@ public class GroupPageController {
 	public Map<String, Object> gettingSelectedBandMembers(@RequestParam("bandId") int bandId) {
 
 		Map<String, Object> returns = new HashMap<String, Object>();
-		returns = gettingSelectedBandMembers.execute(bandId);
+		try {
+			returns = gettingSelectedBandMembers.execute(bandId);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			
+		}
 
 		return returns;
 

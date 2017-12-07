@@ -1,36 +1,32 @@
 package com.puppyrush.buzzcloud.entity;
 
+import java.util.Map;
+
+import com.puppyrush.buzzcloud.bzexception.BZException;
+import com.puppyrush.buzzcloud.bzexception.enumBZExceptionInterface;
 import com.puppyrush.buzzcloud.entity.interfaces.EnumEntity;
+import com.puppyrush.buzzcloud.entity.member.enumMember;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 
-public class EntityException extends Exception {
+public final class EntityException extends BZException {
 	
-	
-	private enumPage toPage;
-	private final EnumEntity ERR_CODE;// 생성자를 통해 초기화 한다.
-	
-	public EntityException(EnumEntity errcode){
-				
-		this("내부오류", errcode , enumPage.ERROR404);
-	}
-	
-	public EntityException(String msg, EnumEntity errcode, enumPage page){ //생성자
-		super(msg);
-		ERR_CODE=errcode;
-		toPage = page;
-	}
-	
-	public EntityException(EnumEntity errcode, enumPage page){// 생성자
-		this(errcode.toString(), errcode,page);// ERR_CODE를 100(기본값)으로 초기화한다.
 
+	private EntityException(String errString, Map<enumBZExceptionInterface,Boolean> errors, enumPage toPage){
+		super(errString,errors,toPage);
 	}
-	
-	public enumPage getToPage(){
-		return toPage;
+	public static class Builder extends BZException.Builder<EntityException>{
+		
+		public Builder(enumPage toPage) {
+			super(toPage);
+			// TODO Auto-generated constructor stub
+		}
+
+
+		@Override		
+		public EntityException build(){
+			return new EntityException(errString,errCodeMap,toPage);
+		}
 	}
-	
-	public EnumEntity getErrCode(){
-		return ERR_CODE;
-	}
+
 }

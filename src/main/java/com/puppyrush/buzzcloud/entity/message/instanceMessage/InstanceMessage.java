@@ -8,19 +8,19 @@ import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
 
 public final class InstanceMessage extends Message{
 
-	private InstanceMessageType type;
+	private enumInstanceMessage type;
 
-	public InstanceMessage(String contents, InstanceMessageType type){
+	public InstanceMessage(String contents, enumInstanceMessage type){
 		super(-1,contents);
 		this.type = type;
 	}
 	
 	
-	public InstanceMessageType getType() {
+	public enumInstanceMessage getType() {
 		return type;
 	}
 
-	public void setType(InstanceMessageType type) {
+	public void setType(enumInstanceMessage type) {
 		this.type = type;
 	}
 	

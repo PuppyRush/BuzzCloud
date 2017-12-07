@@ -1,16 +1,12 @@
 package com.puppyrush.buzzcloud.service.manager.bandDashboard;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.crypto.CipherInputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,17 +14,6 @@ import org.springframework.stereotype.Service;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
-import com.puppyrush.buzzcloud.entity.band.Band;
-import com.puppyrush.buzzcloud.entity.band.Band.BundleBand;
-import com.puppyrush.buzzcloud.entity.band.BandController;
-import com.puppyrush.buzzcloud.entity.band.BandDB;
-import com.puppyrush.buzzcloud.entity.band.BandManager;
-import com.puppyrush.buzzcloud.entity.member.MemberController;
-import com.puppyrush.buzzcloud.entity.member.MemberDB;
-import com.puppyrush.buzzcloud.property.ConnectMysql;
-import com.puppyrush.buzzcloud.property.PathUtils;
-import com.puppyrush.buzzcloud.property.tree.Node;
-import com.puppyrush.buzzcloud.property.tree.Tree;
 
 @Service("gettingCharts")
 public class GettingCharts {
@@ -36,20 +21,6 @@ public class GettingCharts {
 	@Autowired
 	private DBManager dbMng;
 	
-	@Autowired
-	private BandManager bMng;
-	
-	@Autowired
-	private BandDB bDB;
-	
-	@Autowired
-	private BandController bCtl;
-	
-	@Autowired
-	private MemberDB mDB;
-	
-	@Autowired
-	private MemberController mCtl;
 	
 	public Map<String,Object> excute(int bandId) throws EntityException, SQLException, ControllerException{
 				
@@ -75,9 +46,11 @@ public class GettingCharts {
 		returns.put("maxCapacity", (int)res.get(0).get("maxCapacity"));
 		
 		sel.clear();
-		sel.add("createdDate");
+		sel.add("name");
 		res = dbMng.getColumnsOfPart("band", sel, where);
-		returns.put("createdDate", (Timestamp)res.get(0).get("createdDate"));
+		
+		
+		returns.put("title", (String)res.get(0).get("name") + " capacity");
 		
 		return returns;	
 	}
@@ -94,8 +67,14 @@ public class GettingCharts {
 		sel.clear();
 		sel.add("createdDate");
 		List<Map<String,Object>> res = dbMng.getColumnsOfPart("band", sel, where);
-		returns.put("createdDate", (Timestamp)res.get(0).get("createdDate"));
+		returns.put("createdDate", (new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분")).format( ((Timestamp)res.get(0).get("createdDate")) ).toString());
 		
+		List<Integer> dates = new ArrayList<Integer>();
+		String str= (new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")).format( ((Timestamp)res.get(0).get("createdDate")) ).toString();
+		for(String s : str.split("-")){
+			dates.add(Integer.valueOf(s));		
+		}
+		returns.put("createdDateByLong",dates);
 		return returns;	
 	}
 }

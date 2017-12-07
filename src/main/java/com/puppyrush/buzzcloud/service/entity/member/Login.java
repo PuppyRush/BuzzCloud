@@ -1,10 +1,16 @@
 package com.puppyrush.buzzcloud.service.entity.member;
 
 
+import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,17 +18,26 @@ import org.springframework.stereotype.Service;
 import com.puppyrush.buzzcloud.controller.form.LoginForm;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
+import com.puppyrush.buzzcloud.entity.authority.enumAuthorityState;
+import com.puppyrush.buzzcloud.entity.authority.member.enumMemberAuthority;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.entity.member.MemberManager;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberAbnormalState;
+import com.puppyrush.buzzcloud.entity.member.enums.enumMemberStandard;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
+import com.puppyrush.buzzcloud.mail.MailManager;
+import com.puppyrush.buzzcloud.mail.PostMan;
+import com.puppyrush.buzzcloud.mail.enumMailStandard;
+import com.puppyrush.buzzcloud.mail.enumMailState;
 import com.puppyrush.buzzcloud.mail.enumMailType;
 import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.page.enums.enumPageError;
+import com.puppyrush.buzzcloud.property.CommFunc;
+import com.puppyrush.buzzcloud.property.enumSystem;
 
 
 
@@ -45,6 +60,10 @@ final public class Login{
 	@Autowired(required=false)
 	private MemberManager mMng;
 		
+	@Autowired(required=false)
+	private MailManager mailMng;
+		
+	
 	public Map<String,Object> execute(LoginForm form){
 				
 		Map<String,Object> returns = new HashMap<String,Object>();
@@ -56,43 +75,32 @@ final public class Login{
 			
 			returns.putAll(doLoginAsCase(member));
 					
-			/*returns.put("nickname", member.getNickname());
+			returns.put("nickname", member.getNickname());
 			returns.put("id", String.valueOf(member.getId()));
-			returns.put("email", member.getEmail());*/
-			returns.putAll(new InstanceMessage("로그인에 성공하셨습니다.", InstanceMessageType.SUCCESS).getMessage());
+			returns.put("email", member.getEmail());
+			returns.putAll(new InstanceMessage("로그인에 성공하셨습니다.", enumInstanceMessage.SUCCESS).getMessage());
 		}catch(PageException e){
-			e.printStackTrace();
+			returns.putAll(e.getReturns());
 			returns.put("is_successLogin", false);
-			returns.put("view",e.getPage().toString());		
-			returns.putAll(new InstanceMessage(e.getMessage(), InstanceMessageType.ERROR).getMessage());
 		}catch(EntityException e){
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-			returns.put("view", e.getToPage().toString());	
-			
-			InstanceMessage msg = new InstanceMessage(e.getMessage(), InstanceMessageType.ERROR);
-			returns.putAll(msg.getMessage());
+			returns.putAll(e.getReturns());
 		}catch(SQLException e){
-			e.printStackTrace();
+						
 			returns.put("view", enumPage.ERROR403);
 			
-			InstanceMessage msg = new InstanceMessage("알수없는 오류 발생. 관리자에게 문의하세요", InstanceMessageType.ERROR);
+			InstanceMessage msg = new InstanceMessage("알수없는 오류 발생. 관리자에게 문의하세요", enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
 		}catch(Exception e){
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+			
 			returns.put("view", enumPage.ERROR403.toString());
-			InstanceMessage msg = new InstanceMessage("알수없는 오류 발생. 관리자에게 문의하세요", InstanceMessageType.ERROR);
+			InstanceMessage msg = new InstanceMessage("알수없는 오류 발생. 관리자에게 문의하세요", enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
-		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
 		return returns;
 	}
 	
-	public Map<String,Object> doLoginAsCase(Member member) throws Throwable{
+	public Map<String,Object> doLoginAsCase(Member member) throws PageException, AddressException, EntityException, ControllerException, SQLException, MessagingException{
 		
 		Map<String, Object> returns = new HashMap<String, Object>();
 		
@@ -111,7 +119,9 @@ final public class Login{
 				break;
 				
 			default:
-				throw new PageException(enumPageError.UNKNOWN_PARA_VALUE,enumPage.ERROR404);
+				throw (new PageException.Builder(enumPage.ERROR404))
+				.errorString("비 정상적인 접근입니다.")
+				.errorCode(enumPageError.UNKNOWN_PARA_VALUE).build(); 
 			
 		}
 		
@@ -120,7 +130,7 @@ final public class Login{
 		
 	}
 	
-	private Map<String,Object> oauthCase(Member member) throws Throwable{
+	private Map<String,Object> oauthCase(Member member) throws PageException, SQLException, ControllerException{
 		
 		
 		Map<String, Object> returns = new HashMap<String, Object>();
@@ -137,13 +147,10 @@ final public class Login{
 			
 		}
 			
-		
-		
-		
 		return returns;
 	}
 
-	private Map<String,Object> nothingCase(Member member) throws Throwable{
+	private Map<String,Object> nothingCase(Member member) throws EntityException, ControllerException, SQLException, PageException, AddressException, MessagingException{
 		
 		
 		Map<String, Object> returns = new HashMap<String, Object>();
@@ -172,71 +179,129 @@ final public class Login{
 		
 		//가입여부 확인.
 		if(!mDB.isJoin(member.getEmail()))
-			throw new EntityException("이메일이 존재하지 않습니다. 가입후 사용하세요. ", enumMemberState.NOT_JOIN, enumPage.JOIN);
-		
+			throw (new EntityException.Builder(enumPage.JOIN))
+			.errorCode(enumMemberState.NOT_JOIN).errorString("이메일이 존재하지 않습니다. 가입후 사용하세요. ").build();
+
 		//로그인 여부 확인.				
 		if(mCtl.containsEntity(member.getSessionId())){
 			member = mCtl.getMember(member.getSessionId());
 			if(member.isLogin())
-				throw new EntityException( enumMemberState.ALREADY_LOGIN, enumPage.MAIN);
+				throw (new EntityException.Builder(enumPage.MAIN))
+				.errorCode(enumMemberState.ALREADY_LOGIN).errorString("이메일이 존재하지 않습니다. 가입후 사용하세요. ").build();
+		
 		}
 		
 	}
 	
-	private void lockingMember(EnumMap<enumMemberAbnormalState, Boolean> state, Member member) throws Exception{
+	private void lockingMember(EnumMap<enumMemberAbnormalState, Boolean> state, Member member) throws SQLException, EntityException, PageException, AddressException, MessagingException{
 		
 		
 		//아직 가입 인증을 안한경우.
 		if(state.get(enumMemberAbnormalState.JOIN_CERTIFICATION))
-			throw new EntityException(enumMemberState.NOT_JOIN_CERTIFICATION, enumPage.ENTRY);
+			throw (new EntityException.Builder(enumPage.ENTRY))
+			.errorCode(enumMemberState.NOT_JOIN_CERTIFICATION).build();
 			
 		//비밀번호 분실상태인가?
 		//아래의 두 상태는 비밀번호 일치여부를 검사할 필요 없음.
-		if( state.get(enumMemberAbnormalState.LOST_PASSWORD) ){					
+		else if( state.get(enumMemberAbnormalState.LOST_PASSWORD) ){					
 			
-			if(mMng.isSendedmail(member.getEmail(), enumMailType.LOST_PASSWORD))
-				throw new EntityException(enumMemberState.LOST_PASSWORD, enumPage.INPUT_CERTIFICATION_NUMBER);
-			else
-				throw new EntityException(enumMemberState.LOST_PASSWORD, enumPage.INPUT_MAIL);
+			List<MailManager.MailInformation> results = mailMng.getMailDateInformationOf(member.getEmail(), enumMailType.LOST_PASSWORD);
+			if(results.isEmpty()){
+				throw (new EntityException.Builder(enumPage.LOST_PASSWORD))
+				.errorString("비밀번호 분실상태입니다. 임시 비밀번호 발급을 위해 메일을 작성 바랍니다.")
+				.errorCode(enumMailState.NOT_SENDED_MAIL).build(); 
+			}
+			if(results.size()>1){
+				mailMng.invalidateMailOf(member.getEmail(), enumMailType.LOST_PASSWORD);
+				throw (new EntityException.Builder(enumPage.LOST_PASSWORD))
+				.errorString("인증과정에 문제가 생겼습니다. 임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.errorCode(enumMailState.DUPLICATED_SENED_MAIL).build();
+			}
+			int hour = Integer.parseInt(enumMailStandard.NEEDED_HOUR_OF_MAIL_CERTIFICATION.toString());
 			
+			if(CommFunc.isPassingDateFromToday(results.get(0).sendedDate, hour, CommFunc.CalendarKind.HOUR)){
+				mailMng.invalidateMailOf(member.getEmail(), enumMailType.LOST_PASSWORD);
+				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
+				.errorString("인증기한이 초과됐습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.errorCode(enumMemberState.LOST_PASSWORD).build();
+			}
+			else{
+				member.doLogin();
+			}
 
 		}
 		//비밀번호 초과상태인가
-		else if(state.get(enumMemberAbnormalState.FAILD_LOGIN) ){
+		else if(state.get(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT) ){
 		
-			if(mMng.isSendedmail(member.getEmail(), enumMailType.FAILED_LOGIN))
-				throw new EntityException(enumMemberState.EXCEED_FAILD_LOGIN, enumPage.INPUT_CERTIFICATION_NUMBER);
-			else
-				throw new EntityException(enumMemberState.EXCEED_FAILD_LOGIN, enumPage.INPUT_MAIL);
-
-		
-		}
+			final List<MailManager.MailInformation> results = mailMng.getMailDateInformationOf(member.getEmail(), enumMailType.EXCEEDED_LOGIN_COUNT);
+			if(results.isEmpty()){
+				final int count = Integer.parseInt( enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString()); 
+				mMng.setLostPassword(member.getEmail());
+				throw (new EntityException.Builder(enumPage.LOST_PASSWORD))
+				.errorString("비밀번호 시도 횟수를 "+count+"회 초과 했습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.errorCode(enumMailState.NOT_SENDED_MAIL).build(); 
 				
-		//잠김 상태중에서도 아래 두가지는 확인이 필요함.
-		if(state.get(enumMemberAbnormalState.LOST_PASSWORD )){
+			}
+			if(results.size()>1)
+				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
+				.errorString("인증과정에 문제가 생겼습니다. 임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.errorCode(enumMailState.DUPLICATED_SENED_MAIL).build();
 			
-			member.doLogin();
+			int hour = Integer.parseInt(enumMailStandard.NEEDED_HOUR_OF_MAIL_CERTIFICATION.toString());
 			
-			
+			if(CommFunc.isPassingDateFromToday(results.get(0).sendedDate, hour, CommFunc.CalendarKind.HOUR)){
+				mailMng.invalidateMailOf(member.getEmail(), enumMailType.EXCEEDED_LOGIN_COUNT);
+				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
+				.errorString("인증기한이 초과됐습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.errorCode(enumMemberState.LOST_PASSWORD).build();
+			}
+			else{
+				member.doLogin();
+			}
 		}
-		
 		else if(state.get(enumMemberAbnormalState.SLEEP) ){
-		
+				
+			final List<MailManager.MailInformation> results = mailMng.getMailDateInformationOf(member.getEmail(), enumMailType.EXCEEDED_LOGIN_COUNT);
+			if(results.isEmpty()){
+				
+				mMng.setLostPassword(member.getEmail());
+				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
+				.errorString("계정이 휴면상태입니다.  임시 비밀번호 발급을 위해 메일을 보내주시기 바랍니다.")
+				.errorCode(enumMailState.NOT_SENDED_MAIL).build(); 
+				
+			}
+			if(results.size()>1)
+				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
+				.errorString("인증과정에 문제가 생겼습니다. 임시 비밀번호 발급을 위해 메일을 보내주시기 바랍니다.")
+				.errorCode(enumMailState.DUPLICATED_SENED_MAIL).build();
 			
+			int hour = Integer.parseInt(enumMailStandard.NEEDED_HOUR_OF_MAIL_CERTIFICATION.toString());
+			
+			if(CommFunc.isPassingDateFromToday(results.get(0).sendedDate, hour, CommFunc.CalendarKind.HOUR)){
+				mailMng.invalidateMailOf(member.getEmail(), enumMailType.SLEEP);
+				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
+				.errorString("인증기한이 초과됐습니다.  휴면계정 해제를 위한 임시 비밀번호 발급을 위해 메일을 보내주시기 바랍니다.")
+				.errorCode(enumMemberState.SLEEP).build();
+			}
+			else{
+				member.doLogin();
+			}
 			
 		}
 		
 	}
 	
-	private void nonLockingMember(EnumMap<enumMemberAbnormalState, Boolean> state, Member member) throws Exception{
+	private void nonLockingMember(EnumMap<enumMemberAbnormalState, Boolean> state, Member member) throws PageException, EntityException {
 	
 		Map<String,Object> returns = new HashMap<String,Object>();
 		
 		if(member.doLogin()==false)
-			throw new EntityException(enumMemberState.NOT_EQUAL_PASSWORD, enumPage.LOGIN);	
+			throw (new EntityException.Builder(enumPage.LOGIN))
+			.errorString("인증과정에 문제가 생겼습니다. 임시 비밀번호 발급을 위해 메일을 보내주시기 바랍니다.")
+			.errorCode(enumMemberState.NOT_EQUAL_PASSWORD).build();	
 		else{//로그인성공
 			
-			InstanceMessage msg = new InstanceMessage("로그인에 성공하셨습니다.", InstanceMessageType.SUCCESS);
+			InstanceMessage msg = new InstanceMessage("로그인에 성공하셨습니다.", enumInstanceMessage.SUCCESS);
 			returns.putAll(msg.getMessage());
 
 			returns.put("isSuccessLogin", true);

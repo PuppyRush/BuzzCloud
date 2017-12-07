@@ -24,6 +24,7 @@ import com.puppyrush.buzzcloud.entity.authority.file.enumFileAuthority;
 import com.puppyrush.buzzcloud.entity.authority.member.MemberAuthority;
 import com.puppyrush.buzzcloud.entity.authority.member.enumMemberAuthority;
 import com.puppyrush.buzzcloud.entity.band.Band;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
 @Service("authorityManager")
@@ -41,7 +42,7 @@ public final class AuthorityManager {
 
  		
 		FileAuthority fAuth = null;
-
+		
 		try {
 
 			Map<String, Object> where = new HashMap<String, Object>();
@@ -95,22 +96,21 @@ public final class AuthorityManager {
 			auths.put(enumFileAuthority.UPLOAD, false);
 
 			fAuth = new FileAuthority(-1, new Timestamp(System.currentTimeMillis()), auths);
-
-			e.printStackTrace();
 		}
 
 		return fAuth;
 	}
 
-	public BandAuthority getBandAuthority(int bandId) {
+	public BandAuthority getBandAuthority(int bandId) throws SQLException {
 
 		BandAuthority gAuth = null;
-
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
 
-			PreparedStatement ps = conn.prepareStatement("select * from bandAuthority where bandId = ?");
+			ps = conn.prepareStatement("select * from bandAuthority where bandId = ?");
 			ps.setInt(1, bandId);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 
 			rs.next();
 
@@ -148,23 +148,29 @@ public final class AuthorityManager {
 			auths.put(enumBandAuthority.FINAL, false);
 
 			gAuth = new BandAuthority(-1, new Timestamp(System.currentTimeMillis()), auths);
-			e.printStackTrace();
+		}
+		finally{
+			if(ps!=null)
+				ps.close();
+			if(rs!=null)
+				rs.close();
 		}
 
 		return gAuth;
 
 	}
 
-	public MemberAuthority getMemberAuthority(int ownerId, int bandId) throws EntityException {
+	public MemberAuthority getMemberAuthority(int ownerId, int bandId) throws EntityException, SQLException {
 
 		MemberAuthority mAuth = null;
-
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
 
-			PreparedStatement ps = conn.prepareStatement("select * from memberAuthority where bandId = ? and memberId = ?");
+			ps = conn.prepareStatement("select * from memberAuthority where bandId = ? and memberId = ?");
 			ps.setInt(1, bandId);
 			ps.setInt(2, ownerId);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			rs.next();
 			
 			int memberTypeValue= rs.getInt("memberType");
@@ -178,38 +184,43 @@ public final class AuthorityManager {
 					break;
 				}
 			if(!isExist)
-				throw new EntityException(enumAuthorityState.NOT_EXIST_AUTHORITY);
+				throw (new EntityException.Builder(enumPage.ERROR404))
+				.errorString("비 정상적인 접근입니다.")
+				.errorCode(enumAuthorityState.NOT_EXIST_AUTHORITY).build(); 
 			
 			int authId = rs.getInt("authorityId");
 			Timestamp grantedDate = rs.getTimestamp("grantedDate");
 			
 			mAuth = new MemberAuthority( authId, grantedDate , memberType);
-		
-			ps.close();
-			rs.close();
 
 		} catch (SQLException e) {
 			mAuth = new MemberAuthority(-1, new Timestamp(System.currentTimeMillis()),
 					enumMemberAuthority.VIEWER);
-			e.printStackTrace();
+		}
+		finally{
+			if(ps!=null)
+				ps.close();
+			if(rs!=null)
+				rs.close();
 		}
 
 		return mAuth;
 	}
 
-	public MemberAuthority makeMemberAuthority(int memberId, int bandId, enumMemberAuthority auth){
+	public MemberAuthority makeMemberAuthority(int memberId, int bandId, enumMemberAuthority auth) throws SQLException{
 		
 		MemberAuthority mAuth = null;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
 			
-			PreparedStatement ps = conn.prepareStatement("insert into memberAuthority (memberId, bandId, memberType) values(?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+			ps = conn.prepareStatement("insert into memberAuthority (memberId, bandId, memberType) values(?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
 			ps.setInt(1, memberId);
 			ps.setInt(2, bandId);
 			ps.setInt(3, auth.toInteger());
 			ps.executeUpdate();
 			
-			ResultSet rs =  ps.getGeneratedKeys();
+			rs =  ps.getGeneratedKeys();
 			rs.next();
 			int authKey = rs.getInt(1);
 			
@@ -221,19 +232,25 @@ public final class AuthorityManager {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			mAuth = new MemberAuthority(-1,  new Timestamp(System.currentTimeMillis()), enumMemberAuthority.VIEWER);
-			e.printStackTrace();
 		}
-		
+		finally{
+			if(ps!=null)
+				ps.close();
+			if(rs!=null)
+				rs.close();
+		}
+
 		return mAuth;
 	}
 	
-	public BandAuthority makeBandAuthority(int bandId,  Map<enumBandAuthority, Boolean> auths){
+	public BandAuthority makeBandAuthority(int bandId,  Map<enumBandAuthority, Boolean> auths) throws SQLException{
 		
 		BandAuthority bandAuth = null;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
 			
-			PreparedStatement ps = conn.prepareStatement("insert into bandAuthority (bandId, isFinal, isRoot,"
+			ps = conn.prepareStatement("insert into bandAuthority (bandId, isFinal, isRoot,"
 					+ "canJoinMember, canViewUpperBand , canViewSiblingBand, canViewSubBand, canMakeSubBand, canMakeSiblingBand ) values(?,?, ?,?,?, ?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
 			ps.setInt(1, bandId);
 			
@@ -285,7 +302,7 @@ public final class AuthorityManager {
 
 			ps.executeUpdate();
 			
-			ResultSet rs =  ps.getGeneratedKeys();
+			rs =  ps.getGeneratedKeys();
 			rs.next();
 			int authKey = rs.getInt(1);
 			
@@ -305,21 +322,28 @@ public final class AuthorityManager {
 			
 			
 			bandAuth = new BandAuthority(-1,  new Timestamp(System.currentTimeMillis()),a);
-			e.printStackTrace();
 		}
+		finally{
+			if(ps!=null)
+				ps.close();
+			if(rs!=null)
+				rs.close();
+		}
+
 		
 		return bandAuth;
 		
 	}
 	
-	public FileAuthority makeFileAuthoirty(int memberId, int bandId,  Map<enumFileAuthority, Boolean> auths){
+	public FileAuthority makeFileAuthoirty(int memberId, int bandId,  Map<enumFileAuthority, Boolean> auths) throws SQLException{
 		
 
 		FileAuthority fAuth = null;
-		
+		PreparedStatement ps=null;
+		ResultSet rs=null;
 		try {
 			
-			PreparedStatement ps = conn.prepareStatement("insert into fileAuthority (bandId,memberId, canRemove, "
+			ps = conn.prepareStatement("insert into fileAuthority (bandId,memberId, canRemove, "
 					+ "canCreate, canDownload, canUpload) values(?,?,?, ?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
 			ps.setInt(1, bandId);
 			ps.setInt(2, memberId);
@@ -346,7 +370,7 @@ public final class AuthorityManager {
 	
 			ps.executeUpdate();
 			
-			ResultSet rs =  ps.getGeneratedKeys();
+			rs =  ps.getGeneratedKeys();
 			rs.next();
 			int authKey = rs.getInt(1);
 			
@@ -362,8 +386,14 @@ public final class AuthorityManager {
 			a.put(enumFileAuthority.UPLOAD, false);
 
 			fAuth = new FileAuthority(-1,  new Timestamp(System.currentTimeMillis()),a);
-			e.printStackTrace();
 		}
+		finally{
+			if(ps!=null)
+				ps.close();
+			if(rs!=null)
+				rs.close();
+		}
+
 		
 		return fAuth;
 		

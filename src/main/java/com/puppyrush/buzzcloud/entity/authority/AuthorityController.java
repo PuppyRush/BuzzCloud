@@ -11,27 +11,30 @@ import com.puppyrush.buzzcloud.entity.authority.file.FileAuthority;
 import com.puppyrush.buzzcloud.entity.authority.member.MemberAuthority;
 import com.puppyrush.buzzcloud.entity.impl.EntityControllerImpl;
 import com.puppyrush.buzzcloud.entity.interfaces.Entity;
+import com.puppyrush.buzzcloud.page.PageException;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
+import com.puppyrush.buzzcloud.page.enums.enumPageError;
 
 @Service("authorityController")
 final public class AuthorityController extends EntityControllerImpl<Authority>{
 
 	private HashMap<Class<?>, HashMap<Integer,Integer>> authorityMap;
-	private ArrayList<Class<?>> AuthorityClassAry;
+	private ArrayList<Class<?>> authorityClassAry;
 	
 	private int autoIncrementId; 
 	
 	private AuthorityController(){
 		
 		authorityMap = new HashMap<Class<?>, HashMap<Integer,Integer>>();
-		AuthorityClassAry = new ArrayList<Class<?>>();
+		authorityClassAry = new ArrayList<Class<?>>();
 		
-		AuthorityClassAry.add(BandAuthority.class);
-		AuthorityClassAry.add(MemberAuthority.class);
-		AuthorityClassAry.add(FileAuthority.class);
+		authorityClassAry.add(BandAuthority.class);
+		authorityClassAry.add(MemberAuthority.class);
+		authorityClassAry.add(FileAuthority.class);
 
-		for(int i=0 ; i < AuthorityClassAry.size() ; i++){
-			System.out.println(AuthorityClassAry.get(i).getName());
-			authorityMap.put(AuthorityClassAry.get(i), new HashMap<Integer,Integer>());
+		for(int i=0 ; i < authorityClassAry.size() ; i++){
+			System.out.println(authorityClassAry.get(i).getName());
+			authorityMap.put(authorityClassAry.get(i), new HashMap<Integer,Integer>());
 		}
 		
 		autoIncrementId = 0;
@@ -62,9 +65,10 @@ final public class AuthorityController extends EntityControllerImpl<Authority>{
 				
 		if(entityMap.containsKey(id))
 			return (Authority) entityMap.get(id);
-		
-		throw new ControllerException("비 정상적인 접근입니다.",enumController.NOT_EXIST_MEMBER_FROM_MAP);
-		
+		else
+			throw (new ControllerException.Builder(enumPage.ERROR404))
+			.errorString("비 정상적인 접근입니다..")
+			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 		
 	}
 	
 	public <E extends Authority> boolean containsEntity(Class<E> entityKind, int authId){
@@ -109,7 +113,10 @@ final public class AuthorityController extends EntityControllerImpl<Authority>{
 	public <V extends Entity> void addEntity(int id, V obj) throws ControllerException {
 		
 		if(entityMap.containsKey(obj))
-			throw new ControllerException(enumController.ALREAY_EXIST_MEMBER_FROM_MAP);
+			throw (new ControllerException.Builder(enumPage.ERROR404))
+			.errorString("비 정상적인 접근입니다.")
+			.errorCode(enumController.ALREAY_EXIST_MEMBER_FROM_MAP).build(); 
+			
 		
 		entityMap.put(id, (Authority) obj);
 		
@@ -118,7 +125,9 @@ final public class AuthorityController extends EntityControllerImpl<Authority>{
 	public <E extends Authority> void removeEntity(E authority) throws ControllerException{
 		
 		if(containsEntity((Class<E>) authority.getClass(), authority.getAuthorityId())==false){
-			throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
+			throw (new ControllerException.Builder(enumPage.ERROR404))
+			.errorString("비 정상적인 접근입니다.")
+			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
 		}
 		
 		Class<? extends Authority> clazz = authority.getClass();		
@@ -134,7 +143,9 @@ final public class AuthorityController extends EntityControllerImpl<Authority>{
 	public void removeEntity(int id) throws ControllerException {
 		
 		if(!entityMap.containsKey(id))
-			throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
+			throw (new ControllerException.Builder(enumPage.ERROR404))
+			.errorString("비 정상적인 접근입니다.")
+			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build();		
 		
 		entityMap.remove(id);
 		

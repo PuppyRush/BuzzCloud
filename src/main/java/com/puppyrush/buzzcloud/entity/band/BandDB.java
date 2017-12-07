@@ -123,7 +123,7 @@ public class BandDB {
 				bld.append(date.valueOf("2009-10-03 20:10:10").toString());
 				bld.append(")\n그룹 소유주의 허가를 기다리시거나 설정페이지에서 가입요청을 철회하세요.");
 				
-				InstanceMessage msg = new InstanceMessage(bld.toString(),InstanceMessageType.SUCCESS);
+				InstanceMessage msg = new InstanceMessage(bld.toString(),enumInstanceMessage.SUCCESS);
 				returns.putAll(msg.getMessage());
 				returns.put("isSuccess", false);
 			}
@@ -139,7 +139,7 @@ public class BandDB {
 			
 			returns.put("isSuccess", true);
 			
-			InstanceMessage msg = new InstanceMessage("그룹에 가입이 신청되었습니다. 승인이 되면 사용이 가능합니다.",InstanceMessageType.SUCCESS);
+			InstanceMessage msg = new InstanceMessage("그룹에 가입이 신청되었습니다. 승인이 되면 사용이 가능합니다.",enumInstanceMessage.SUCCESS);
 			returns.putAll(msg.getMessage());
 		}
 		return returns;

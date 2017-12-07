@@ -25,11 +25,11 @@ public class BeingExistNickname {
 		
 		if(dbAccess.getColumnsOfAll("member", where).isEmpty()){
 			returns.put("isExist", false);
-			returns.putAll(new InstanceMessage("중복되는 이름이 없습니다.",InstanceMessageType.SUCCESS).getMessage());
+			returns.putAll(new InstanceMessage("중복되는 이름이 없습니다.",enumInstanceMessage.SUCCESS).getMessage());
 		}
 		else{
 			returns.put("isExist", true);
-			returns.putAll(new InstanceMessage("그룹이름이 중복됩니다.",InstanceMessageType.ERROR).getMessage());
+			returns.putAll(new InstanceMessage("그룹이름이 중복됩니다.",enumInstanceMessage.ERROR).getMessage());
 		}
 
 		return returns;

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.puppyrush.buzzcloud.controller.form.BandForm;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.dbAccess.DBManager.ColumnHelper;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.authority.AuthorityController;
@@ -23,8 +24,10 @@ import com.puppyrush.buzzcloud.entity.band.Band;
 import com.puppyrush.buzzcloud.entity.band.BandManager;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
-
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.entity.band.Band.AuthoritedMember;
+import com.puppyrush.buzzcloud.entity.band.enums.enumBandState;
 import com.puppyrush.buzzcloud.entity.band.BandController;
 import com.puppyrush.buzzcloud.entity.band.BandDB;
 
@@ -46,26 +49,31 @@ public class GettingSelectedBandInfo{
 	@Autowired(required = false)
 	private DBManager	dbAccess;
 	
-	public Map<String, Object> execute(int bandId) throws ControllerException, SQLException {
+	public Map<String, Object> execute(int bandId) throws ControllerException, SQLException, EntityException {
 
 		Map<String, Object> result = new HashMap<String, Object>();
 
 		Map<String, Object> where = new HashMap<String, Object>();
-		List<Map<String, Object>> bandInfo = new ArrayList<Map<String, Object>>();
-		List<Map<String, Object>> bandDetail = new ArrayList<Map<String, Object>>();
 
 		where.put("bandId", bandId);
 
-		bandInfo = dbAccess.getColumnsOfAll("band", where);
-		bandDetail = dbAccess.getColumnsOfAll("bandDetail", where);
+		ColumnHelper bandInfo = dbAccess.getColumnsOfAll("band", where);
+		ColumnHelper bandDetail = dbAccess.getColumnsOfAll("bandDetail", where);
 
+		if(bandInfo.isEmpty() || bandDetail.isEmpty())
+			throw (new EntityException.Builder(enumPage.GROUP_MANAGER))
+			.instanceMessage(enumInstanceMessage.ERROR)
+			.errorString("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
+			.errorCode(enumBandState.NOT_EXIST_BAND).build();
+		
+		
 		result.put("bandId", bandId);
-		result.put("bandName", bandInfo.get(0).get("name"));
-		result.put("bandCapacity", bandDetail.get(0).get("maxCapacity"));
-		result.put("bandContains", bandDetail.get(0).get("bandContains"));
+		result.put("bandName", bandInfo.getString(0, "name"));
+		result.put("bandCapacity", bandDetail.getInteger(0,"maxCapacity"));
+		result.put("bandContains", bandDetail.getInteger(0, "bandContains"));
 
-		int ownerId = (int) bandInfo.get(0).get("owner");
-		int adminId = (int) bandInfo.get(0).get("administrator");
+		int ownerId = bandInfo.getInteger(0, "owner");
+		int adminId = bandInfo.getInteger(0, "administrator");
 		int upperBandId = bandMng.getUpperBand(bandId);
 
 		String ownerNickname = mDB.getNicknameOfId(ownerId);

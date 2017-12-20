@@ -22,6 +22,7 @@ public enum enumMemberState implements enumMember, enumEntityState
 	EXCEEDED_LOGIN_COUNT("비밀번호를 "+enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString()+"회 이상 초과 하셨습니다."),
 	PASSING_CHANGE_PWD("비밀번호를 변경하지 않은지 "+enumMemberStandard.PASSWD_CHANGE_DATE_OF_MONTH+"되셨습니다."),
 	SLEEP("계정이 휴면상태입니다."),
+	NOT_EXIST_MEMBER("존재하지 않는 사용자 이거나  중복됩니다."),
 	ERROR("unknow error"),
 	
 	RESOLVE_JOIN(0);

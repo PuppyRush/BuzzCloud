@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.puppyrush.buzzcloud.controller.form.BandForm;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.dbAccess.DBManager.ColumnHelper;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 import com.puppyrush.buzzcloud.property.enumSystem;
@@ -113,11 +114,11 @@ public class BandDB {
 		where.put("memberId", memberId);
 		where.put("bandId", bandId);
  		
-		List<Map<String, Object>> result = dbMng.getColumnsOfAll("bandRequestJoin",where);
-		if(!result.isEmpty()){
-			if((int)result.get(0).get("memberId")==memberId && (int)result.get(0).get("bandId")==bandId){
+		ColumnHelper ch = dbMng.getColumnsOfAll("bandRequestJoin",where);
+		if(!ch.isEmpty()){
+			if(ch.getInteger(0, "memberId")==memberId && ch.getInteger(0, "bandId")==bandId){
 				
-				Timestamp date = (Timestamp)result.get(0).get("requestDate");
+				Timestamp date =ch.getTimestamp(0, "requestDate");
 				StringBuilder bld = new StringBuilder();
 				bld.append("이미 가입요청을 하셨습니다. (");
 				bld.append(date.valueOf("2009-10-03 20:10:10").toString());

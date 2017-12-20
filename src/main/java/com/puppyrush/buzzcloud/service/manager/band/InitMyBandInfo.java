@@ -14,7 +14,7 @@ import com.puppyrush.buzzcloud.entity.authority.band.enumBandAuthority;
 import com.puppyrush.buzzcloud.entity.authority.file.enumFileAuthority;
 import com.puppyrush.buzzcloud.entity.band.Band;
 import com.puppyrush.buzzcloud.entity.band.BandManager;
-import com.puppyrush.buzzcloud.entity.band.enumBand;
+import com.puppyrush.buzzcloud.entity.band.enums.enumBand;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 

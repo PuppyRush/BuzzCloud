@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.dbAccess.DBManager.ColumnHelper;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
@@ -83,12 +84,12 @@ public class RegisteMemberFace {
 		where.put("memberId", member.getId());
 		set.add("image");
 
-		List<Map<String, Object>> res = dbMng.getColumnsOfPart("memberDetail", set, where);
-		if (res.size() != 1) {
+		ColumnHelper res = dbMng.getColumnsOfPart("memberDetail", set, where);
+		if (res.columnSize() != 1) {
 			throw new SQLException("이미지 등록 DB내부오류. 관리자에게 문의하세요.");
 		}
 
-		String savedImageName = (String) res.get(0).get("image");
+		String savedImageName = res.getString(0, "image");
 		if (!savedImageName.equals("") || !savedImageName.contains("defaultImage")) {
 
 			File oldFile = new File(CommFunc.toAbsolutePathFromImage(member.getId(), savedImageName));

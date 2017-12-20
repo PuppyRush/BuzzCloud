@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,19 +14,92 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.mysql.jdbc.ResultSetMetaData;
+import com.puppyrush.buzzcloud.bzexception.BZException;
+import com.puppyrush.buzzcloud.entity.EntityException;
+import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
 @Service("DBManager")
 public final class DBManager {
 
+
+	public static class ColumnHelper{
+		private List<Map<String,Object>> columns;
+		private int columnCount;
+		private boolean isEmpty;
+		
+		private ColumnHelper(){
+			isEmpty = true;
+			columnCount = 0;
+			columns = new ArrayList<Map<String,Object>>();
+		}
+		
+		private void addColumn(Map<String,Object> column){
+			columns.add(column);
+			columnCount++;
+			isEmpty = true;
+		}
+		
+		private boolean isValidation(int colIdx){
+			if(isEmpty || columns.size()<=colIdx){
+				return false;
+			}
+			return true;
+		}
+		
+		public int columnSize(){
+			return columns.size();
+		}
+		
+		public boolean isEmpty(){
+			return columns.isEmpty();
+		}
+		
+		public List<Map<String,Object>> getColumns(){
+			return columns;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public <T> void getValue(int columnIdx, String fieldName, T value){
+			if(!isValidation(columnIdx)){
+				value = null;
+			}
+			else
+				value = (T)columns.get(columnIdx).get(fieldName);
+		}
+		
+		public String getString(int colIdx, String fieldName){
+			if(!isValidation(colIdx)){
+				return null;
+			}
+			else
+				return (String)columns.get(colIdx).get(fieldName);
+		}
+		
+		public Integer getInteger(int colIdx, String fieldName){
+			if(!isValidation(colIdx)){
+				return null;
+			}
+			else
+				return (Integer)columns.get(colIdx).get(fieldName);
+		}
+		
+		public Timestamp getTimestamp(int colIdx, String fieldName){
+			if(!isValidation(colIdx)){
+				return null;
+			}
+			else
+				return (Timestamp)columns.get(colIdx).get(fieldName);
+		}
+	}
+	
 	private Connection conn = ConnectMysql.getConnector();
 	
-	
-	public List<Map<String,Object>> getColumnsOfAll( String tableName, Map<String,Object> whereCaluse){
+	public ColumnHelper getColumnsOfAll( String tableName, Map<String,Object> whereCaluse){
 		
 		List<Object> whereValue = new ArrayList<Object>();
-		List<Map<String,Object> > ary = new ArrayList<Map<String,Object> >();
-					
+		ColumnHelper ch = new ColumnHelper();
 		try {
 			
 			StringBuilder sql;
@@ -60,34 +134,34 @@ public final class DBManager {
 				colName.add( rsmd.getColumnName(l) );
 			}
 				
+			
+			
 			while(rs.next()){
 				
 				HashMap<String,Object> info = new HashMap<String,Object>();
 				
 				for(String key : colName)
 					info.put(key, rs.getObject(key));
-				ary.add(info);
+				ch.addColumn(info);
 			}
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		return ary;
+				
+		return ch;
 		
 	}
 	
-	public List<Map<String,Object>> getColumnsOfPart(String tableName, List<String> selectCaluse,  Map<String,Object> whereCaluse){
+	public ColumnHelper getColumnsOfPart(String tableName, List<String> selectCaluse,  Map<String,Object> whereCaluse){
 		
 		if(selectCaluse.size()==0)
 			return getColumnsOfAll(tableName, whereCaluse);
 		
 		List<Object> whereAry = new ArrayList<Object>();
-		List<Map<String,Object> > ary = new ArrayList<Map<String,Object> >();
+		ColumnHelper ch = new ColumnHelper();
 		
-			
 		try {
 			
 			StringBuilder sql = new StringBuilder("select ");
@@ -139,7 +213,7 @@ public final class DBManager {
 				for(String colName : selectCaluse)
 					info.put(colName, rs.getObject(colName));
 				
-				ary.add(info);
+				ch.addColumn(info);
 				
 			}
 			
@@ -148,18 +222,15 @@ public final class DBManager {
 			e.printStackTrace();
 		}
 		
+		return ch;
 		
-		return ary;
-		
-	}
-	
-	
+	}	
 	
 	public void updateColumn(String tableName, Map<String,Object> set, Map<String,Object> whereCaluse) throws SQLException{
 		
 		ArrayList<Object> whereAry = new ArrayList<Object>();
 		ArrayList<Object> setAry = new ArrayList<Object>();
-		StringBuilder sql = new StringBuilder("update ").append(tableName).append(" ").append(" set ");
+		StringBuilder sql = new StringBuilder("update ").append(tableName).append(" set ");
 		
 		if(set.size()>0){
 			Iterator<String> it = set.keySet().iterator();
@@ -223,8 +294,6 @@ public final class DBManager {
 			}
 			e.printStackTrace();
 		}
-		
-		
 	}
 	
 	public List<Integer>  insertColumn(String tableName, List<String> columns, List<List<Object>> values){

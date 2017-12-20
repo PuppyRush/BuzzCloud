@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.dbAccess.DBManager.ColumnHelper;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.enumController;
@@ -123,49 +124,30 @@ public class MemberDB {
 		return member;
 	}
 	
-	public Member getMember(String email) throws EntityException, ControllerException{
-			
-		PreparedStatement ps = null;
-		ResultSet rs= null;
+	public Member getMember(String email) throws EntityException, ControllerException, SQLException{
+	
 		Member member = null;
+
+		Map<String, Object> where = new HashMap<String, Object>();
+		where.put("email", email);
 		
-		try{
-			ps = conn.prepareStatement("select * from member where email = ?");
-			ps.setString(1, email);
-			rs = ps.executeQuery();
-			if(!rs.next())
-				throw (new EntityException.Builder(enumPage.JOIN))
-				.errorString("가입 후 로그인 바랍니다")
-				.instanceMessage(enumInstanceMessage.ERROR)
-				.errorCode(enumMemberState.NOT_JOIN).build();
+		ColumnHelper ch = dbMng.getColumnsOfAll("member",  where);
 				
-			
-			int memberId= rs.getInt("memberId");
-			EnumMap<enumMemberAbnormalState, Boolean> state = getMemberAbnormalStates(memberId);
-			enumMemberType idType = enumMemberType.valueOf(rs.getString("registrationKind"));
-			String nickname = rs.getString("nickname");
-			
-			member = new Member.Builder(memberId,email).abnormalState(state).registrationKind(idType).nickname(nickname).build();
-					
-			if(mCtl.containsEntity(memberId) == false)
-				mCtl.addEntity(memberId, member);
-			
-			
-		}catch(SQLException e){
-			e.printStackTrace();
-			
-		}finally{
-			
-			try {
-				ps.close();
-				rs.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
+		if(ch.isEmpty())
+			throw (new EntityException.Builder(enumPage.JOIN))
+			.errorString("가입 후 로그인 바랍니다")
+			.instanceMessage(enumInstanceMessage.ERROR)
+			.errorCode(enumMemberState.NOT_JOIN).build();
+		else if(ch.columnSize()>1)
+			throw new SQLException();
 		
+		int memberId= ch.getInteger(0, "memberId");
+		EnumMap<enumMemberAbnormalState, Boolean> state = getMemberAbnormalStates(memberId);
+		enumMemberType idType = enumMemberType.valueOf(ch.getString(0, "registrationKind"));
+		String nickname = ch.getString(0, "nickname");
+		
+		member = new Member.Builder(memberId,email).abnormalState(state).registrationKind(idType).nickname(nickname).build();
+
 		return member;
 	}
 		
@@ -517,11 +499,11 @@ public class MemberDB {
 		int id = getIdOfEmail(email);
 		where.put("memberId", id);
 		sel.add("registrationKind");
-		List<Map<String,Object>> res = dbMng.getColumnsOfPart("member", sel, where);
+		ColumnHelper ch = dbMng.getColumnsOfPart("member", sel, where);
 		
-		if(res.isEmpty())
+		if(ch.isEmpty())
 			return false;
-		else if(enumMemberType.valueOf((String)res.get(0).get("registrationKind")).equals(enumMemberType.NOTHING)){
+		else if(enumMemberType.valueOf(ch.getString(0, "registrationKind")).equals(enumMemberType.NOTHING)){
 			return true;
 		}
 		return false;

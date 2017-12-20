@@ -73,6 +73,8 @@ final public class Login{
 			Member member = mCtl.getMember(form);
 			member.setSessionId(form.getSessionId());
 			
+			invalidateMember_If_dosentLogin(member);
+			
 			returns.putAll(doLoginAsCase(member));
 					
 			returns.put("nickname", member.getNickname());
@@ -100,6 +102,17 @@ final public class Login{
 		return returns;
 	}
 	
+	public void invalidateMember_If_dosentLogin(Member member) throws ControllerException{
+				
+		if(!member.isLogin()){
+			if(mCtl.containsEntity(member.getId()))
+				mCtl.removeEntity(member.getId());
+			if(mCtl.containsEntity(member.getSessionId()))
+				mCtl.removeMember(member.getSessionId());
+		}
+		
+	}
+	
 	public Map<String,Object> doLoginAsCase(Member member) throws PageException, AddressException, EntityException, ControllerException, SQLException, MessagingException{
 		
 		Map<String, Object> returns = new HashMap<String, Object>();
@@ -107,14 +120,14 @@ final public class Login{
 		switch(member.getUserType()){
 			case NOTHING:
 				
-				returns.putAll(nothingCase(member));
+				nothingCase(member);
 			
 				break;
 				
 			case NAVER:
 			case GOOGLE:
 				
-				returns.putAll(oauthCase(member));
+				oauthCase(member);
 			
 				break;
 				
@@ -130,10 +143,8 @@ final public class Login{
 		
 	}
 	
-	private Map<String,Object> oauthCase(Member member) throws PageException, SQLException, ControllerException{
+	private void oauthCase(Member member) throws PageException, SQLException, ControllerException{
 		
-		
-		Map<String, Object> returns = new HashMap<String, Object>();
 	
 		if(mDB.isJoin(member.getEmail()))
 			member.doLogin();
@@ -147,14 +158,10 @@ final public class Login{
 			
 		}
 			
-		return returns;
 	}
 
-	private Map<String,Object> nothingCase(Member member) throws EntityException, ControllerException, SQLException, PageException, AddressException, MessagingException{
-		
-		
-		Map<String, Object> returns = new HashMap<String, Object>();
-		
+	private void nothingCase(Member member) throws EntityException, ControllerException, SQLException, PageException, AddressException, MessagingException{
+				
 		checkJoinAndPreLogin(member);
 
 		EnumMap<enumMemberAbnormalState, Boolean> state = mDB.getMemberAbnormalStates(member.getId());
@@ -165,13 +172,8 @@ final public class Login{
 			
 		}//ABNORMAL=0. 잠김상태가 아니면 로그인을 시도한다.
 		else{
-		
-			nonLockingMember(state, member);
-			
+			nonLockingMember( member);
 		}	
-		
-		
-		return returns;
 		
 	}
 		
@@ -193,8 +195,7 @@ final public class Login{
 		
 	}
 	
-	private void lockingMember(EnumMap<enumMemberAbnormalState, Boolean> state, Member member) throws SQLException, EntityException, PageException, AddressException, MessagingException{
-		
+	private void lockingMember(EnumMap<enumMemberAbnormalState, Boolean> state, Member member) throws SQLException, EntityException, PageException, AddressException, MessagingException, NumberFormatException, ControllerException{
 		
 		//아직 가입 인증을 안한경우.
 		if(state.get(enumMemberAbnormalState.JOIN_CERTIFICATION))
@@ -227,6 +228,7 @@ final public class Login{
 			}
 			else{
 				member.doLogin();
+					
 			}
 
 		}
@@ -288,28 +290,12 @@ final public class Login{
 			}
 			
 		}
-		
+
 	}
 	
-	private void nonLockingMember(EnumMap<enumMemberAbnormalState, Boolean> state, Member member) throws PageException, EntityException {
+	private void nonLockingMember(Member member) throws PageException, EntityException, SQLException {
 	
-		Map<String,Object> returns = new HashMap<String,Object>();
-		
-		if(member.doLogin()==false)
-			throw (new EntityException.Builder(enumPage.LOGIN))
-			.errorString("인증과정에 문제가 생겼습니다. 임시 비밀번호 발급을 위해 메일을 보내주시기 바랍니다.")
-			.errorCode(enumMemberState.NOT_EQUAL_PASSWORD).build();	
-		else{//로그인성공
-			
-			InstanceMessage msg = new InstanceMessage("로그인에 성공하셨습니다.", enumInstanceMessage.SUCCESS);
-			returns.putAll(msg.getMessage());
-
-			returns.put("isSuccessLogin", true);
-			
-		}
-		
-		returns.put("view", enumPage.MAIN.toString());			
-		
+		member.doLogin();
 		
 	}
 	

@@ -13,9 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.dbAccess.DBManager.ColumnHelper;
+import com.puppyrush.buzzcloud.entity.EntityException;
+import com.puppyrush.buzzcloud.entity.enumEntityState;
 import com.puppyrush.buzzcloud.entity.band.BandDB;
 import com.puppyrush.buzzcloud.entity.band.BandManager;
+import com.puppyrush.buzzcloud.entity.band.enums.enumBandState;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
+import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
 @Service("getSearhcedBandInfo")
@@ -34,19 +41,24 @@ public class GettingSearchedBandInfo {
 	private MemberDB memberDB;
 	
 	
-	public Map<String,Object> excute(int bandId){
+	public Map<String,Object> excute(int bandId) throws EntityException{
 		
 		Map<String, Object> returns = new HashMap<String, Object>();
 
 		ArrayList<String> select = new ArrayList<String>();
-		HashMap<String, Object> where = new HashMap<String, Object>();
-		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-			
-		where.put("bandId", bandId);
-		result = dbMng.getColumnsOfAll("band", where);
 		
-		int ownerId = (int)result.get(0).get("owner");
-		int adminId = (int)result.get(0).get("administrator");
+		HashMap<String, Object> where = new HashMap<String, Object>();	
+		where.put("bandId", bandId);
+		
+		ColumnHelper ch = dbMng.getColumnsOfAll("band", where);
+		if(ch.isEmpty())
+			throw (new EntityException.Builder(enumPage.GROUP_MANAGER))
+			.instanceMessage(enumInstanceMessage.ERROR)
+			.errorString("오류가 발생했습니다.")
+			.errorCode(enumBandState.NOT_EXIST_BAND).build();
+		
+		int ownerId = ch.getInteger(0, ("owner"));
+		int adminId = ch.getInteger(0, ("administrator"));
 		int rootBandId = bandMng.getRootBandOf(bandId);
 		
 		
@@ -55,9 +67,9 @@ public class GettingSearchedBandInfo {
 		String adminName = memberDB.getNicknameOfId(adminId);
 		
 		select.add("contents");
-		result = dbMng.getColumnsOfPart("bandDetail", select, where);
+		ch = dbMng.getColumnsOfPart("bandDetail", select, where);
 		
-		returns.put("bandContain", result.get(0).get("contents"));
+		returns.put("bandContain", ch.getString(0, ("contents")));
 		returns.put("rootBandName", rootBandName);
 		returns.put("bandOwnerName", ownerName);
 		returns.put("bandAdminName", adminName);

@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.puppyrush.buzzcloud.controller.form.ProfileForm;
 import com.puppyrush.buzzcloud.entity.ControllerException;
+import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
@@ -61,13 +62,15 @@ public class AccountPageController {
 	public Map<String, Object> getMyAccountInfo(HttpServletRequest rq) {
 
 		Map<String, Object> returns = new HashMap<String, Object>();
+		
 		try {
 			returns = accountInfo.execute(mCtl.getMember(rq.getRequestedSessionId()));
+		} catch (EntityException e) {
+			returns.putAll(e.getReturns());
 		} catch (ControllerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			returns.putAll(e.getReturns());
 		}
-
+	
 		return returns;
 
 	}
@@ -81,7 +84,7 @@ public class AccountPageController {
 			returns = settingProfile.execute(form, mCtl.getMember(rq.getRequestedSessionId()).getId());
 		} catch (ControllerException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			returns.putAll(e.getReturns());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,7 +104,6 @@ public class AccountPageController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			mv.addAllObjects(new InstanceMessage(e.getMessage(),enumInstanceMessage.SUCCESS).getMessage());
-			e.printStackTrace();
 			mv.setViewName(enumPage.ERROR404.toString());
 		}
 	

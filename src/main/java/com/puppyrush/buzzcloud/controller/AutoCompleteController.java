@@ -75,9 +75,14 @@ public class AutoCompleteController {
 	@RequestMapping(value = "/getSerachedBandInfo.ajax", method = RequestMethod.GET)
 	public Map<String, Object> getSerachedBandInfo(@RequestParam("bandId") int bandId) {
 
-		
-		return getSearchedBandInfo.excute(bandId);
-		
+		Map<String, Object> returns = new HashMap<String, Object>();
+		try {
+			returns = getSearchedBandInfo.excute(bandId);
+		} catch (EntityException e) {
+			// TODO Auto-generated catch block
+			returns.putAll(e.getInstanceMessage());
+		}
+		return returns;
 	}
 
 

@@ -5,17 +5,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.dbAccess.DBManager.ColumnHelper;
 import com.puppyrush.buzzcloud.entity.EntityException;
-import com.puppyrush.buzzcloud.entity.band.enumBand;
+import com.puppyrush.buzzcloud.entity.band.enums.enumBand;
 import com.puppyrush.buzzcloud.entity.interfaces.Entity;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberAbnormalState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberStandard;
@@ -42,6 +49,9 @@ import com.puppyrush.buzzcloud.property.enumSystem;
 @Repository("member")
 public final class Member implements Entity {
 
+	@Autowired
+	private DBManager dbMng;	
+	
 	private static Connection conn = ConnectMysql.getConnector();
 	
 	/**
@@ -128,7 +138,7 @@ public final class Member implements Entity {
 
 		nickname=bld.nickname;
 		planePassword=bld.planePassword;
-		abnormalState = new EnumMap<>(enumMemberAbnormalState.class);
+		abnormalState = bld.abnormalState;
 		registrationKind=bld.registrationKind;
 		email=bld.email;
 		regDate =  new Timestamp(System.currentTimeMillis());
@@ -311,6 +321,7 @@ public final class Member implements Entity {
 
 
 	/**
+	 * @throws SQLException 
 	 * @throws PageException 
 	 * @throws Exception 
 	 * @param member  가입할 유저의 정보의 객체 
@@ -318,127 +329,108 @@ public final class Member implements Entity {
 	 * @return 로그인 무사히 성사됐는지 여부를 반환
 	 * @throws  
 	 */
-	public boolean doLogin() throws PageException {
+	public boolean doLogin() throws PageException, SQLException {
 		
-		PreparedStatement _ps =null;
-		ResultSet _rs = null;
-		PreparedStatement ps = null;
-		ResultSet rs=null;
-		boolean res=false;
+		boolean res=false;			
+		
+		Map<String, Object> where = new HashMap<String, Object>();
+		where.put("email", email);
 
-		try {				
-			
-			conn.setAutoCommit(false);
-			
-			ps = conn.prepareStatement("select * from member where email = ? ");
-			ps.setString(1, email);
-			rs = ps.executeQuery();	
-			rs.next();
-			
-			String hashedpw =  rs.getString("password");
-			int _idKey = rs.getInt("memberId");
-			id = _idKey;
-			
-			switch(registrationKind){
-				case NOTHING:
-					if( BCrypt.checkpw( planePassword, hashedpw ) ){
+		ColumnHelper ch = dbMng.getColumnsOfAll("member", where);
 						
-						res =  true;
-
-						////// 마지막 로그인 날짜 갱신
-						_ps = conn.prepareStatement("update memberDetail set lastLoginDate = ?, failedLoginCount = ? where memberId = ?");
-						
-						
-						Timestamp t = new Timestamp(System.currentTimeMillis());
-						_ps.setTimestamp(1, t);
-						_ps.setInt(2, 0);
-						_ps.setInt(3, _idKey);
-						_ps.executeUpdate();
-						_ps.close();
-										
-						
-						//잠금상태 해제 
-						//sleep인경우?
-						
-						rs.close();
-						ps.close();
-						
-						isJoin = true;
-						isLogin = true;
-						isLogout = false;
-			
-					}
-					//불일치
-					else{
-						res = false;
-						
-						_ps = conn.prepareStatement("select failedLoginCount from memberDetail where memberId =?");
-						_ps.setInt(1,_idKey);
-						_rs = _ps.executeQuery();
-						_rs.next();
-						int _failedLoginCount = _rs.getInt(1);
-						_ps.close();
-										
-						_ps = conn.prepareStatement("update memberDetail set failedLoginCount = ? where memberId = ?");
-						_ps.setInt(1, _failedLoginCount++);
-						_ps.setInt(2, _idKey);			
-						_ps.executeUpdate();
-						_ps.close();
-						
-						if(_failedLoginCount >= Integer.valueOf(enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString())){
-							_ps = conn.prepareStatement("update memberState set isAbnormal = 1 , failedLogin = 1 where memberId = ?");
-							_ps.setInt(1, _idKey);
-							_ps.executeUpdate();
-							_ps.close();
-						}
-							
-						isJoin = true;
-						isLogin = false;
-						isLogout = true;
-					}
-				
-					break;
-				
-				case GOOGLE:
-				case NAVER:
+		String hashedpw =  ch.getString(0, "password");
+		int _idKey = ch.getInteger(0,"memberId");
+		id = _idKey;
+		
+		switch(registrationKind){
+			case NOTHING:
+				if( BCrypt.checkpw( planePassword, hashedpw ) ){
 					
+					res =  true;
+
 					////// 마지막 로그인 날짜 갱신
-					_ps = conn.prepareStatement("update memberDetail set lastLoginDate = ?, failedLoginCount = ? where memberId = ?");
+					Map<String, Object> _set = new HashMap<String, Object>();
+					_set.put("lastLoginDate", new Timestamp(System.currentTimeMillis()));
+					_set.put("failedLoginCount", 0);
 					
+					Map<String, Object> _where = new HashMap<String, Object>();
+					_where.put("memberId", _idKey);
 					
-					Timestamp t = new Timestamp(System.currentTimeMillis());
-					_ps.setTimestamp(1, t);
-					_ps.setInt(2, 0);
-					_ps.setInt(3,_idKey);
-					_ps.executeUpdate();
-
+					dbMng.updateColumn("memberDetail", _set, _where);
+					
 					//잠금상태 해제 
 					//sleep인경우?
-					
-					rs.close();
-					ps.close();
-					
+				
 					isJoin = true;
 					isLogin = true;
 					isLogout = false;
+		
+				}
+				//불일치
+				else{
+					res = false;
 					
-					break;
+					List<String> _sel = new ArrayList<String>();
+					_sel.add("failedLoginCount");
+					
+					Map<String, Object> _where = new HashMap<String, Object>();
+					_where.put("memberId", _idKey);
+					
+					ColumnHelper _ch = dbMng.getColumnsOfPart("memberDetail", _sel, _where);
+					
+					
+					int _failedLoginCount = ch.getInteger(0, "failedLoginCount");
+					
+					Map<String, Object> _set = new HashMap<String, Object>();
+					_set.put("failedLoginCount", ++_failedLoginCount);
+					
+					dbMng.updateColumn("memberDetail", _set, _where);
+											
+					if(_failedLoginCount >= Integer.valueOf(enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString())){
+						
+						Map<String, Object> set = new HashMap<String, Object>();
+						set.put("isAbnormal", 1);
+						set.put("failedLogin", 1);
+						
+						dbMng.updateColumn("memberState", set, _where);
+					}
+						
+					isJoin = true;
+					isLogin = false;
+					isLogout = true;
+				}
+			
+				break;
+			
+			case GOOGLE:
+			case NAVER:
 				
-				default:
-					throw (new PageException.Builder(enumPage.LOGIN))
-					.errorString("로그인 중 시스템 에러가 발생했습니다. 관리자에게 문의하세요.")
-					.errorCode(enumPageError.UNKNOWN_PARA_VALUE).build(); 
+				Map<String, Object> set = new HashMap<String, Object>();
+				set.put("lastLoginDate", new Timestamp(System.currentTimeMillis()));
+				set.put("failedLoginCount", 0);
+				
+				Map<String, Object> _where = new HashMap<String, Object>();
+				where.put("memberId", _idKey);
+				
+				dbMng.updateColumn("memberDetail", set, _where);
 
-	
-			}
+				//잠금상태 해제 
+				//sleep인경우?
+				
+				isJoin = true;
+				isLogin = true;
+				isLogout = false;
+				
+				break;
 			
-			
-			conn.setAutoCommit(true);
-			
-		}catch(SQLException e){
-			e.printStackTrace();
+			default:
+				throw (new PageException.Builder(enumPage.LOGIN))
+				.errorString("로그인 중 시스템 에러가 발생했습니다. 관리자에게 문의하세요.")
+				.errorCode(enumPageError.UNKNOWN_PARA_VALUE).build(); 
+
+
 		}
-	
+
 		return res;
 	}
 

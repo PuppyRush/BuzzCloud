@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.dbAccess.DBManager.ColumnHelper;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.authority.band.BandAuthority;
@@ -48,35 +49,35 @@ public final class AuthorityManager {
 			Map<String, Object> where = new HashMap<String, Object>();
 			where.put("memberId", memberId);
 			where.put("bandId", bandId);
-			List<Map<String, Object>> res = dbMng.getColumnsOfAll("fileAuthority", where);
+			ColumnHelper ch = dbMng.getColumnsOfAll("fileAuthority", where);
 			
-			if(res.size()>1)
+			if(ch.columnSize()>1)
 				throw new SQLException("no more 1 of filAuthority");
 
-			int authId = (Integer)res.get(0).get("authorityId");
-			Timestamp time = (Timestamp)res.get(0).get("grantedDate");
+			int authId = ch.getInteger(0, "authorityId");
+			Timestamp time = ch.getTimestamp(0, "grantedDate");
 			
 			if(authCtl.containsEntity(FileAuthority.class,authId))
 				return authCtl.getEntity(FileAuthority.class, authId);
 			
 			
 			EnumMap<enumFileAuthority, Boolean> auths = new EnumMap<enumFileAuthority, Boolean>(enumFileAuthority.class);
-			if ((Integer)res.get(0).get("canRemove") == 1)
+			if (ch.getInteger(0, "canRemove") == 1)
 				auths.put(enumFileAuthority.REMOVE, true);
 			else
 				auths.put(enumFileAuthority.REMOVE, false);
 
-			if ((Integer)res.get(0).get("canDownload")== 1)
+			if (ch.getInteger(0, "canDownload")== 1)
 				auths.put(enumFileAuthority.DOWNLOAD, true);
 			else
 				auths.put(enumFileAuthority.DOWNLOAD, false);
 
-			if ((Integer)res.get(0).get("canUpload") == 1)
+			if (ch.getInteger(0, "canUpload") == 1)
 				auths.put(enumFileAuthority.UPLOAD, true);
 			else
 				auths.put(enumFileAuthority.UPLOAD, false);
 
-			if ((Integer)res.get(0).get("canCreate") == 1)
+			if (ch.getInteger(0, "canCreate") == 1)
 				auths.put(enumFileAuthority.CREATE, true);
 			else
 				auths.put(enumFileAuthority.CREATE, false);

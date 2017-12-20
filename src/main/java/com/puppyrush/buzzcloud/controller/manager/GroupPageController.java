@@ -92,6 +92,9 @@ public class GroupPageController {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			
+		} catch (EntityException e) {
+			// TODO Auto-generated catch block
+			returns.putAll(e.getReturns());
 		}
 		return returns;
 	}
@@ -117,7 +120,12 @@ public class GroupPageController {
 	public Map<String, Object> searhcedBandInfo(@RequestParam("bandId") int bandId) {
 
 		Map<String, Object> returns = new HashMap<String, Object>();
-		returns = searhcedBandInfo.execute(bandId);
+		try {
+			returns = searhcedBandInfo.execute(bandId);
+		} catch (EntityException e) {
+			// TODO Auto-generated catch block
+			returns.putAll(e.getReturns());
+		}
 
 		return returns;
 

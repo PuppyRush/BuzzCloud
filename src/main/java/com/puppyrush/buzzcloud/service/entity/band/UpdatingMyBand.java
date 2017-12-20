@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.puppyrush.buzzcloud.controller.form.BandForm;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.dbAccess.DBManager.ColumnHelper;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.authority.AuthorityController;
@@ -30,8 +31,11 @@ import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.entity.member.MemberManager;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.enumSystem;
 import com.puppyrush.buzzcloud.entity.band.Band.AuthoritedMember;
+import com.puppyrush.buzzcloud.entity.band.enums.enumBandState;
 import com.puppyrush.buzzcloud.entity.band.BandController;
 import com.puppyrush.buzzcloud.entity.band.BandDB;
 
@@ -68,9 +72,9 @@ public class UpdatingMyBand{
 	private int bandId; 
 	private BandForm bandForm;
 	
-	private Map<String, Object> exBand;
-	private Map<String, Object> exBandDetail;
-	private List<Map<String, Object>> exMembers;
+	private ColumnHelper exBand;
+	private ColumnHelper exBandDetail;
+	private ColumnHelper exMembers;
 
 		
 	public Map<String, Object> execute(int bandId, BandForm form) throws SQLException, ControllerException, EntityException {
@@ -84,10 +88,17 @@ public class UpdatingMyBand{
 		Map<String, Object> where = new HashMap<String, Object>();
 		where.put("bandId" ,bandId);
 		
-		exBand = dbMng.getColumnsOfAll("band", where).get(0);
-		exBandDetail = dbMng.getColumnsOfAll("bandDetail", where).get(0);
+		exBand = dbMng.getColumnsOfAll("band", where);
+		exBandDetail = dbMng.getColumnsOfAll("bandDetail", where);
 		exMembers = dbMng.getColumnsOfAll("bandMember", where);
 
+		if(exBand.isEmpty() || exBandDetail.isEmpty() || exMembers.isEmpty() )
+			throw (new EntityException.Builder(enumPage.GROUP_MANAGER))
+			.instanceMessage(enumInstanceMessage.ERROR)
+			.errorString("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
+			.errorCode(enumBandState.NOT_EXIST_BAND).build();
+		
+		
 		checkForm(params);
 		updateBandDetail();
 		updateMembers();
@@ -139,12 +150,12 @@ public class UpdatingMyBand{
 		
 		Map<String, Object> set = new HashMap<String, Object>();
 		
-		if(!bandForm.getBandName().equals((String)exBand.get("bandName"))){
+		if(!bandForm.getBandName().equals(exBand.getString(0, "bandName"))){
 			set.put("name", bandForm.getBandName());
 		}
 		
 		int adminId = mDB.getIdOfNickname(bandForm.getAdministrator());
-		if(adminId!=(int)exBand.get("administrator")){
+		if(adminId!=exBand.getInteger(0, "administrator")){
 			set.put("administrator", adminId);
 		}
 		
@@ -168,11 +179,11 @@ public class UpdatingMyBand{
 			
 		Map<String, Object> set = new HashMap<String, Object>();
 		
-		if(bandForm.getBandCapacity()!=(int)exBandDetail.get("maxCapacity")){
+		if(bandForm.getBandCapacity()!=exBandDetail.getInteger(0, "maxCapacity")){
 			set.put("maxCapacity", bandForm.getBandCapacity());
 		}
 		
-		if(!bandForm.getBandContain().equals((String)exBandDetail.get("contents"))){
+		if(!bandForm.getBandContain().equals(exBandDetail.getString(0, "contents"))){
 			set.put("contents", bandForm.getBandContain());
 		}
 		 
@@ -202,7 +213,7 @@ public class UpdatingMyBand{
 		
 		List<Integer> exList = new ArrayList<Integer>();
 		
-		for(Map<String,Object> key : exMembers){
+		for(Map<String,Object> key : exMembers.getColumns()){
 			exList.add((int)key.get("memberId"));
 		}
 		

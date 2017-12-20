@@ -42,7 +42,7 @@ public class GettingSelectedBandMembers{
 		whereCaluse.put("bandId", bandId);
 		
 		Map<Integer, Map<String,Object>> bandMembers = new HashMap<Integer,Map<String,Object>>(); 
-		for(Map<String,Object> map : dbMng.getColumnsOfAll("bandMember", whereCaluse) ){
+		for(Map<String,Object> map : dbMng.getColumnsOfAll("bandMember", whereCaluse).getColumns() ){
 			bandMembers.put((Integer)map.get("memberId"), map);
 		}
 		

@@ -10,13 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.dbAccess.DBManager.ColumnHelper;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
+import com.puppyrush.buzzcloud.entity.enumEntityState;
 import com.puppyrush.buzzcloud.entity.band.Band;
 import com.puppyrush.buzzcloud.entity.band.BandManager;
+import com.puppyrush.buzzcloud.entity.band.enums.enumBandState;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
+import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.CommFunc;
 
 @Service("gettingMyGroups")
@@ -60,14 +66,23 @@ public class GettingMyGroups{
 		
 	}
 		
-	private String getImagePath(int memberId){
+	private String getImagePath(int memberId) throws EntityException{
 		
 		Map<String, Object> where = new HashMap<String, Object>();
 		List<String> sel = new ArrayList<String>();
 		where.put("memberId", memberId);
 		sel.add("image");
 		
-		String imageName =  (String)dbMng.getColumnsOfPart("memberDetail", sel,where).get(0).get("image");
+		ColumnHelper ch = dbMng.getColumnsOfPart("memberDetail", sel,where);
+		
+		if(ch.columnSize() != 1 )
+			throw (new EntityException.Builder(enumPage.GROUP_MANAGER))
+			.instanceMessage(enumInstanceMessage.ERROR)
+			.errorString("사용자 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
+			.errorCode(enumMemberState.NOT_EXIST_MEMBER).build();
+				
+		
+		String imageName =  ch.getString(0, "image");
 		return CommFunc.toRelativePathFromImage(memberId, imageName);
 		
 	}

@@ -16,7 +16,7 @@ public enum enumPage {
 	CERTIFICATE("verifyRegistration.do"),
 	LOGIN("member/Login"),
 	JOIN("member/Join"),
-	LOST_PASSWORD("member/FindPassword"),
+	LOST_PASSWORD("member/InputMail"),
 	RESET_PASSWORD("member/ResetPassword"),
 	CERTIFICATE_FAILED_PASSWORD("member/CertificatePassword"),
 	INPUT_CERTIFICATION_NUMBER("member/CheckAuthNum"),

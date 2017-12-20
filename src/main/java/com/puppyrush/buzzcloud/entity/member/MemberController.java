@@ -59,7 +59,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 	}
 	
 	
-	public Member getMember(LoginForm form) throws ControllerException, EntityException{
+	public Member getMember(LoginForm form) throws ControllerException, EntityException, SQLException{
 		
 		if(form.getSessionId()==null)
 			throw new NullPointerException();

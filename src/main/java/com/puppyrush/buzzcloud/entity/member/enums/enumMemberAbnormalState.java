@@ -7,7 +7,7 @@ public enum enumMemberAbnormalState implements enumMember  {
 
 
 	LOST_PASSWORD("lostPassword"),
-	EXCEEDED_LOGIN_COUNT("failedLogin"),
+	EXCEEDED_LOGIN_COUNT("exceededLoginCount"),
 	SLEEP("sleep"),
 	OLD_PASSWORD("oldPassword"),
 	JOIN_CERTIFICATION("joinCertification");

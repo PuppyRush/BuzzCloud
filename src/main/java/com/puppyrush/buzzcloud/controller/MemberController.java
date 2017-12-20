@@ -16,7 +16,7 @@ import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.page.enums.enumPageError;
 import com.puppyrush.buzzcloud.property.enumSystem;
-import com.puppyrush.buzzcloud.service.entity.member.FindPassword;
+import com.puppyrush.buzzcloud.service.entity.member.SendMail;
 import com.puppyrush.buzzcloud.service.entity.member.Join;
 import com.puppyrush.buzzcloud.service.entity.member.Login;
 import com.puppyrush.buzzcloud.service.entity.member.Logout;
@@ -50,7 +50,7 @@ public class MemberController {
 	private Join join;		
 
 	@Autowired(required = false)
-	private FindPassword findPassword;
+	private SendMail findPassword;
 	
 	@RequestMapping(value="/join.ajax", method = RequestMethod.POST )
 	public @ResponseBody Map<String, Object> join(JoinForm form, HttpServletRequest rq) {
@@ -116,8 +116,8 @@ public class MemberController {
 		return mv;
 	}
 	
-	@RequestMapping(value = "/findPassword.do", method = RequestMethod.GET)
-	public ModelAndView findPassword(@RequestParam("email") String email) {
+	@RequestMapping(value = "/inputEmail.do", method = RequestMethod.GET)
+	public ModelAndView inputMail(@RequestParam("email") String email) {
 
 		ModelAndView mv = new ModelAndView();
 		Map<String, Object> returns = new HashMap<String, Object>();
@@ -125,12 +125,14 @@ public class MemberController {
 			returns = findPassword.execute(email);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), enumInstanceMessage.ERROR).getMessage());
 		} catch (MessagingException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), enumInstanceMessage.ERROR).getMessage());
+		} catch (EntityException e) {
+			returns.putAll(e.getReturns());
+		} catch (ControllerException e) {
+			returns.putAll(e.getReturns());
 		}
 		
 		

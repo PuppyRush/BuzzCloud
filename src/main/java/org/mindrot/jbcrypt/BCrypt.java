@@ -16,6 +16,7 @@ package org.mindrot.jbcrypt;
 
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
+import java.util.Random;
 
 /**
  * BCrypt implements OpenBSD-style Blowfish password hashing using
@@ -777,5 +778,19 @@ public class BCrypt {
 			ret |= hashed_bytes[i] ^ try_bytes[i];
 		
 		return ret == 0;
+	}
+	
+	public static String getTemporaryPassword(){
+		final int numbers = '9'-'0'+1;
+		final int letters = 'Z'-'A'+1;
+		StringBuilder tempPW = new StringBuilder("");
+		for(int i=0 ; i < 6; i++){
+			if(new Random().nextBoolean()){
+				tempPW.append((char)(new Random().nextInt(letters)+'A'));
+			}
+			else
+				tempPW.append((char)(new Random().nextInt(numbers)+'0'));
+		}
+		return tempPW.toString();
 	}
 }

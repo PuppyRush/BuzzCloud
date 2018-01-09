@@ -22,6 +22,11 @@
 
 <!-- Custom CSS -->
 <link href="/library/popup/style.css" rel="stylesheet">
+<link	href="/resources/views/member/css/main.css?<?=filemtime(\'./css/readizgen.css\')?"	rel="stylesheet" type="text/css">
+<link	href="/resources/views/member/css/form.css" rel="stylesheet" type="text/css">
+<link	href="/resources/views/member/css/stylish-portfolio.css" rel="stylesheet" type="text/css">
+<link	href="/resources/views/member/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+<!--  -->
 
 <link href="/resources/views/member/css/stylish-portfolio.css"	rel="stylesheet">
 <!-- bootsnipp down -->
@@ -39,25 +44,21 @@
 		<div class="modal-content">
 			<div class="modal-header" align="center">
 				<img class="img-circle" id="img_logo2"
-					src="../WidgetClientPage/img/test1.jpg">
+					src="/resources/image/logo.png">
 
 			</div>
 			<div id="div-forms">
-				<form id="login-form" method="POST" ACTION="login.do">
+				<form id="login-form" method="POST" ACTION="/member/login.do">
 					<div class="modal-body">
 						<div id="div-login-msg">
 							<div id="icon-login-msg"
 								class="glyphicon glyphicon-chevron-right"></div>
 							<span id="text-login-msg">Type your username and password.</span>
 						</div>
-						<input type="hidden" name="idType" value="nothing">
-						<input id="login_username" name="login_username"
-							class="form-control" type="text" placeholder="Username" required>
-						<input id="login_password" name="login_password"
-							class="form-control" type="password" placeholder="Password"
-							required> <input class="sessionId" name="sessionId"
-							type="hidden" /> <input type="hidden" name="idType"
-							value="inner">
+						<input type="hidden" name="idType" value="NOTHING">
+						<input id="email" name="email"	class="form-control" type="text" placeholder="Username" required>
+						<input id="password" name="password"			class="form-control" type="password" placeholder="Password"		required> 
+						<input class="sessionId" name="sessionId"		type="hidden" /> 
 						<div class="checkbox">
 							<label> <input type="checkbox"> Remember me
 							</label>

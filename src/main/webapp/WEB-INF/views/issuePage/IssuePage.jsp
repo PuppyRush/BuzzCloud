@@ -4,7 +4,7 @@ com.puppyrush.buzzcloud.page.enums.enumPage, java.util.ArrayList, java.util.Hash
 com.puppyrush.buzzcloud.entity.member.Member , 
 com.puppyrush.buzzcloud.entity.band.Band, 
 com.puppyrush.buzzcloud.entity.band.BandManager" %>
-<%@page import="com.puppyrush.buzzcloud.page.enums.enumCautionKind, 
+<%@page import="com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage",
 com.puppyrush.buzzcloud.entity.band.Band.BundleBand,  
 com.puppyrush.buzzcloud.property.tree.Tree, 
 com.puppyrush.buzzcloud.property.tree.Node"%>
@@ -16,25 +16,7 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 
 	request.setCharacterEncoding("UTF-8");
 
-	Member member = null;
- 	boolean isSuccessVerify = false;
-	HashMap<String,Object> results =  VerifyPage.Verify(session.getId(), enumPage.MAIN);
-	
-	if((boolean)results.get("isSuccessVerify")){
-	
-		member = MemberController.getInstance().getMember(session.getId());
-		isSuccessVerify = true;		
-		
-	}else{
-		isSuccessVerify = false;
-		enumPage to = (enumPage)results.get("to");
-		
-		request.setAttribute("message",  (String)results.get("message"));
-		request.setAttribute("messageKind", results.get("messageKind"));
-		response.sendRedirect(to.toString());
-		return;
-				
-	}
+
 	
 %>
     
@@ -94,10 +76,10 @@ com.puppyrush.buzzcloud.property.tree.Node"%>
 		var popup_color;
 		<% 
 			if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
-				enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
+				enumInstanceMessage kind = (enumInstanceMessage)request.getAttribute("messageKind");	
 		%>
 			  message = "<%=(String)request.getAttribute("message")%>";
-			  popup_color = "<%=(String)kind.getString()%>";
+			  popup_color = "<%=(String)kind.toString()%>";
 			  ohSnap(message,{color:popup_color});
 		<%
 			}

@@ -13,14 +13,24 @@
 	
 	function callback_setCharts(data){
 		
+		setCapacityUsage(data);
+		setCreatedTime(data["createdDate"]);
+		setCreatedTimeByNow(data["createdDateByLong"]);
+		
+	
+	}	
+	
+	function setCapacityUsage(data){
+
 		use = Math.round(data["usingCapacity"]/1024/1024);
 		max = Math.round(data["maxCapacity"]/1024/1024);
 		per = Math.round(max/100);
 		useper = per * use;
 		restper = 100-useper;
+		title = data["title"];
 		
 		$("#usageText").text("usage : " + useper+ "%");
-		
+				
 		
 		info = new Highcharts.chart('usage', {
 	    chart: {
@@ -28,11 +38,11 @@
 	        plotBorderWidth: null,
 	        plotShadow: false,
 	        type: 'pie',
-    				backgroundColor:null,
+    				backgroundColor:"#3d3d3d",
 	        height:200
 	    },
 	    title: {
-	        text: null
+	        text: title
 	    },
 	    tooltip: {
 	        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -63,8 +73,56 @@
 	            selected: true
 	        }]
 	    }]
-	});
+	});	
+	}
+	
+	function setCreatedTime(time){
+			var date = new Date();
+			var y = date.getFullYear();
+			var d = date.getDay();
+			
+			var now = date.toDateString();
+			
+			var current_time = [h,m,s].join(':');
+			
+			$("#createdDate").text(now);
+	}
+	
+	function setCreatedTimeByNow(list){
+		var now = new Date();
 		
-	
-	}	
-	
+		var past = new Date(list[0],list[1],list[2],list[3],list[4]);
+		var gap = now - past;
+		
+		var currentMin = 60*1000;
+		var min = parseInt(gap/currentMin);
+		
+		var currentHour = 60*60*1000;
+		var hour = parseInt(gap/currentHour);
+		
+		var currentDay = 24*currentHour;
+		var day = parseInt(gap/currentDay);
+		
+		var currentMonth = currentDay*30;
+		var month = parseInt(gap/currentMonth);
+		
+		var currentYear = currentMonth*12;
+		var year = parseInt(gap/currentYear);
+		
+		var str = "";
+		if(year>0){
+			str+= year+"년 ";
+		}
+		if(month>0){
+			str+= month+"개월 ";
+		}
+		if(day>0){
+			str+= day+"일 ";
+		}
+		if(hour>0){
+			str+= hour+"시간 ";
+		}
+		
+		$("#createdDateGap").text(str);
+		
+	}

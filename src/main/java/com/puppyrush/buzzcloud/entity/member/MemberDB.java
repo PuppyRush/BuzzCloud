@@ -61,17 +61,15 @@ public class MemberDB {
 		ps.setInt(1, memberId);			
 		rs = ps.executeQuery();
 		rs.next();
-	
-		if(rs.getInt("isAbnormal")==1){
 		
-			for(enumMemberAbnormalState e : enumMemberAbnormalState.values()){												
-				String _attributeName = e.getString();
-				if(rs.getInt(_attributeName)==1)
-					stateMap.put(e, true);
-				else
-					stateMap.put(e, false);
-			}
+		for(enumMemberAbnormalState e : enumMemberAbnormalState.values()){												
+			String _attributeName = e.toString();
+			if(rs.getInt(_attributeName)==1)
+				stateMap.put(e, true);
+			else
+				stateMap.put(e, false);
 		}
+		
 
 		return stateMap;		
 	}
@@ -151,15 +149,16 @@ public class MemberDB {
 		return member;
 	}
 		
-	public boolean isExistNickname(String nickname){
+	public boolean isExistNickname(String nickname, int memberId){
 		
 		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		boolean result = false;
 		try{
-			ps = conn.prepareStatement("select memberId from member where nickname = ?");
+			ps = conn.prepareStatement("select memberId from member where nickname = ? AND memberId <> ?");
 			ps.setString(1, nickname);
+			ps.setInt(2, memberId);
 			rs = ps.executeQuery();
 			
 			if(rs.next())			
@@ -318,46 +317,7 @@ public class MemberDB {
 		
 	}
 	
-	public  boolean changePassword(Member member, String newPassword) throws Throwable{
-		
-		PreparedStatement _sp = conn.prepareStatement("update member set password = ? where memberId = ?");
-		
-		String _hashPassword = BCrypt.hashpw( newPassword, BCrypt.gensalt());
-		_sp.setString(1, _hashPassword);
-		_sp.setInt(2, member.getId());
-				
-		return true;
-		
-	}
 
-	public  void withdrawMember(int uId, String nickname, String email, String reason) throws SQLException, AddressException, MessagingException{
-		
-		PreparedStatement _ps= null;
-		try{
-			
-			conn.setAutoCommit(false);
-		
-		
-			_ps= conn.prepareStatement("delete from member where memberId = ?");
-			_ps.setInt(1, uId);
-			_ps.executeQuery();			
-			
-			String subject = "[WidetStore] 탈퇴 ";
-			String content = new StringBuilder("안녕하세요.  버즈클라우드에서 알립니다. ").append(nickname)
-					.append("님이 버즈클라우드에서 탈퇴 됐습니다.\n 만일 탈퇴를 요청하지 않은 경우면 관리자에게 문의하세요.\n").append("탈퇴사유 : ")
-					.append(reason).toString();
-						
-			Builder bld = new PostManImple.Builder(enumMail.gmailID.toString(), email).subject(subject).content(content).build();
-			postman.send(bld);
-			
-			
-			conn.commit();
-		}finally{
-			
-			_ps.close();
-		}
-		
-	}
 	
 	public  ArrayList<Member> getAllMember(){
 		
@@ -385,27 +345,27 @@ public class MemberDB {
 				if(__rs.getInt("isAbnormal")==1){
 		
 					
-					if(__rs.getInt(enumMemberAbnormalState.LOST_PASSWORD.getString())==1)
+					if(__rs.getInt(enumMemberAbnormalState.LOST_PASSWORD.toString())==1)
 						state.put(enumMemberAbnormalState.LOST_PASSWORD, true);
 					else
 						state.put(enumMemberAbnormalState.LOST_PASSWORD, false);
 					
-					if(__rs.getInt(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT.getString())==1)
+					if(__rs.getInt(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT.toString())==1)
 						state.put(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT, true);
 					else
 						state.put(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT, false);
 					
-					if(__rs.getInt(enumMemberAbnormalState.SLEEP.getString())==1)
+					if(__rs.getInt(enumMemberAbnormalState.SLEEP.toString())==1)
 						state.put(enumMemberAbnormalState.SLEEP, true);
 					else
 						state.put(enumMemberAbnormalState.SLEEP, false);
 					
-					if(__rs.getInt(enumMemberAbnormalState.OLD_PASSWORD.getString())==1)
+					if(__rs.getInt(enumMemberAbnormalState.OLD_PASSWORD.toString())==1)
 						state.put(enumMemberAbnormalState.OLD_PASSWORD, true);
 					else
 						state.put(enumMemberAbnormalState.OLD_PASSWORD, false);
 					
-					if(__rs.getInt(enumMemberAbnormalState.JOIN_CERTIFICATION.getString())==1)
+					if(__rs.getInt(enumMemberAbnormalState.JOIN_CERTIFICATION.toString())==1)
 						state.put(enumMemberAbnormalState.JOIN_CERTIFICATION, true);
 					else
 						state.put(enumMemberAbnormalState.JOIN_CERTIFICATION, false);

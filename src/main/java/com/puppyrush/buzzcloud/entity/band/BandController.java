@@ -3,6 +3,8 @@ package com.puppyrush.buzzcloud.entity.band;
 
 
 
+import java.sql.SQLException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,7 @@ public final class BandController extends EntityControllerImpl<Band>{
 	private BandManager bandMng;
 
 	
-	public Band newBand(int bandId){
+	public Band newBand(int bandId) throws SQLException{
 		Band band = null;
 		try{
 			if(containsEntity(bandId))

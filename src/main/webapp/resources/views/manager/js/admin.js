@@ -1,4 +1,4 @@
-// Interactiveness now
+/*// Interactiveness now
 
 (function() {
 
@@ -13,11 +13,7 @@
 	};
 	
 	var ticktock = function() {
-		var d = new Date();
-		
-		var h = pad( d.getHours() );
-		var m = pad( d.getMinutes() );
-		var s = pad( d.getSeconds() );
+
 		
 		var current_time = [h,m,s].join(':');
 		
@@ -34,10 +30,11 @@
 	
 }());
 
-/* ---------- Notifications ---------- */
+ ---------- Notifications ---------- 
 	$('.noty').click(function(e){
 		e.preventDefault();
 		var options = $.parseJSON($(this).attr('data-noty-options'));
 		noty(options);
 	});
 
+*/

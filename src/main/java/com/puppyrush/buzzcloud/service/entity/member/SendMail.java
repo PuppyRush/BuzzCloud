@@ -24,7 +24,7 @@ import com.puppyrush.buzzcloud.page.enums.enumPage;
 
 
 
-@Service("findPassword")
+@Service("sendMail")
 final public class SendMail{
 	
 	@Autowired(required=false)
@@ -37,7 +37,8 @@ final public class SendMail{
 	private MailManager mailMng;
 	
 	
-	public Map<String,Object> execute(String email) throws SQLException, AddressException, MessagingException, EntityException, ControllerException{
+	public Map<String,Object> execute(String email) 
+		throws SQLException, AddressException, MessagingException, EntityException, ControllerException{
 				
 		Map<String,Object> returns = new HashMap<String,Object>();
 		
@@ -48,29 +49,49 @@ final public class SendMail{
 			Member member = mDB.getMember(email);
 			Map<enumMemberAbnormalState, Boolean> state = member.getAbnormalState();
 			if(state.containsKey(enumMemberAbnormalState.JOIN_CERTIFICATION) && state.get(enumMemberAbnormalState.JOIN_CERTIFICATION)){
+				mailMng.invalidateMailOf(member.getEmail(), enumMailType.JOIN_CERTIFICATION);
+				mMng.updateMemberAbnormalState(email, enumMemberAbnormalState.JOIN_CERTIFICATION, 1);
 				mMng.requestCertificateJoin(member);
 				returns.putAll(new InstanceMessage("가입을 위한 인증번호를 전송하였습니다. 메일을 확인하세요.", enumInstanceMessage.SUCCESS).getMessage());
 			}
 			else if(state.containsKey(enumMemberAbnormalState.SLEEP) && state.get(enumMemberAbnormalState.SLEEP)){
-				mailMng.SendCertificationMail(member, enumMailType.SLEEP);
+				mailMng.invalidateMailOf(member.getEmail(), enumMailType.SLEEP);
+				mMng.updateMemberAbnormalState(email, enumMemberAbnormalState.SLEEP, 1);
+				String planePw = mailMng.SendCertificationMail(member, enumMailType.SLEEP);
+				mMng.updatePassword(member.getId(), planePw);
 				returns.putAll(new InstanceMessage("휴면계정 해제를 위한 인증번호를 전송하였습니다. 메일을 확인하세요.", enumInstanceMessage.SUCCESS).getMessage());
 			}
 			else if(state.containsKey(enumMemberAbnormalState.OLD_PASSWORD) && state.get(enumMemberAbnormalState.OLD_PASSWORD)){
+				mailMng.invalidateMailOf(member.getEmail(), enumMailType.OLD_PASSWORD);
 				if(!mDB.isOnSiteAccount(email))
-					returns.putAll(new InstanceMessage("분실 비밀번호는 사이트 가입자만 찾을 수 있습니다.", enumInstanceMessage.ERROR).getMessage());
+					returns.putAll(new InstanceMessage("", enumInstanceMessage.ERROR).getMessage());
 				else{
-					mMng.setLostPassword(email);	
+					mMng.updateMemberAbnormalState(email, enumMemberAbnormalState.OLD_PASSWORD, 1);
 					returns.putAll(new InstanceMessage("임시비밀번호를 메일로 보냈습니다. 메일을 확인하세요.", enumInstanceMessage.SUCCESS).getMessage());
 				}
 				
 			}
 			else if(state.containsKey(enumMemberAbnormalState.LOST_PASSWORD) && state.get(enumMemberAbnormalState.LOST_PASSWORD)){
-				mailMng.SendCertificationMail(member, enumMailType.LOST_PASSWORD);
-				returns.putAll(new InstanceMessage("임시비밀번호를 전송하였습니다. 메일을 확인하세요.", enumInstanceMessage.SUCCESS).getMessage());
+				mailMng.invalidateMailOf(member.getEmail(), enumMailType.LOST_PASSWORD);
+				if(!mDB.isOnSiteAccount(email))
+					returns.putAll(new InstanceMessage("분실 비밀번호는 사이트 가입자만 찾을 수 있습니다.", enumInstanceMessage.ERROR).getMessage());
+				else{
+					mMng.updateMemberAbnormalState(email, enumMemberAbnormalState.LOST_PASSWORD, 1);
+					String planePw = mailMng.SendCertificationMail(member, enumMailType.LOST_PASSWORD);
+					mMng.updatePassword(member.getId(), planePw);
+					returns.putAll(new InstanceMessage("임시비밀번호를 전송하였습니다. 메일을 확인하세요.", enumInstanceMessage.SUCCESS).getMessage());
+				}
 			}		
 			else if(state.containsKey(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT) && state.get(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT)){
-				mailMng.SendCertificationMail(member, enumMailType.EXCEEDED_LOGIN_COUNT);
-				returns.putAll(new InstanceMessage("임시비밀번호를 전송하였습니다. 메일을 확인하세요.", enumInstanceMessage.SUCCESS).getMessage());
+				mailMng.invalidateMailOf(member.getEmail(), enumMailType.EXCEEDED_LOGIN_COUNT);
+				if(!mDB.isOnSiteAccount(email))
+					returns.putAll(new InstanceMessage("", enumInstanceMessage.ERROR).getMessage());
+				else{
+					mMng.updateMemberAbnormalState(email, enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT, 1);
+					String planePw = mailMng.SendCertificationMail(member, enumMailType.EXCEEDED_LOGIN_COUNT);
+					mMng.updatePassword(member.getId(), planePw);
+					returns.putAll(new InstanceMessage("임시비밀번호를 전송하였습니다. 메일을 확인하세요.", enumInstanceMessage.SUCCESS).getMessage());
+				}
 			}		
 			
 		}

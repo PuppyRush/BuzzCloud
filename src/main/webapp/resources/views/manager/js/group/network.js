@@ -3,7 +3,7 @@
 
 		var _bands = new Array();
 		var _rootsBand = new Array();
-
+		var _rootBandIds = new Map();
 
 
 		function bundleBand(){
@@ -61,6 +61,14 @@
 							 }
 				}
 			
+				if(data["rootBands"]){
+					var rootBandIds = data["rootBands"];
+					 for (var key in rootBandIds) {		
+					 	var id = rootBandIds[key];	
+					 _rootBandIds[id] = id;
+					 }
+				}
+				
 				drawVisualization();
 		}
 				 
@@ -70,9 +78,7 @@
 			
 		  	var sel = network.getSelection();
 		  	selectedBandId = network.nodesTable[sel[0].row].id;
-		  	
-
-
+		  
 				var comAjax2 = new ComAjax();
 				comAjax2.setUrl("/managerPage/groupConfig/getBandInfo.ajax");
 				comAjax2.addParam("bandId", selectedBandId);
@@ -87,9 +93,7 @@
 				comAjax.setCallback("callback_setSelectedBandMembers");
 				comAjax.setType("post");
 				comAjax.setAsync("false")
-				comAjax.ajax();
-	
-			  	
+				comAjax.ajax();	  	
 	  	}
 		
 		
@@ -198,7 +202,11 @@
 				var _band = new band();
 				_band = _bands[i];
 				var id = Number(_band.id);
-				nodesTable.addRow([ id , _band.name,"circle"]);
+				
+				if(_rootBandIds[id] == id)
+					nodesTable.addRow([ id , _band.name,"database"]);
+				else
+					nodesTable.addRow([ id , _band.name,"circle"]);
 			}
 
 			

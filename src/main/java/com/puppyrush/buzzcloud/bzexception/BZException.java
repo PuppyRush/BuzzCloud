@@ -18,7 +18,7 @@ public abstract class BZException extends Exception{
 	private enumPage toPage;
 	private enumInstanceMessage instanceMessage;
 	private Map<enumBZExceptionInterface,Boolean> errCodeMap;
-	
+	private Map<String, Object> stringMap;
 
 	public static abstract class Builder <T extends BZException>{
 		
@@ -26,12 +26,13 @@ public abstract class BZException extends Exception{
 		protected enumPage toPage;
 		protected Map<enumBZExceptionInterface,Boolean> errCodeMap;
 		protected enumInstanceMessage instanceMessage;
+		protected Map<String, Object> stringMap;
 		
 		public Builder(enumPage toPage){
 			this.toPage = toPage;
 			errString = "System Error";
 			errCodeMap =  new HashMap<enumBZExceptionInterface,Boolean>();
-
+			stringMap = new HashMap<String, Object>();
 		}
 		
 		public Builder<T> errorString(String errStr){
@@ -51,6 +52,17 @@ public abstract class BZException extends Exception{
 			return this;
 		}
 		
+		public Builder<T> putString(String key, Object value){
+			this.stringMap.put(key, value);
+			return this;
+		}
+		
+		public Builder<T> putString(Map<String, Object> stringMap){
+			this.stringMap.putAll(stringMap);
+			return this;
+		}
+		
+		
 		public abstract T build();
 		
 	}
@@ -60,6 +72,7 @@ public abstract class BZException extends Exception{
 		this.errCodeMap = errors;
 		this.toPage = toPage;
 		instanceMessage = enumInstanceMessage.WARNING;
+		stringMap = new HashMap<String, Object>();
 	}
 
 	final public String getErrorString(){
@@ -81,9 +94,16 @@ public abstract class BZException extends Exception{
 	
 	final public Map<String, Object> getReturns(){
 		Map<String, Object> returns = new HashMap<String, Object>();
+		returns.putAll(stringMap);
 		returns.putAll(new InstanceMessage( errString, instanceMessage).getMessage());
 		returns.put("view", toPage.toString());
 		return returns;
 	}
 	
+	final public Map<String, Object> getReturnsForAjax(){
+		Map<String, Object> returns = new HashMap<String, Object>();
+		returns.putAll(stringMap);
+		returns.putAll(new InstanceMessage( errString, instanceMessage).getMessage());
+		return returns;
+	}
 }

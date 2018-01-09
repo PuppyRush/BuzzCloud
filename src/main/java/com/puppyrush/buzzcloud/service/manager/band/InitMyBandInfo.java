@@ -1,5 +1,6 @@
 package com.puppyrush.buzzcloud.service.manager.band;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.authority.band.enumBandAuthority;
 import com.puppyrush.buzzcloud.entity.authority.file.enumFileAuthority;
 import com.puppyrush.buzzcloud.entity.band.Band;
+import com.puppyrush.buzzcloud.entity.band.BandDB;
 import com.puppyrush.buzzcloud.entity.band.BandManager;
 import com.puppyrush.buzzcloud.entity.band.enums.enumBand;
 import com.puppyrush.buzzcloud.entity.member.Member;
@@ -29,7 +31,7 @@ final public class InitMyBandInfo {
 
 	int memberId;
 
-	public Map<String, Object> execute(int	memberId) throws ControllerException {
+	public Map<String, Object> execute(int	memberId) throws ControllerException, SQLException, EntityException {
 
 		this.memberId = memberId;
 		
@@ -40,6 +42,7 @@ final public class InitMyBandInfo {
 		returns.put("maxCapacity", getMaxCapacity());
 		returns.put("bandAuthority", getBandAuthority());
 		returns.put("fileAuthority", getFileAuthority());
+		
 		
 		Member member = mCtl.getEntity(memberId);
 		returns.put("groupOwner", member.getNickname());
@@ -77,7 +80,7 @@ final public class InitMyBandInfo {
 
 	}
 
-	private Map<String, Integer> getSubBands(){
+	private Map<String, Integer> getSubBands() throws SQLException{
 		
 		Map<String, Integer> bandMap = new HashMap<String, Integer>();
 		bandMap.put("NewGroup", -1);
@@ -85,7 +88,7 @@ final public class InitMyBandInfo {
 									
 			Member member = mCtl.getEntity(memberId);
 			
-			ArrayList<Band> bands = bandMng.getRootOfOwneredBands(member.getId());
+			List<Band> bands = bandMng.getRootOfOwneredBands(member.getId());
 			if(bands.size()>0){
 				for(int i=0 ; i < bands.size() ; i++){
 					
@@ -122,7 +125,7 @@ final public class InitMyBandInfo {
 		Map<String, String> returns = new HashMap<String, String>();
 		
 		for(enumBandAuthority auth : enumBandAuthority.values()){
-			returns.put(auth.getString(), auth.getString());
+			returns.put(auth.toString(), auth.toString());
 		}
 		
 		return returns;
@@ -133,11 +136,13 @@ final public class InitMyBandInfo {
 		Map<String, String> returns = new HashMap<String, String>();
 		
 		for(enumFileAuthority auth : enumFileAuthority.values()){
-			returns.put(auth.getString().trim(), auth.getString().trim());
+			returns.put(auth.toString(), auth.toString());
 		}
 		
 		return returns;
 		
 	}
+	
+
 	
 }

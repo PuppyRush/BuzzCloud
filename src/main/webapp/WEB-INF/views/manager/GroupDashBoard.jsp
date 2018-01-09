@@ -178,20 +178,20 @@
 
       <!-- LOCAL TIME BLOCK -->
       		<div class="half-unit">
-	      		<dtitle>Local Time</dtitle>
+	      		<dtitle>서버 가동 시간</dtitle>
 	      		<hr>
 		      		<div class="clockcenter">
-			      		<digiclock>12:45:25</digiclock>
+			      		<div id="createdDateGap">12:45:25</div>
 		      		</div>
 			</div>
 
       <!-- SERVER UPTIME -->
 			<div class="half-unit">
-	      		<dtitle>그룹이 생성된 시간</dtitle>
+	      		<dtitle>서버가 생성된 시간</dtitle>
 	      		<hr>
-	      		<div class="cont">
-					<p><img src="/resources/views/manager/images/up.png" alt=""> <bold>Up</bold> | 356ms.</p>
-				</div>
+		      		<div class="clockcenter">
+			      		<div id="createdDate">12:45:25</div>
+		      		</div>
 			</div>
 
         </div>

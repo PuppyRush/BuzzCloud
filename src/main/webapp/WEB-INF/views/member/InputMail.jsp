@@ -44,17 +44,18 @@
 
 			</div>
 			<div id="div-forms">
-				<form id="findForm" method="GET" ACTION="/member/inputEmail.do">
+				<form id="findForm" method="GET" ACTION="/mail/sendEmail.do">
 					<div class="modal-body">
 						<div id="div-login-msg">
 							<div id="icon-login-msg"								class="glyphicon glyphicon-chevron-right"></div>
 							<span id="text-login-msg">Enter your E-Mail </span>
 						</div>
-						<input type="hidden" name="idType" value="nothing">
-						<input id="email" name="email"	class="form-control" type="text" placeholder="Email" required>
+						<input type="hidden" id="status" name="status" value="LOST_PASSWORD"/>
+						<input id="email" name="email"	class="form-control" type="text" placeholder="Write your email" required>
 					</div>
 
 					<button type="submit" class="btn btn-primary btn-lg btn-block">Send Mail</button>
+					
 				</form>
 			</div>
 		</div>
@@ -65,6 +66,7 @@
 
 <script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/commonAjax.js"></script>
 	<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/clientSideLibrary.js"></script>
+	<script type="text/javascript" charset="utf-8"		src="/resources/views/member/js/inputMail.js"></script>
 
 <!-- ohsnap -->
 		<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>
@@ -75,11 +77,11 @@
     
 	<script>
 	window.onload=function(){		
-	if("${message}"=="")
-		return;
-	ohSnap("${message}",{'color': "${messageKind}" });
-	
-}
+		if("${message}"=="")
+			return;
+		ohSnap("${message}",{'color': "${messageKind}" });
+		
+	}
 		
 	</script>
 	

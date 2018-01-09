@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.swing.plaf.SliderUI;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.javadude.annotation.Bean;
 import com.puppyrush.buzzcloud.controller.form.BandForm;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
+import com.puppyrush.buzzcloud.dbAccess.DBManager.ColumnHelper;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.authority.AuthorityController;
@@ -152,53 +155,62 @@ public final class BandManager {
 		
 	}
 	
-	public ArrayList<Band> getRootOfOwneredBands(int memberId) throws EntityException {
+	public List<Integer> getRootOfOwneredBandIds(int memberId) throws EntityException, ControllerException, SQLException {
 
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		ArrayList<Band> rootBands = new ArrayList<Band>();
-		try {
+		List<Integer> bandsAry = new ArrayList<Integer>();
 
-			ArrayList<Integer> bandsAry = new ArrayList<Integer>();
+		List<String> sel = new ArrayList<String>();
+		Map<String, Object> where = new HashMap<String, Object>();
+		sel.add("bandId");
+		where.put("owner", memberId);
+		
+		ColumnHelper ch = dbMng.getColumnsOfPart("band", sel, where);
+		if(ch.isEmpty())
+			return bandsAry;
+		
+		for(int i=0; i < ch.columnSize() ; i++)
+			bandsAry.add(ch.getInteger(i, "bandId"));
+	
+		return getRootBandOf(bandsAry);
 
-			ps = conn.prepareStatement("select bandId from band where owner = ?");
-			ps.setInt(1, memberId);
-			rs = ps.executeQuery();
+	}
 
-			while (rs.next())
-				bandsAry.add(rs.getInt(1));
+	
+	public List<Band> getRootOfOwneredBands(int memberId) throws EntityException, ControllerException, SQLException {
 
-			ArrayList<Integer> rootBandsId = getRootBandOf(bandsAry);
+	
+		List<Band> rootBands = new ArrayList<Band>();
+		
 
-			for (int rootBandId : rootBandsId) {
-				if (bCtl.containsEntity(rootBandId) == false) {
-					Band band = getBand(rootBandId);
-					rootBands.add(band);
-				} else
-					rootBands.add(bCtl.getEntity(rootBandId));
-			}
+		List<Integer> bandsAry = new ArrayList<Integer>();
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ControllerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				ps.close();
-				rs.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		List<String> sel = new ArrayList<String>();
+		Map<String, Object> where = new HashMap<String, Object>();
+		sel.add("bandId");
+		where.put("owner", memberId);
+		
+		ColumnHelper ch = dbMng.getColumnsOfPart("band", sel, where);
+		if(ch.isEmpty())
+			return rootBands;
+		
+		for(int i=0; i < ch.columnSize() ; i++)
+			bandsAry.add(ch.getInteger(i, "bandId"));
+	
+		List<Integer> rootBandsId = getRootBandOf(bandsAry);
 
+		for (int rootBandId : rootBandsId) {
+			if (bCtl.containsEntity(rootBandId) == false) {
+				Band band = getBand(rootBandId);
+				rootBands.add(band);
+			} else
+				rootBands.add(bCtl.getEntity(rootBandId));
 		}
 
 		return rootBands;
 
 	}
 
-	private ArrayList<Integer> getRootBandOf(ArrayList<Integer> bands) {
+	private List<Integer> getRootBandOf(List<Integer> bandsAry) {
 
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -206,9 +218,9 @@ public final class BandManager {
 
 		try {
 
-			for (int bandId : bands) {
+			for (int bandId : bandsAry) {
 
-				ps = conn.prepareStatement("select isRoot from bandAuthority where bandId = ?");
+				ps = conn.prepareStatement("select Root from bandAuthority where bandId = ?");
 				ps.setInt(1, bandId);
 				rs = ps.executeQuery();
 				rs.next();
@@ -323,33 +335,22 @@ public final class BandManager {
 		return memberAry;
 	}
 	
-	public int getUpperBand(int bandId) {
+	public int getUpperBand(int bandId) throws SQLException {
 
-		PreparedStatement ps = null;
-		ResultSet rs = null;
 		int upperBandId = bandId;
-		try {
+		
+		List<String> sel = new ArrayList<String>();
+		Map<String, Object> where = new HashMap<String, Object>();
+		
+		sel.add("fromBand");
+		where.put("toBand", bandId);
+		ColumnHelper ch = dbMng.getColumnsOfPart("bandRelation", sel, where);
+		
+		if(ch.columnSize() != 1)
+			throw new SQLException();
+		
+		upperBandId = ch.getInteger(0, "fromBand");
 
-			ps = conn.prepareStatement("select * from bandRelation where toBand = ?");
-			ps.setInt(1, bandId);
-			rs = ps.executeQuery();
-			rs.next();
-			upperBandId = rs.getInt("fromBand");
-
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-
-		} finally {
-			try {
-				ps.close();
-				rs.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 
 		return upperBandId;
 	}
@@ -419,7 +420,7 @@ public final class BandManager {
 		return gId;
 	}
 
-	public Tree<Band> getSubBands(int bandId) throws EntityException {
+	public Tree<Band> getSubBands(int bandId) throws EntityException, SQLException {
 
 		Tree<Band> tree = null;
 
@@ -502,64 +503,50 @@ public final class BandManager {
 
 	}
 
-	public Band getBand(int bandId) throws EntityException {
+	public Band getBand(int bandId) throws EntityException, SQLException, ControllerException {
 
 		String bandName = "";
 		int ownerId = -1;
 		Band band = null;
 
-		try {
-			PreparedStatement ps = conn.prepareStatement("select * from band where bandId = ? ");
-			ps.setInt(1, bandId);
-			ResultSet rs = ps.executeQuery();
-			
-			rs.next();
+		List<String> sel = new ArrayList<String>();
+		Map<String, Object> where = new HashMap<String, Object>();
+		where.put("bandId", bandId);
+		
+		ColumnHelper ch = dbMng.getColumnsOfAll("band", where);
+		if(ch.columnSize()!=1)
+			throw new SQLException();
+				
+		int adminId = ch.getInteger(0, "administrator");
+		ownerId = ch.getInteger(0, "owner");
+		bandName = ch.getString(0,"name");
+		
+		int upperBandId = getUpperBand(bandId);
 
-			int adminId = rs.getInt("administrator");
-			ownerId = rs.getInt("owner");
-			bandName = rs.getString("name");
-			
-					
-			ps.close();
-			rs.close();
+		BandAuthority bandAuthority = authMng.getBandAuthority(bandId);
+		MemberAuthority mAuth = authMng.getMemberAuthority(ownerId, bandId);
+		FileAuthority fAuth = authMng.getFileAuthoirty(ownerId, bandId);
 
-			int upperBandId = getUpperBand(bandId);
+		Member member = mCtl.containsEntity(ownerId) ? mCtl.getEntity(ownerId) : mDB.getMember(ownerId);
+		HashMap<Integer, AuthoritedMember> members = new HashMap<Integer, AuthoritedMember>();
 
-			BandAuthority bandAuthority = authMng.getBandAuthority(bandId);
-			MemberAuthority mAuth = authMng.getMemberAuthority(ownerId, bandId);
-			FileAuthority fAuth = authMng.getFileAuthoirty(ownerId, bandId);
+		members.put(member.getId(), new AuthoritedMember(member, mAuth, fAuth));
 
-			Member member = mCtl.containsEntity(ownerId) ? mCtl.getEntity(ownerId) : mDB.getMember(ownerId);
-			HashMap<Integer, AuthoritedMember> members = new HashMap<Integer, AuthoritedMember>();
+		ch = dbMng.getColumnsOfAll("bandDetail", where);
+		if(ch.columnSize()!=1)
+			throw new SQLException();
+				
+		int maxCapacity = ch.getInteger(0,"maxCapacity");
+		int usingCapacity = ch.getInteger(0,"usingCapacity");
+		String driverPath = ch.getString(0,"driverPath");
+		String driverNickname = ch.getString(0,"driverNickname");
+		String contents = ch.getString(0,"contents");
+		
+		band = new Band.Builder(bandId, ownerId, bandName).bandAuhority(bandAuthority).members(members).upperBandId(upperBandId).maxCapacity(maxCapacity)
+				.usingCapacity(usingCapacity).driverPath(driverPath).adminId(adminId).driverNickname(driverNickname).contents(contents).build();
 
-			members.put(member.getId(), new AuthoritedMember(member, mAuth, fAuth));
-
-			ps.close();
-			rs.close();
-			
-			ps = conn.prepareStatement("select * from bandDetail where bandId = ? ");
-			ps.setInt(1, bandId);
-			rs = ps.executeQuery();
-			rs.next();
-			
-			int maxCapacity = rs.getInt("maxCapacity");
-			int usingCapacity = rs.getInt("usingCapacity");
-			String driverPath = rs.getString("driverPath");
-			String driverNickname = rs.getString("driverNickname");
-			String contents = rs.getString("contents");
-			
-			band = new Band.Builder(bandId, ownerId, bandName).bandAuhority(bandAuthority).members(members).upperBandId(upperBandId).maxCapacity(maxCapacity)
-					.usingCapacity(usingCapacity).driverPath(driverPath).adminId(adminId).driverNickname(driverNickname).contents(contents).build();
-
-			if (bCtl.containsEntity(bandId) == false)
-				bCtl.addEntity(bandId, band);
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ControllerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (bCtl.containsEntity(bandId) == false)
+			bCtl.addEntity(bandId, band);
 
 		return band;
 
@@ -584,19 +571,9 @@ public final class BandManager {
 			bDB.makeBandMember(bandId, form.getMembers());
 			bDB.makeBandRelation(form.getUpperBand(), bandId);
 			
-			EnumMap<enumBandAuthority ,Boolean> bandAuthMap = new EnumMap<enumBandAuthority ,Boolean>(enumBandAuthority.class);
-						
-			for(int i=0 ; i < form.getBandAuthority().size(); i++){
-				
-				if(enumBandAuthority.valueOf(form.getBandAuthority().get(i)) != null)
-					bandAuthMap.put(enumBandAuthority.valueOf(form.getBandAuthority().get(i)), true);
-			}
-	
-			EnumMap<enumFileAuthority ,Boolean> fileAuthMap = new EnumMap<enumFileAuthority ,Boolean>(enumFileAuthority.class);
-			for(int i=0 ; i < form.getFileAuthority().size(); i++){
-				if(enumFileAuthority.valueOf(form.getFileAuthority().get(i)) != null)
-					fileAuthMap.put(enumFileAuthority.valueOf(form.getFileAuthority().get(i)), true);
-			}
+			Map<enumBandAuthority ,Boolean> bandAuthMap = enumBandAuthority.toEnumMap(form.getBandAuthority());	
+			Map<enumFileAuthority ,Boolean> fileAuthMap = enumFileAuthority.toEnumMap(form.getFileAuthority());
+			
 			
 			HashMap<Integer, AuthoritedMember> authoritedMap = new HashMap<Integer, AuthoritedMember>(); 
 			for(int i=0 ; i < form.getMembers().size() ; i++){
@@ -691,7 +668,7 @@ public final class BandManager {
 		
 		String driverPath = "";
 		
-		if(upperBand==newBandId){
+		if(upperBand==newBandId || upperBand == -1){
 			driverPath = enumSystem.DEFAULT_DIRVER_ABS_PATH.toString() + UUID.randomUUID().toString();
 			File file = new File(driverPath);
 			file.mkdirs();

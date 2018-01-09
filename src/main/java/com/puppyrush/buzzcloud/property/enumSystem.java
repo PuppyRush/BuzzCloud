@@ -12,7 +12,7 @@ public enum enumSystem {
 	MEMBERS_FOLDER_NAME("member"),
 	ADMIN("gooddaumi@naver.com"),
 	ADMIN_ID(0),
-	MAX_CAPACITY(1024), //MB
+	
 	
 	
 	

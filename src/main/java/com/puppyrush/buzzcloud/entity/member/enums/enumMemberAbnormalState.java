@@ -10,7 +10,8 @@ public enum enumMemberAbnormalState implements enumMember  {
 	EXCEEDED_LOGIN_COUNT("exceededLoginCount"),
 	SLEEP("sleep"),
 	OLD_PASSWORD("oldPassword"),
-	JOIN_CERTIFICATION("joinCertification");
+	JOIN_CERTIFICATION("joinCertification"),
+	IS_ABNORMAL("isAbnormal");
 		
 	private enumPage toPage;
 	private String enumStr;
@@ -19,7 +20,7 @@ public enum enumMemberAbnormalState implements enumMember  {
 		enumStr = str;
 	}
 	
-	public String getString(){
+	public String toString(){
 		return enumStr;
 	}
 	

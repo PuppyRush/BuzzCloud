@@ -6,8 +6,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 	
-	<context:annotation-config/>
 	<import resource="classpath:dbAccessBean.xml"/>
+	<context:annotation-config/>
 	
 	<bean id="authorityDB" class="com.puppyrush.buzzcloud.entity.authority.AuthorityDB" scope="singleton"/>
 	<bean id="authorityController" class="com.puppyrush.buzzcloud.entity.authority.AuthorityController" scope="singleton" />
@@ -17,16 +17,16 @@
 	<bean id="bandAuthority" class="com.puppyrush.buzzcloud.entity.authority.band.BandAuthority" scope="singleton" />
 	<bean id="memberAuthority" class="com.puppyrush.buzzcloud.entity.authority.member.MemberAuthority" scope="singleton" />
 	
-	<bean id="band" class="com.puppyrush.buzzcloud.entity.band.Band" scope="singleton"/>
-	<bean id="bandController" class="com.puppyrush.buzzcloud.entity.band.BandController" scope="singleton"/>
-	<bean id="bandDB" class="com.puppyrush.buzzcloud.entity.band.BandDB"/>
-	<bean id="bandManager" class="com.puppyrush.buzzcloud.entity.band.BandManager"/>
+	<bean id="band" class="com.puppyrush.buzzcloud.entity.band.Band" scope="singleton" />
+	<bean id="bandController" class="com.puppyrush.buzzcloud.entity.band.BandController" scope="singleton" />
+	<bean id="bandDB" class="com.puppyrush.buzzcloud.entity.band.BandDB" scope="singleton" />
+	<bean id="bandManager" class="com.puppyrush.buzzcloud.entity.band.BandManager" scope="singleton" />
 	
 	
-	<bean id="memberController" class="com.puppyrush.buzzcloud.entity.member.MemberController"/>
-	<bean id="memberDB" class="com.puppyrush.buzzcloud.entity.member.MemberDB"/>
-	<bean id="memberManager" class="com.puppyrush.buzzcloud.entity.member.MemberManager"/>
-	<bean id="member" class="com.puppyrush.buzzcloud.entity.member.Member"/>
+	<bean id="memberController" class="com.puppyrush.buzzcloud.entity.member.MemberController" scope="singleton" />
+	<bean id="memberDB" class="com.puppyrush.buzzcloud.entity.member.MemberDB" scope="singleton" />
+	<bean id="memberManager" class="com.puppyrush.buzzcloud.entity.member.MemberManager" scope="singleton" />
+	<bean id="member" class="com.puppyrush.buzzcloud.entity.member.Member" scope="singleton" />
 
 	<bean id="postman" class="com.puppyrush.buzzcloud.mail.PostManImple" scope="singleton"/>
 

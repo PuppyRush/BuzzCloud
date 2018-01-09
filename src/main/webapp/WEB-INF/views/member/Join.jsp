@@ -1,4 +1,4 @@
-<%@page import="com.puppyrush.buzzcloud.page.enums.*"%>
+<%@page import="com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -111,10 +111,10 @@
 		var message;
 		var popup_color;
 		<% if(request.getAttribute("message")!=null && request.getAttribute("messageKind") !=null){
-			enumCautionKind kind = (enumCautionKind)request.getAttribute("messageKind");	
+			
 		%>
 		  message = "<%=(String)request.getAttribute("message")%>";
-		  popup_color = "<%=(String)kind.getString()%>";
+		  popup_color = "<%=(String)request.getAttribute("messageKind")%>";
 		  ohSnap(message,{color:popup_color});
 		<%
 		}

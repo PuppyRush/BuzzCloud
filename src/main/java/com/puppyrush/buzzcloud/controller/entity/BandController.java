@@ -21,6 +21,7 @@ import com.puppyrush.buzzcloud.entity.band.BandDB;
 import com.puppyrush.buzzcloud.entity.band.BandManager;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
+import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.service.entity.band.BeingExistName;
 import com.puppyrush.buzzcloud.service.entity.band.MakingBand;
 import com.puppyrush.buzzcloud.service.entity.band.UpdatingMyBand;
@@ -56,13 +57,11 @@ public class BandController {
 			returns = bandDB.makeBandRequestJoin(bandId, mCtl.getMember(rq.getRequestedSessionId()).getId());
 		} catch (ControllerException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 			returns.put("isSuccess", false);
 			InstanceMessage msg = new InstanceMessage("그룹가입 요청에 실패하였습니다.  관리자에게 문의하세요",enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 			returns.put("isSuccess", false);
 			InstanceMessage msg = new InstanceMessage("그룹가입 요청에 실패하였습니다.  관리자에게 문의하세요",enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
@@ -85,23 +84,16 @@ public class BandController {
 			// TODO Auto-generated catch block
 			InstanceMessage msg = new InstanceMessage("그룹정보 변경에 실패하였습니다.  관리자에게 문의하세요",enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
-			e.printStackTrace();
 		} catch (ControllerException e) {
-			InstanceMessage msg = new InstanceMessage(e.getMessage(),enumInstanceMessage.ERROR);
-			returns.putAll(msg.getMessage());
-			e.printStackTrace();
+			returns.putAll(e.getReturnsForAjax());
 		} catch (EntityException e) {
-			InstanceMessage msg = new InstanceMessage(e.getMessage(),enumInstanceMessage.ERROR);
-			returns.putAll(msg.getMessage());
-			e.printStackTrace();
+			returns.putAll(e.getReturnsForAjax());
 		} catch ( IllegalArgumentException e){
 			InstanceMessage msg = new InstanceMessage(e.getMessage(),enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
-			e.printStackTrace();
 		} catch( Exception e){
 			InstanceMessage msg = new InstanceMessage(e.getMessage(),enumInstanceMessage.ERROR);
 			returns.putAll(msg.getMessage());
-			e.printStackTrace();
 		}
 		
 
@@ -112,10 +104,15 @@ public class BandController {
 
 	@ResponseBody
 	@RequestMapping(value = "/makeBand.ajax", method = RequestMethod.POST)
-	public Map<String, Object> updateBand(BandForm bandForm) {
+	public Map<String, Object> updateBand(BandForm bandForm){
 
 		Map<String, Object> returns = new HashMap<String, Object>();
-		returns = makingBand.execute(bandForm);
+		try {
+			returns = makingBand.execute(bandForm);
+		} catch (PageException e) {
+			// TODO Auto-generated catch block
+			returns.putAll(e.getReturnsForAjax());
+		}
 
 		return returns;
 

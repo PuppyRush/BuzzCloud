@@ -19,6 +19,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +34,7 @@ public class Join{
 	@Autowired(required=false)
 	private MemberManager mMng;
 			
-	public Map<String,Object> execute(JoinForm form) throws SQLException, EntityException, Throwable{
+	public Map<String,Object> execute(JoinForm form) throws SQLException, EntityException, PageException, NumberFormatException, AddressException, MessagingException{
 			
 		Map<String, Object> returns = new HashMap<String,Object>();
 		Member member=null;
@@ -71,7 +74,7 @@ public class Join{
 	
 	
 	
-	private void join(Member member) throws SQLException, EntityException, Throwable{
+	private void join(Member member) throws SQLException, EntityException, NumberFormatException, AddressException, PageException, MessagingException{
 		
 		if(checkJoinAndDuplicated(member)){
 			member.doJoin();
@@ -85,7 +88,7 @@ public class Join{
 			throw (new PageException.Builder(enumPage.LOGIN))
 			.errorString("이미 가입한 유저입니다.")
 			.errorCode(enumPageError.WRONG_PARAMATER).build(); 
-		else if(mDB.isExistNickname(member.getNickname()))
+		else if(mDB.isExistNickname(member.getNickname(),member.getId()))
 			throw (new PageException.Builder(enumPage.JOIN))
 			.errorString("닉네임이 중복됩니다.")
 			.errorCode(enumPageError.WRONG_PARAMATER).build(); 

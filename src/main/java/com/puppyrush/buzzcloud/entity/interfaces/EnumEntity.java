@@ -1,6 +1,6 @@
 package com.puppyrush.buzzcloud.entity.interfaces;
 
-public interface EnumEntity {
+public interface EnumEntity<T> {
 
 	@Override
 	String toString();

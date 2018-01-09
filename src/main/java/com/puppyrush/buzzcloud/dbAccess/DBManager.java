@@ -14,10 +14,6 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.mysql.jdbc.ResultSetMetaData;
-import com.puppyrush.buzzcloud.bzexception.BZException;
-import com.puppyrush.buzzcloud.entity.EntityException;
-import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
-import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.ConnectMysql;
 
 @Service("DBManager")
@@ -38,7 +34,7 @@ public final class DBManager {
 		private void addColumn(Map<String,Object> column){
 			columns.add(column);
 			columnCount++;
-			isEmpty = true;
+			isEmpty = false;
 		}
 		
 		private boolean isValidation(int colIdx){
@@ -127,23 +123,25 @@ public final class DBManager {
 			for(i=0 ; i < whereValue.size() ; i++)
 				ps.setObject(i+1, whereValue.get(i));
 			
-			ResultSet rs = ps.executeQuery();			
+			ResultSet rs = ps.executeQuery();
+			if(!rs.next())
+				return ch;
+			
 			ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
 			ArrayList<String> colName = new ArrayList<String>();
 			for(int l=1 ; l <= rsmd.getColumnCount() ; l++){
 				colName.add( rsmd.getColumnName(l) );
 			}
-				
+					
 			
-			
-			while(rs.next()){
+			do{
 				
 				HashMap<String,Object> info = new HashMap<String,Object>();
 				
 				for(String key : colName)
 					info.put(key, rs.getObject(key));
 				ch.addColumn(info);
-			}
+			}while(rs.next());
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -207,15 +205,17 @@ public final class DBManager {
 				ps.setObject(i+1, whereAry.get(i));
 						
 			ResultSet rs = ps.executeQuery();			
-							
-			while(rs.next()){
+			if(!rs.next())
+				return ch;
+			
+			do{
 				HashMap<String,Object> info = new HashMap<String,Object>();
 				for(String colName : selectCaluse)
 					info.put(colName, rs.getObject(colName));
 				
 				ch.addColumn(info);
 				
-			}
+			}while(rs.next());
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

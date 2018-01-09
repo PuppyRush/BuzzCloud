@@ -1,5 +1,6 @@
 package com.puppyrush.buzzcloud.service.entity.band;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,28 +29,22 @@ public class InitializingBandMap{
 	private MemberController mCtl;
 
 	
-	public Map<String, Object> execute(String sId) {
+	public Map<String, Object> execute(String sId) throws ControllerException, SQLException, EntityException {
 
 		Map<String, Object> params = new HashMap<String, Object>();
 				
-		Member member;
-		try {
-			member = mCtl.getMember(sId);
-		} catch (ControllerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return params;
-		}
+		Member member = mCtl.getMember(sId);
 		int id = member.getId();
 		
 		params.put("subBandRelation", getSubBandRelation(id) );
 		params.put("myAllBand", getAllMyBand(id));
-
+		params.put("rootBands", getRootBands(id));
+		
 		return params;
 		
 	}
 
-	private Map<Integer, List<Integer>> getSubBandRelation(int memberId) {
+	private Map<Integer, List<Integer>> getSubBandRelation(int memberId) throws SQLException, ControllerException {
 
 		Map<Integer, List<Integer>> returns = new HashMap<Integer, List<Integer>>();
 		
@@ -65,10 +60,19 @@ public class InitializingBandMap{
 					Tree<Band> tree = bandMng.getSubBands(bands.get(i).getBandId());
 					ArrayList<BundleBand> subBands = tree.getSubRelationNodes();
 					
-					for(int l=0 ; l < subBands.size() ; l++){
+					if(!subBands.isEmpty())
+						for(int l=0 ; l < subBands.size() ; l++){
+							ArrayList<Integer> temp = new ArrayList<Integer>();
+							temp.add(subBands.get(l).fromBand.getBandId());
+							temp.add(subBands.get(l).toBand.getBandId());
+							
+							returns.put(mapKey, temp);
+							mapKey++;
+						}
+					else{
 						ArrayList<Integer> temp = new ArrayList<Integer>();
-						temp.add(subBands.get(l).fromBand.getBandId());
-						temp.add(subBands.get(l).toBand.getBandId());
+						temp.add(bands.get(i).getBandId());
+						temp.add(bands.get(i).getBandId());
 						
 						returns.put(mapKey, temp);
 						mapKey++;
@@ -84,7 +88,7 @@ public class InitializingBandMap{
 
 	}
 
-	private Map<String, Object> getAllMyBand(int memberId) {
+	private Map<String, Object> getAllMyBand(int memberId) throws SQLException, ControllerException {
 
 		Map<String, Object> bandMap = new HashMap<String, Object>();
 
@@ -109,4 +113,8 @@ public class InitializingBandMap{
 
 	}
 	
+	private List<Integer> getRootBands(int memberId) throws EntityException, ControllerException, SQLException{
+		return bandMng.getRootOfOwneredBandIds(memberId);
+	
+	}
 }

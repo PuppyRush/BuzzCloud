@@ -3,6 +3,7 @@
    var myBands;
    var maxCapacity;
    
+   
 	$(document).ready(function(){						
 				
 		initPage();
@@ -37,12 +38,12 @@
     maxCapacity = Number(data["maxCapacity"])/(1024*1024);
   	  $("#groupCapacity").attr("placeholder","할당할 용량 ( 가능한 최대 용량 :  " + maxCapacity+" )" );
     
-  	bandAuthority = data["bandAuthority"];
-  	 for (var key in bandAuthority) {		   
+  	bandAuthorityMap = data["bandAuthority"];
+  	 for (var key in bandAuthorityMap) {
 			$("#bandAuthority").append('<option>'+key);	   		 	
 		 }
-		fileAuthority = data["fileAuthority"];
-		  for (var key in fileAuthority) {		   
+		fileAuthorityMap = data["fileAuthority"];
+		  for (var key in fileAuthorityMap) {		   
 	  		$("#fileAuthority").append('<option>'+key);	   		 	
 		  	}
   	 
@@ -174,7 +175,7 @@
 	 
 	 function callback_makeBand(data){
 		 ohSnap(data["message"],{color: data["messageKind"]} );
-			network.redraw();
+		 initNetwork();
 	 }
 	 
 	 function callback_updateBand(data){

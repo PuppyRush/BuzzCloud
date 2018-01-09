@@ -35,7 +35,7 @@ public class SettingProfile{
 		HashMap<String, Object> set = new HashMap<String, Object>();
 		HashMap<String, Object> where = new HashMap<String, Object>();
 		
-		if(mDB.isExistNickname(form.getNickname())){
+		if(mDB.isExistNickname(form.getNickname(),memberId)){
 			returns.putAll(new InstanceMessage("닉네임이 중복됩니다.",enumInstanceMessage.ERROR).getMessage());
 		}
 		else{

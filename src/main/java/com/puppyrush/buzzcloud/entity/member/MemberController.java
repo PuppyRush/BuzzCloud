@@ -80,34 +80,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		return member;
 		
 	}
-	
-	private Member setMember(int uId) throws SQLException{
 		
-		
-		PreparedStatement _ps = conn.prepareStatement("select * from user where useId = ? ");
-		_ps.setInt(1, uId);
-		ResultSet _rs = _ps.executeQuery();	
-		_rs.next();
-		
-		String email = _rs.getString("email");
-		return new Member.Builder(_rs.getInt("userId"), email).registrationKind(enumMemberType.valueOf(_rs.getString("registrationKind"))  )
-				.nickname(_rs.getString("nickname")).build();
-		
-	}
-	
-	private Member setMember(String email) throws SQLException{
-		
-		
-		PreparedStatement _ps = conn.prepareStatement("select * from user where email = ? ");
-		_ps.setString(1, email);
-		ResultSet _rs = _ps.executeQuery();	
-		_rs.next();
-
-		return new Member.Builder(_rs.getInt("userId"), email).registrationKind(enumMemberType.valueOf(_rs.getString("registrationKind"))  )
-				.nickname(_rs.getString("nickname")).build();
-		
-	}
-	
 	public Member newMember(String sessionId, String email) throws Throwable{
 		Member member = null;
 		if(containsEntity(sessionId)){
@@ -141,9 +114,9 @@ public final class MemberController extends EntityControllerImpl<Member>{
 	}
 		
 	
-	public void addMember(String email, String sId) throws SQLException, ControllerException{
+	public Member addMember(String email, String sId) throws SQLException, ControllerException, EntityException{
 		
-		Member member = setMember(email);
+		Member member = mDB.getMember(email);
 		
 		if(member==null)
 			throw new NullPointerException();
@@ -153,24 +126,27 @@ public final class MemberController extends EntityControllerImpl<Member>{
 		
 		if(containsEntity(sId) == false)
 			sessionIdMap.put(sId, member.getId());
-		
+	
+		return member;
 	}
 		
 	
-	public void addMember(int uId, String sId) throws SQLException, ControllerException{
+	public Member addMember(int uId, String sId) throws SQLException, ControllerException{
 		
-		Member member = setMember(uId);
-		
-		if(member==null)
-			throw new NullPointerException();
-		
-		if(containsEntity(member.getId()) == false )
+
+	
+		if(!containsEntity(uId)){
+			Member member = mDB.getMember(uId);
+			
 			addEntity(member.getId(), member);
 		
-		if(containsEntity(sId) == false)
-			sessionIdMap.put(sId, member.getId());
-
-		
+			if(!containsEntity(sId))
+				sessionIdMap.put(sId, member.getId());
+			
+			return member;
+		}
+		else
+			return getEntity(uId);
 	}
 	
 	

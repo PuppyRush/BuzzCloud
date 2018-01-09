@@ -60,7 +60,7 @@
  
  
  
-/* $("#imageForm").on("click", function(){
+ $("#imageForm").on("click", function(){
 		
 		var comAjax = new ComAjax();
 		comAjax.setUrl("/managerPage/myAccount/registerMemberFace.ajax");
@@ -74,8 +74,25 @@
 		ohSnap(data["message"], {color:data["messageKind"]});
 		$("memberImage").prop("src",data["imagePath"]);
 	}
-*/
+
+ $(".changePasswordModal #changePasswordButton").on("click", function(){
+	 		
+			var comAjax = new ComAjax();
+			comAjax.setType("post");
+			comAjax.setUrl("/member/changePassword.ajax");
+			comAjax.setCallback("callback_changePassword")
+			comAjax.addParam("oldPassword",$(".changePasswordModal #oldPassword").val());
+			comAjax.addParam("newPassword",$(".changePasswordModal #newPassword").val());
+			comAjax.ajax();
+
+ 		});
  
+	function callback_changePassword(data){
+		ohSnap(data["message"], {color:data["messageKind"]});
+		$('.changePasswordModal').hide();
+		$('#mask').hide();
+	}
+	
 
  $("#navPages li").on("click", function(){
 

@@ -88,7 +88,6 @@ public class PageForwadingController {
 		
 		}
 		mv.addAllObjects(returns);
-		mv.setViewName((String)returns.get("view"));
 		
 		return mv;
 	}

@@ -48,7 +48,7 @@ public class GettingCharts {
 		ColumnHelper res = dbMng.getColumnsOfPart("bandDetail", sel, where);
 		
 		if(res.columnSize() != 1 )
-			throw (new EntityException.Builder(enumPage.GROUP_MANAGER))
+			throw (new EntityException.Builder(enumPage.GROUP_DASHBOARD))
 			.instanceMessage(enumInstanceMessage.ERROR)
 			.errorString("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
 			.errorCode(enumBandState.NOT_EXIST_BAND).build();

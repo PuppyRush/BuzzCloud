@@ -22,6 +22,7 @@
     <link href="/resources/views/manager/css/font-style.css" rel="stylesheet">
     <link href="/resources/views/manager/css/register.css" rel="stylesheet">
     <link href="/resources/views/manager/css/myaccount.css" rel="stylesheet">
+    <link	href="/resources/views/manager/css/form.css" rel="stylesheet" type="text/css">
 				<!-- ohsnap css  -->
 			<link href="/resources/lib/include/notificator/ohsnap.css" rel="stylesheet">
 		
@@ -43,9 +44,44 @@
   	<link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
 	</head>
   <body>
+  
+	<div id="mask"></div>
+	<div class="changePasswordModal">
+		<div class="text-vertical-center" tabindex="-1" role="dialog"		aria-hidden="true">
+			<div class="modal-dialog">
+						<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"	aria-hidden="true">×</button>
+						<h1 class="text-center">새로운 비밀번호를 입력해주세요</h1>
+					</div>
+				<div class="modal-content">
+					<div class="modal-body">
 
-	<div id="ohsnap">	</div>
+						<form class="form col-md-12 center-block" id="changePasswordForm" method="post" action="/member/changePassword.ajax">
+							<div class="form-group">
+								<input type="password" name="oldPassword"	 id="oldPassword"		class="form-control input-lg" placeholder="write old password">
+							</div>
+							<div class="form-group">
+								<input type="password" name="newPassword"	id="newPassword"		class="form-control input-lg" placeholder="write new password">
+							</div>
+							<div class="form-group">
+								<input type="password" name="newPassword2"	id="newPassword2"		class="form-control input-lg" placeholder="rewrite new password">
+							</div>
+							<div class="form-group">
+								<button class="btn btn-primary btn-lg btn-block" id="changePasswordButton" type="button"	>비밀번호 변경하기</button>
+							</div>
+							<input type="hidden"  id="idType" name="idType" value="NOTHING">
+						</form>
 
+					</div>
+					<div class="modal-footer">
+						<div class="col-md-12">
+							<button class="close" data-dismiss="modal" aria-hidden="true">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
   	<!-- NAVIGATION MENU -->
 
@@ -142,7 +178,9 @@
         		        </div>
         		    
         		        <div class="footer">     		           
-      		            <button type="button" id="submitProfile" class="btn btn-success">변경하기</button>
+      		            <button type="button" id="submitProfile" class="btn btn-success">프로필 변경하기</button>
+      		            <br>
+      		            <button type="button" id="changePasswordModal" class="btn btn-success">비밀번호 변경하기</button>
         		        </div>
         		    </form>
         		</div>
@@ -169,6 +207,10 @@
 		<input type="hidden" name="forwardPageName" id="forwardPageName">
 	</form>
 	
+	
+	<div id="ohsnap">	</div>
+	
+	
 	<script>
 	
 	window.onload=function(){
@@ -180,7 +222,6 @@
 	
 	</script>
 
-				
 		<script type="text/javascript" src="/resources/bower_components/jquery/jquery.js"></script>    
 		</script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		<script	 src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
@@ -191,8 +232,9 @@
 	
 	<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/commonAjax.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 	<script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
-	<script type="text/javascript" src="/resources/lib/commanJs/formValidator.j?<?=filemtime(\'./css/readizgen.css\')?s"></script>
+	<script type="text/javascript" src="/resources/lib/commanJs/formValidator.js?<?=filemtime(\'./css/readizgen.css\')?s"></script>
 	<script type="text/javascript" src="/resources/views/manager/js/myaccount.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+	<script type="text/javascript" src="/resources/views/manager/js/form.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 		
 	
 </body>

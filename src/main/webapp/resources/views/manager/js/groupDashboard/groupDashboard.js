@@ -19,12 +19,12 @@
 		        });
 		    });*/
 			
+		 	myBandIds = new Array()
 			$(document).ready(function() {
 				
 				initPage();
 				setMyGroups();
-				getCharts();
-				
+
 		        $("#btn-blog-next").click(function () {
 		            $('#blogCarousel').carousel('next')
 		        });
@@ -62,15 +62,18 @@
 					ary = data["groups"];
 					
 					for(i=0 ; i < ary.length ; i++ ){
+						
 						band = ary[i];
-
+						myBandIds.push(band["bandId"]);
 						$("#groups").append('<li id="'+band["bandId"]+'">  <i class="unread"></i> <img class="avatar" src="'+band["image"]+'" alt="avatar">'
 								+ '<p class="name" id="name">이름 : '+band["bandName"]+ ' </p>'
 								+'<p class="content" id="size"><strong>그룹원 수</strong> ' +band["memberCount"]+'명 </p>'+
 								'<div class="actions"><a id='+band["adminId"]+' onClick="groupModal(this)"><img src="http://findicons.com/files/icons/2151/snow/32/information.png" alt="reply"></a></div></li>');
 										
 					}
-					
+					if(myBandIds.length>0)
+						getCharts(myBandIds[0]);
+				
 				}
 			}
 			

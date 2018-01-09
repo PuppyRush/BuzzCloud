@@ -15,6 +15,8 @@ import com.puppyrush.buzzcloud.entity.authority.AuthorityManager;
 import com.puppyrush.buzzcloud.entity.authority.file.enumFileAuthority;
 import com.puppyrush.buzzcloud.entity.band.Band;
 import com.puppyrush.buzzcloud.entity.band.BandController;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
+
 import cn.bluejoe.elfinder.impl.DefaultFsMapping.BandMember;
 import cn.bluejoe.elfinder.localfs.LocalFsVolume;
 import cn.bluejoe.elfinder.service.FsService;
@@ -79,8 +81,9 @@ final public class StaticFsServiceFactory implements FsServiceFactory
 		if(bandCtl.containsEntity(bandId))
 			band = bandCtl.getEntity(bandId);
 		else
-			throw new ControllerException(enumController.NOT_EXIST_MEMBER_FROM_MAP);
-				
+			throw (new ControllerException.Builder(enumPage.BROWSER))
+			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
+						
 		final String driverPath = band.getDriverPath();
 		final String nickname = band.getDriverNickname();
 		
@@ -118,16 +121,16 @@ final public class StaticFsServiceFactory implements FsServiceFactory
 		Map<enumFileAuthority,Boolean> map = authMng.getFileAuthoirty(bm.getMemberId(), bm.getBandId()).getAuthorityType();
 		
 		if(map.get(enumFileAuthority.DOWNLOAD) && 
-			!(map.get(enumFileAuthority.CREATE) && map.get(enumFileAuthority.REMOVE) && map.get(enumFileAuthority.UPLOAD)) ){
+			!(map.get(enumFileAuthority.CREATES) && map.get(enumFileAuthority.REMOVE) && map.get(enumFileAuthority.UPLOAD)) ){
 			all.setReadable(true);
 		}
 		
-		if(map.get(enumFileAuthority.CREATE)&& map.get(enumFileAuthority.DOWNLOAD) && map.get(enumFileAuthority.REMOVE) && map.get(enumFileAuthority.UPLOAD)){
+		if(map.get(enumFileAuthority.CREATES)&& map.get(enumFileAuthority.DOWNLOAD) && map.get(enumFileAuthority.REMOVE) && map.get(enumFileAuthority.UPLOAD)){
 			all.setWritable(true);
 			all.setReadable(true);
 		}
 		
-		if(!(map.get(enumFileAuthority.CREATE) || map.get(enumFileAuthority.DOWNLOAD) || map.get(enumFileAuthority.REMOVE) || map.get(enumFileAuthority.UPLOAD)))
+		if(!(map.get(enumFileAuthority.CREATES) || map.get(enumFileAuthority.DOWNLOAD) || map.get(enumFileAuthority.REMOVE) || map.get(enumFileAuthority.UPLOAD)))
 			all.setLocked(true);
 		
 		

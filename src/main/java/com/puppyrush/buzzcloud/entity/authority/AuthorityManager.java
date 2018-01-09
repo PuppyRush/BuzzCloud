@@ -51,8 +51,8 @@ public final class AuthorityManager {
 			where.put("bandId", bandId);
 			ColumnHelper ch = dbMng.getColumnsOfAll("fileAuthority", where);
 			
-			if(ch.columnSize()>1)
-				throw new SQLException("no more 1 of filAuthority");
+			if(ch.columnSize()!=1)
+				throw new SQLException("ColumnHelper has no more 1 or cant empty of  filAuthority");
 
 			int authId = ch.getInteger(0, "authorityId");
 			Timestamp time = ch.getTimestamp(0, "grantedDate");
@@ -62,28 +62,13 @@ public final class AuthorityManager {
 			
 			
 			EnumMap<enumFileAuthority, Boolean> auths = new EnumMap<enumFileAuthority, Boolean>(enumFileAuthority.class);
-			if (ch.getInteger(0, "canRemove") == 1)
-				auths.put(enumFileAuthority.REMOVE, true);
-			else
-				auths.put(enumFileAuthority.REMOVE, false);
-
-			if (ch.getInteger(0, "canDownload")== 1)
-				auths.put(enumFileAuthority.DOWNLOAD, true);
-			else
-				auths.put(enumFileAuthority.DOWNLOAD, false);
-
-			if (ch.getInteger(0, "canUpload") == 1)
-				auths.put(enumFileAuthority.UPLOAD, true);
-			else
-				auths.put(enumFileAuthority.UPLOAD, false);
-
-			if (ch.getInteger(0, "canCreate") == 1)
-				auths.put(enumFileAuthority.CREATE, true);
-			else
-				auths.put(enumFileAuthority.CREATE, false);
-
-			
-			
+			for(enumFileAuthority fileauth : enumFileAuthority.values()){
+				if (ch.getInteger(0, fileauth.getString()) == 1)
+					auths.put(fileauth, true);
+				else
+					auths.put(fileauth, false);
+			}
+						
 			fAuth = new FileAuthority(authId, time, auths);
 			authCtl.addEntity(fAuth);
 			
@@ -91,7 +76,7 @@ public final class AuthorityManager {
 
 			EnumMap<enumFileAuthority, Boolean> auths = new EnumMap<enumFileAuthority, Boolean>(
 					enumFileAuthority.class);
-			auths.put(enumFileAuthority.CREATE, false);
+			auths.put(enumFileAuthority.CREATES, false);
 			auths.put(enumFileAuthority.DOWNLOAD, false);
 			auths.put(enumFileAuthority.REMOVE, false);
 			auths.put(enumFileAuthority.UPLOAD, false);
@@ -105,42 +90,37 @@ public final class AuthorityManager {
 	public BandAuthority getBandAuthority(int bandId) throws SQLException {
 
 		BandAuthority gAuth = null;
-		PreparedStatement ps=null;
-		ResultSet rs=null;
-		try {
-
-			ps = conn.prepareStatement("select * from bandAuthority where bandId = ?");
-			ps.setInt(1, bandId);
-			rs = ps.executeQuery();
-
-			rs.next();
-
-			bandId = rs.getInt("bandId");
-
+	
+		try{
+			Map<String, Object> where = new HashMap<String, Object>();
+			where.put("bandId", bandId);
+			ColumnHelper ch = dbMng.getColumnsOfAll("bandAuthority", where);
+			
+			if(ch.columnSize()!=1)
+				throw new SQLException("ColumnHelper has no more one or cant empty of bandAuthority");
+	
+			bandId = ch.getInteger(0, "bandId");
+			int authId = ch.getInteger(0, "authorityId");
+			Timestamp time = ch.getTimestamp(0, "grantedDate");
+			
+			if(authCtl.containsEntity(BandAuthority.class,authId))
+				return authCtl.getEntity(BandAuthority.class, authId);
+			
+			
 			EnumMap<enumBandAuthority, Boolean> auths = new EnumMap<enumBandAuthority, Boolean>(
 					enumBandAuthority.class);
+	
+			for(enumBandAuthority bandauth : enumBandAuthority.values()){
+				if (ch.getInteger(0, bandauth.getString()) == 1)
+					auths.put(bandauth, true);
+				else
+					auths.put(bandauth, false);
+			}
+		
+			gAuth = new BandAuthority(bandId, time, auths);
 
-			if (rs.getInt("isFinal") == 1)
-				auths.put(enumBandAuthority.FINAL, true);
-			else
-				auths.put(enumBandAuthority.FINAL, false);
-
-			if (rs.getInt("isRoot") == 1)
-				auths.put(enumBandAuthority.ROOT, true);
-			else
-				auths.put(enumBandAuthority.ROOT, false);
-
-			if (rs.getInt("canJoinMember") == 1)
-				auths.put(enumBandAuthority.CAN_JOIN_MEMBER, true);
-			else
-				auths.put(enumBandAuthority.CAN_JOIN_MEMBER, false);
-
-			gAuth = new BandAuthority(rs.getInt("bandId"), rs.getTimestamp("grantedDate"), auths);
-
-			ps.close();
-			rs.close();
-
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 
 			EnumMap<enumBandAuthority, Boolean> auths = new EnumMap<enumBandAuthority, Boolean>(
 					enumBandAuthority.class);
@@ -150,12 +130,7 @@ public final class AuthorityManager {
 
 			gAuth = new BandAuthority(-1, new Timestamp(System.currentTimeMillis()), auths);
 		}
-		finally{
-			if(ps!=null)
-				ps.close();
-			if(rs!=null)
-				rs.close();
-		}
+		
 
 		return gAuth;
 
@@ -247,66 +222,32 @@ public final class AuthorityManager {
 	public BandAuthority makeBandAuthority(int bandId,  Map<enumBandAuthority, Boolean> auths) throws SQLException{
 		
 		BandAuthority bandAuth = null;
-		PreparedStatement ps=null;
-		ResultSet rs=null;
 		try {
 			
-			ps = conn.prepareStatement("insert into bandAuthority (bandId, isFinal, isRoot,"
-					+ "canJoinMember, canViewUpperBand , canViewSiblingBand, canViewSubBand, canMakeSubBand, canMakeSiblingBand ) values(?,?, ?,?,?, ?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
-			ps.setInt(1, bandId);
+			List<String> col = new ArrayList<String>();
 			
-			if( auths.containsKey(enumBandAuthority.FINAL) )
-				ps.setInt(2, auths.get(enumBandAuthority.FINAL) ? 1 : 0);
-			else
-				ps.setInt(2, 0);
+			List<List<Object>> values = new ArrayList<List<Object>>();
+			List<Object> _col = new ArrayList<Object>();
 			
-			if( auths.containsKey(enumBandAuthority.ROOT) )
-				ps.setInt(3, auths.get(enumBandAuthority.ROOT) ? 1 : 0);
-			else
-				ps.setInt(3, 0);
+			col.add("bandId");
+			_col.add(bandId);
 			
+			for(enumBandAuthority bAuth : enumBandAuthority.values()){
+				col.add(bAuth.getString());
+				
+				if( auths.containsKey(bAuth) )
+					_col.add(auths.get(bAuth) ? 1 : 0);
+				else
+					_col.add(0);				
+			}
+			values.add(_col);
 			
-			if( auths.containsKey(enumBandAuthority.CAN_JOIN_MEMBER) )
-				ps.setInt(4, auths.get(enumBandAuthority.CAN_JOIN_MEMBER) ? 1 : 0);
-			else
-				ps.setInt(4, 0);
+			List<Integer> keys = dbMng.insertColumn("bandAuthority", col, values);
+			if(keys.size() != 1)
+				throw new SQLException();
 			
-			
-			if( auths.containsKey(enumBandAuthority.CAN_VIEW_UPPER_BAND) )
-				ps.setInt(5, auths.get(enumBandAuthority.CAN_VIEW_UPPER_BAND) ? 1 : 0);
-			else
-				ps.setInt(5, 0);
-			
-			if( auths.containsKey(enumBandAuthority.CAN_VIEW_SIBILING_BAND) )
-				ps.setInt(6, auths.get(enumBandAuthority.CAN_VIEW_SIBILING_BAND) ? 1 : 0);
-			else
-				ps.setInt(6, 0);
-			
-			
-			
-			if( auths.containsKey(enumBandAuthority.CAN_VIEW_SUB_BAND) )
-				ps.setInt(7, auths.get(enumBandAuthority.CAN_VIEW_SUB_BAND) ? 1 : 0);
-			else
-				ps.setInt(7, 0);
-			
-			
-			if( auths.containsKey(enumBandAuthority.CAN_MAKE_SUB_BAND) )
-				ps.setInt(8, auths.get(enumBandAuthority.CAN_MAKE_SUB_BAND) ? 1 : 0);
-			else
-				ps.setInt(8, 0);
-			
-			
-			if( auths.containsKey(enumBandAuthority.CAN_MAKE_SIBLING_BAND) )
-				ps.setInt(9, auths.get(enumBandAuthority.CAN_MAKE_SIBLING_BAND) ? 1 : 0);
-			else
-				ps.setInt(9, 0);
+			int authKey = keys.get(0);
 
-			ps.executeUpdate();
-			
-			rs =  ps.getGeneratedKeys();
-			rs.next();
-			int authKey = rs.getInt(1);
-			
 			bandAuth = new BandAuthority(authKey, new Timestamp(System.currentTimeMillis()), auths);
 			
 		} catch (SQLException e) {
@@ -324,14 +265,7 @@ public final class AuthorityManager {
 			
 			bandAuth = new BandAuthority(-1,  new Timestamp(System.currentTimeMillis()),a);
 		}
-		finally{
-			if(ps!=null)
-				ps.close();
-			if(rs!=null)
-				rs.close();
-		}
 
-		
 		return bandAuth;
 		
 	}
@@ -340,40 +274,33 @@ public final class AuthorityManager {
 		
 
 		FileAuthority fAuth = null;
-		PreparedStatement ps=null;
-		ResultSet rs=null;
 		try {
 			
-			ps = conn.prepareStatement("insert into fileAuthority (bandId,memberId, canRemove, "
-					+ "canCreate, canDownload, canUpload) values(?,?,?, ?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
-			ps.setInt(1, bandId);
-			ps.setInt(2, memberId);
+			List<String> col = new ArrayList<String>();
 			
-			if( auths.containsKey(enumFileAuthority.REMOVE) )
-				ps.setInt(3, auths.get(enumFileAuthority.REMOVE) ? 1 : 0);
-			else
-				ps.setInt(3, 0);
+			List<List<Object>> values = new ArrayList<List<Object>>();
+			List<Object> _col = new ArrayList<Object>();
 			
-			if( auths.containsKey(enumFileAuthority.CREATE) )
-				ps.setInt(4, auths.get(enumFileAuthority.CREATE) ? 1 : 0);
-			else
-				ps.setInt(4, 0);
+			col.add("bandId");
+			col.add("memberId");
+			_col.add(bandId);
+			_col.add(memberId);
 			
-			if( auths.containsKey(enumFileAuthority.DOWNLOAD) )
-				ps.setInt(5, auths.get(enumFileAuthority.DOWNLOAD) ? 1 : 0);
-			else
-				ps.setInt(5, 0);
-						
-			if( auths.containsKey(enumFileAuthority.UPLOAD) )
-				ps.setInt(6, auths.get(enumFileAuthority.UPLOAD) ? 1 : 0);
-			else
-				ps.setInt(6, 0);	
-	
-			ps.executeUpdate();
+			for(enumFileAuthority fileAuth : enumFileAuthority.values()){
+				col.add(fileAuth.getString());
+				
+				if( auths.containsKey(fileAuth) )
+					_col.add(auths.get(fileAuth) ? 1 : 0);
+				else
+					_col.add(0);				
+			}
+			values.add(_col);
 			
-			rs =  ps.getGeneratedKeys();
-			rs.next();
-			int authKey = rs.getInt(1);
+			List<Integer> keys = dbMng.insertColumn("fileAuthority", col, values);
+			if(keys.size() != 1)
+				throw new SQLException();
+			
+			int authKey = keys.get(0);
 			
 			fAuth = new FileAuthority(authKey, new Timestamp(System.currentTimeMillis()), auths);
 			
@@ -381,20 +308,13 @@ public final class AuthorityManager {
 			// TODO Auto-generated catch block
 			
 			EnumMap<enumFileAuthority, Boolean> a = new EnumMap<enumFileAuthority, Boolean>(enumFileAuthority.class);
-			a.put(enumFileAuthority.CREATE, false);
+			a.put(enumFileAuthority.CREATES, false);
 			a.put(enumFileAuthority.DOWNLOAD, false);
 			a.put(enumFileAuthority.REMOVE, false);
 			a.put(enumFileAuthority.UPLOAD, false);
 
 			fAuth = new FileAuthority(-1,  new Timestamp(System.currentTimeMillis()),a);
 		}
-		finally{
-			if(ps!=null)
-				ps.close();
-			if(rs!=null)
-				rs.close();
-		}
-
 		
 		return fAuth;
 		

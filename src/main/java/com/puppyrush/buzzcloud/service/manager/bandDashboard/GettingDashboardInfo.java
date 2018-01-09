@@ -53,12 +53,8 @@ public class GettingDashboardInfo {
 		where.put("bandId", bandId);
 		ColumnHelper result = dbMng.getColumnsOfAll("bandRequestJoin", where);
 		
-		if(result.columnSize() != 1 )
-			throw (new EntityException.Builder(enumPage.GROUP_DASHBOARD))
-			.instanceMessage(enumInstanceMessage.ERROR)
-			.errorString("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
-			.errorCode(enumBandState.NOT_EXIST_BAND).build();
-		
+		if(result.isEmpty() )
+			return returns;		
 		
 		for(Map<String,Object> map : result.getColumns()){
 			Map<String, String> joins = new HashMap<String, String>();

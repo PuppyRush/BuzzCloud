@@ -255,10 +255,11 @@ window.onload=function(){
     
     	<!-- ohsnap -->
 		<script type="text/javascript" charset="utf-8"	src="https://rawgithub.com/justindomingue/ohSnap/master/ohsnap.js"	></script>
-	
+		
+
 		<script type="text/javascript" src="/resources/lib/commanJs/commonAjax.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 		<script type="text/javascript" src="/resources/lib/commanJs/formValidator.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
-		 <script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+	 <script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
    <script type="text/javascript" src="/resources/views/manager/js/jquery.js"></script>    
    <script type="text/javascript" src="/resources/views/manager/js/admin.js"></script>
 
@@ -267,13 +268,14 @@ window.onload=function(){
 		<script type="text/javascript" src="/resources/lib/include/easyautocomplete/jquery.easy-autocomplete.js"></script>
 		<script type="text/javascript" src="/resources/views/manager/js/group/autocomplete.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 
+		<script type="text/javascript" src="/resources/views/manager/js/group/group.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 				
 		<!-- network js  -->
 		<script type="text/javascript" src="/resources/lib/include/network-1.5.0/network.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
 		<script type="text/javascript" src="/resources/views/manager/js/group/network.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 		
-		<script type="text/javascript" src="/resources/views/manager/js/group/group.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
+		
 
 </body>
 

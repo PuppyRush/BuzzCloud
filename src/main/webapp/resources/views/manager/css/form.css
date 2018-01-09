@@ -1,3 +1,5 @@
+
+
 @CHARSET "UTF-8";
 
 @font-face {
@@ -19,36 +21,14 @@
 	top: 0;
 }
 
-.contactModal {
+.changePasswordModal {
 	display: none;
 	position: absolute;
-	left: 22%;
+	left: 25%;
 	top: 10%;
 	z-index: 10000;
 }
 
-.loginModal {
-	display: none;
-	position: absolute;
-	left: 22%;
-	top: 10%;
-	z-index: 10000;
-}
-
-.joinModal {
-	display: none;
-	position: absolute;
-	left: 20%;
-	top: 10%;
-	z-index: 10000;
-}
-
-.contactModal #contain {
-	resize: none;
-	width: 100%;
-	max-width: 100%;
-	max-height: 100%;
-}
 
 /* Button Common */
 .button, .button * {
@@ -181,5 +161,3 @@
 	opacity: .7;
 	filter: alpha(opacity = 70);
 }
-
-

@@ -35,6 +35,7 @@ import com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessag
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 import com.puppyrush.buzzcloud.property.enumSystem;
 import com.puppyrush.buzzcloud.entity.band.Band.AuthoritedMember;
+import com.puppyrush.buzzcloud.entity.band.enums.enumBandStandard;
 import com.puppyrush.buzzcloud.entity.band.enums.enumBandState;
 import com.puppyrush.buzzcloud.entity.band.BandController;
 import com.puppyrush.buzzcloud.entity.band.BandDB;
@@ -139,8 +140,8 @@ public class UpdatingMyBand{
 			}
 		}
 		
-		if(bandForm.getBandCapacity()>Integer.valueOf( enumSystem.MAX_CAPACITY.toString())){
-			throw new IllegalArgumentException("그룹에 허용할 수 있는 용량은 최대 " + enumSystem.MAX_CAPACITY.toString()+"입니다.");
+		if(bandForm.getBandCapacity()> enumBandStandard.MAX_CAPACITY.toInt()) {
+			throw new IllegalArgumentException("그룹에 허용할 수 있는 용량은 최대 " + enumBandStandard.MAX_CAPACITY.toString()+"입니다.");
 		}
 		
 		

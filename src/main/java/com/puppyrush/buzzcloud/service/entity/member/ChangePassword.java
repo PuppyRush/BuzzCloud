@@ -4,18 +4,18 @@ package com.puppyrush.buzzcloud.service.entity.member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.enumController;
-import com.puppyrush.buzzcloud.entity.band.BandController;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
+import com.puppyrush.buzzcloud.entity.member.MemberManager;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.*;
 import com.puppyrush.buzzcloud.mail.enumMailState;
 import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
+import com.puppyrush.buzzcloud.page.enums.enumPageError;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -29,40 +29,40 @@ import java.util.Map;
  *       해당 클래스의 기능순서도는  114.129.211.123/boards/2/topics/64 참고
 */
 
-@Service("logout")
-final public class Logout {
+@Service("changePassword")
+final public class ChangePassword {
 
 
 	@Autowired(required=false)
 	private MemberController mCtl;
 	
 	@Autowired(required=false)
-	private BandController bCtl;
+	private MemberManager mMng;
 	
-	
-	public Map<String,Object> execute(String sId) throws ControllerException, EntityException, SQLException{
+	public Map<String,Object> execute(String sId, String oldPassword, String newPassword) throws ControllerException, EntityException, SQLException, PageException{
 		
 		Map<String , Object> returns = new HashMap<String , Object>();
-		Member member = null;
 		
 		if(!mCtl.containsEntity(sId))
 			throw (new ControllerException.Builder(enumPage.ENTRY))
 			.errorString("로그인 한 유저가 아닙니다.")
 			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
 		
-		member = mCtl.getMember(sId);
+		Member member = mCtl.getMember(sId);
 		
 		if(member.isLogin()==false)
 			throw (new EntityException.Builder(enumPage.ENTRY))
 			.errorString("로그인 한 유저가 아닙니다.")
 			.errorCode(enumMemberState.NOT_LOGIN).build(); 
 		
-		member.doLogout();
+		if(!member.getPlanePassword().equals(oldPassword))
+			throw (new PageException.Builder(enumPage.MY_ACCOUNT))
+			.errorString("입력하신 현재 비밀번호가 일치하지 않습니다.")
+			.errorCode(enumPageError.WRONG_PARAMATER).build(); 
+			
+		mMng.updatePassword(member.getId(), newPassword);
 		
-		mCtl.removeMember(sId);
-
-		returns.put("view", enumPage.ENTRY.toString());	
-		returns.putAll(new InstanceMessage( "로그아웃에 성공하셨습니다.", enumInstanceMessage.SUCCESS).getMessage());			
+		returns.putAll(new InstanceMessage( "비밀번호 변경에 성공하였습니다.", enumInstanceMessage.SUCCESS).getMessage());			
 		
 		
 		return returns;

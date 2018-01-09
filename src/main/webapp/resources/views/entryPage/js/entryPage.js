@@ -50,7 +50,7 @@
 		
 		
 		$(".findPassword").on("click", function() {
-			$("#forwardPage #page").val("LOST_PASSWORD");
+			$("#forwardPage #page").val("INPUT_MAIL");
 			$("#forwardPage").submit();			
 		});
 		

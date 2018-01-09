@@ -73,13 +73,13 @@ public class BandForm {
 		return upperBand;
 	}
 	public void setUpperBand(int upperBand) {
-		this.exUpperBand = upperBand;
+		this.upperBand = upperBand;
 	}
 	public int getExUpperBand() {
 		return exUpperBand;
 	}
 	public void setExUpperBand(int upperBand) {
-		this.upperBand = upperBand;
+		this.exUpperBand = upperBand;
 	}
 	public List<Integer> getMembers() {
 		return members;

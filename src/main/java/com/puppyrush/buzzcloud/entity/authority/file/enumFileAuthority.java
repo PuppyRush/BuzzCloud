@@ -1,13 +1,18 @@
 package com.puppyrush.buzzcloud.entity.authority.file;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+import com.puppyrush.buzzcloud.entity.authority.band.enumBandAuthority;
 import com.puppyrush.buzzcloud.entity.interfaces.EnumEntity;
 
 public enum enumFileAuthority implements EnumEntity {
 	
-	CREATE("canCreate"),
-	REMOVE("canRemove"),
-	DOWNLOAD("canDownload"),
-	UPLOAD("canUpload");
+	CREATES("파일/폴더 생성 가능"),
+	REMOVE("파일/폴더 삭제 가능"),
+	DOWNLOAD("다운로드 가능"),
+	UPLOAD("업로드 가능");
 	
 	private String str;
 	
@@ -22,5 +27,20 @@ public enum enumFileAuthority implements EnumEntity {
 	
 	public String getString(){
 		return this.name();
+	}
+
+	public static Map<enumFileAuthority,Boolean> toEnumMap(List<String> ary){
+		
+		Map<enumFileAuthority ,Boolean> bandAuthMap = new EnumMap<enumFileAuthority ,Boolean>(enumFileAuthority.class);
+		
+		for(String str : ary){
+			for(enumFileAuthority bandauth : enumFileAuthority.values()){
+				if(bandauth.toString().equals(str)){
+					bandAuthMap.put(bandauth, true);
+					break;
+				}
+			}	
+		}
+		return bandAuthMap;
 	}
 }

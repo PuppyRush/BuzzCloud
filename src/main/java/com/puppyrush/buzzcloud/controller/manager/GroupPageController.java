@@ -17,7 +17,10 @@ import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
 import com.puppyrush.buzzcloud.entity.member.MemberDB;
 import com.puppyrush.buzzcloud.entity.member.MemberManager;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage;
 import com.puppyrush.buzzcloud.page.PageException;
+import com.puppyrush.buzzcloud.property.enumSystem;
 import com.puppyrush.buzzcloud.property.tree.Tree;
 import com.puppyrush.buzzcloud.service.entity.band.GettingSelectedBandInfo;
 import com.puppyrush.buzzcloud.service.entity.band.GettingSelectedBandMembers;
@@ -44,7 +47,6 @@ public class GroupPageController {
 	// private final Logger logger = (Logger)
 	// LoggerFactory.getLogger(MainController.class);;
 
-
 	@Autowired(required = false)
 	private MemberController		mCtl;
 
@@ -58,8 +60,8 @@ public class GroupPageController {
 	private SearchedBandInfo		searhcedBandInfo;
 
 	@Autowired(required = false)
-	private GettingSelectedBandInfo gettingBandInfo;
-	
+	private GettingSelectedBandInfo		gettingBandInfo;
+
 	public GroupPageController() {
 
 	}
@@ -73,7 +75,13 @@ public class GroupPageController {
 			returns = bandInfo.execute(mCtl.getMember(rq.getRequestedSessionId()).getId());
 		} catch (ControllerException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			returns.putAll(e.getReturnsForAjax());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), enumInstanceMessage.ERROR).getMessage());
+		} catch (EntityException e) {
+			// TODO Auto-generated catch block
+			returns.putAll(e.getReturnsForAjax());
 		}
 
 		return returns;
@@ -88,13 +96,13 @@ public class GroupPageController {
 			returns = gettingBandInfo.execute(bandId);
 		} catch (ControllerException e) {
 			// TODO Auto-generated catch block
-			returns.putAll(e.getReturns());
+			returns.putAll(e.getReturnsForAjax());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			
+			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), enumInstanceMessage.ERROR).getMessage());
 		} catch (EntityException e) {
 			// TODO Auto-generated catch block
-			returns.putAll(e.getReturns());
+			returns.putAll(e.getReturnsForAjax());
 		}
 		return returns;
 	}
@@ -108,7 +116,7 @@ public class GroupPageController {
 			returns = gettingSelectedBandMembers.execute(bandId);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			
+			returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), enumInstanceMessage.ERROR).getMessage());
 		}
 
 		return returns;
@@ -124,7 +132,7 @@ public class GroupPageController {
 			returns = searhcedBandInfo.execute(bandId);
 		} catch (EntityException e) {
 			// TODO Auto-generated catch block
-			returns.putAll(e.getReturns());
+			returns.putAll(e.getReturnsForAjax());
 		}
 
 		return returns;

@@ -99,8 +99,9 @@ public class ConnectorController
 			throw new IOException(e.getMessage());
 		}
 
+		final FsServiceFactory service = fsMapping.getFsServiceFactory(bm);
 		String cmd = request.getParameter("cmd");
-		CommandExecutor ce = commandExecutorFactory.get(cmd);
+		CommandExecutor ce = commandExecutorFactory.get(cmd,service);
 
 		if (ce == null)
 		{
@@ -111,7 +112,7 @@ public class ConnectorController
 		try
 		{			
 			
-			final FsServiceFactory service = fsMapping.getFsServiceFactory(bm);
+			
 			final HttpServletRequest finalRequest = request;
 			ce.execute(new CommandExecutionContext()
 			{

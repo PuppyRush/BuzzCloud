@@ -1,5 +1,6 @@
 package com.puppyrush.buzzcloud.controller.entity;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.puppyrush.buzzcloud.controller.form.BandForm;
+import com.puppyrush.buzzcloud.dbAccess.DBException;
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
@@ -104,7 +106,7 @@ public class BandController {
 
 	@ResponseBody
 	@RequestMapping(value = "/makeBand.ajax", method = RequestMethod.POST)
-	public Map<String, Object> updateBand(BandForm bandForm){
+	public Map<String, Object> updateBand(BandForm bandForm) throws ControllerException, EntityException, SQLException, IOException, DBException{
 
 		Map<String, Object> returns = new HashMap<String, Object>();
 		try {

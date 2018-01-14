@@ -88,7 +88,7 @@ public class GroupDashboard {
 	
 	@ResponseBody
 	@RequestMapping(value = "/getBandInfo.ajax", method = RequestMethod.GET)
-	public Map<String, Object> getSerachedBandInfo(@RequestParam("bandId") int bandId) {
+	public Map<String, Object> getSerachedBandInfo(@RequestParam("bandId") int bandId) throws ControllerException {
 		Map<String, Object> returns = new HashMap<String, Object>();
 		try {
 			returns =  gettingBandInfo.excute(bandId);

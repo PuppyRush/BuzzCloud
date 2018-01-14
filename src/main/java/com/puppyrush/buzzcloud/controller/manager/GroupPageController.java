@@ -109,7 +109,7 @@ public class GroupPageController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getSelectedBandMembers.ajax", method = RequestMethod.POST)
-	public Map<String, Object> gettingSelectedBandMembers(@RequestParam("bandId") int bandId) {
+	public Map<String, Object> gettingSelectedBandMembers(@RequestParam("bandId") int bandId) throws ControllerException, EntityException {
 
 		Map<String, Object> returns = new HashMap<String, Object>();
 		try {
@@ -125,7 +125,7 @@ public class GroupPageController {
 
 	@ResponseBody
 	@RequestMapping(value = "/searhcedBandInfo.ajax", method = RequestMethod.POST)
-	public Map<String, Object> searhcedBandInfo(@RequestParam("bandId") int bandId) {
+	public Map<String, Object> searhcedBandInfo(@RequestParam("bandId") int bandId) throws SQLException {
 
 		Map<String, Object> returns = new HashMap<String, Object>();
 		try {

@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.puppyrush.buzzcloud.controller.form.BandForm;
+import com.puppyrush.buzzcloud.dbAccess.DBException;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.enumController;
@@ -26,7 +27,7 @@ public class MakingBand{
 	@Autowired(required=false)
 	private BandManager bMng;
 
-	public Map<String, Object> execute(BandForm form) throws PageException, ControllerException, EntityException, SQLException, IOException {
+	public Map<String, Object> execute(BandForm form) throws PageException, ControllerException, EntityException, SQLException, IOException, DBException {
 		Map<String, Object> returns = new HashMap<String, Object>();
 
 		isValidationBandInfo(form);

@@ -131,7 +131,7 @@ public final class MemberController extends EntityControllerImpl<Member>{
 	}
 		
 	
-	public Member addMember(int uId, String sId) throws SQLException, ControllerException{
+	public Member addMember(int uId, String sId) throws SQLException, ControllerException, EntityException{
 		
 
 	

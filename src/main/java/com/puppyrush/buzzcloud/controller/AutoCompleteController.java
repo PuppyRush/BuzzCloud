@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,6 +82,9 @@ public class AutoCompleteController {
 		} catch (EntityException e) {
 			// TODO Auto-generated catch block
 			returns.putAll(e.getInstanceMessage());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			
 		}
 		return returns;
 	}

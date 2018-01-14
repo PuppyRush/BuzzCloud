@@ -42,7 +42,6 @@ public class SettingRequestedJoin {
 		where.put("memberId", form.getMemberId());
 		where.put("bandId", form.getBandId());
 		
-		
 		dbMng.deleteColumns("bandRequestJoin", where);
 		
 		if(form.isAccept()){
@@ -51,16 +50,12 @@ public class SettingRequestedJoin {
 			col.add("bandId");
 			col.add("memberId");
 			
-			List<List<Object>> values = new ArrayList<List<Object>>();
 			List<Object> val = new ArrayList<Object>();
 			val.add(form.getBandId());
 			val.add(form.getMemberId());
-			values.add(val);
-			dbMng.insertColumn("bandMember", col, values);
-			
+			dbMng.insertColumn("bandMember", col, val);
 			
 			returns.putAll(new InstanceMessage("구성원"+name+" 에 대하여 가입요청을 승인하였습니다.", enumInstanceMessage.SUCCESS).getMessage());
-			
 		}
 		else{
 			returns.putAll(new InstanceMessage("구성원"+name+" 에 대하여 가입요청을 거절하였습니다.", enumInstanceMessage.WARNING).getMessage());

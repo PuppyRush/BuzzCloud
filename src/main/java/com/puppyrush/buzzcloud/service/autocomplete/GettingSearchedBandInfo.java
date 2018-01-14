@@ -41,7 +41,7 @@ public class GettingSearchedBandInfo {
 	private MemberDB memberDB;
 	
 	
-	public Map<String,Object> excute(int bandId) throws EntityException{
+	public Map<String,Object> excute(int bandId) throws EntityException, SQLException{
 		
 		Map<String, Object> returns = new HashMap<String, Object>();
 
@@ -53,8 +53,8 @@ public class GettingSearchedBandInfo {
 		ColumnHelper ch = dbMng.getColumnsOfAll("band", where);
 		if(ch.isEmpty())
 			throw (new EntityException.Builder(enumPage.GROUP_MANAGER))
-			.instanceMessage(enumInstanceMessage.ERROR)
-			.errorString("오류가 발생했습니다.")
+			.instanceMessageType(enumInstanceMessage.ERROR)
+			.instanceMessage("오류가 발생했습니다.")
 			.errorCode(enumBandState.NOT_EXIST_BAND).build();
 		
 		int ownerId = ch.getInteger(0, ("owner"));

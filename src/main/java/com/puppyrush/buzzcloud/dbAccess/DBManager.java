@@ -25,10 +25,13 @@ public final class DBManager {
 		private int columnCount;
 		private boolean isEmpty;
 		
+		private int columnIdx;
+		
 		private ColumnHelper(){
 			isEmpty = true;
 			columnCount = 0;
 			columns = new ArrayList<Map<String,Object>>();
+			columnIdx = -1;
 		}
 		
 		private void addColumn(Map<String,Object> column){
@@ -48,6 +51,10 @@ public final class DBManager {
 			return columns.size();
 		}
 		
+		public boolean isUnique(){
+			return columns.size()==1;
+		}
+		
 		public boolean isEmpty(){
 			return columns.isEmpty();
 		}
@@ -55,6 +62,53 @@ public final class DBManager {
 		public List<Map<String,Object>> getColumns(){
 			return columns;
 		}
+		
+		public boolean next(){
+			if(columnCount-1 == columnIdx)
+				return false;
+			else{
+				columnIdx++;
+				return true;
+			}
+		}
+		
+		//
+		
+		@SuppressWarnings("unchecked")
+		public <T> void getValue(String fieldName, T value){
+			if(!isValidation(columnIdx)){
+				value = null;
+			}
+			else
+				value = (T)columns.get(columnIdx).get(fieldName);
+		}
+		
+		public String getString(String fieldName){
+			if(!isValidation(columnIdx)){
+				return null;
+			}
+			else
+				return (String)columns.get(columnIdx).get(fieldName);
+		}
+		
+		public Integer getInteger(String fieldName){
+			if(!isValidation(columnIdx)){
+				return null;
+			}
+			else
+				return (Integer)columns.get(columnIdx).get(fieldName);
+		}
+		
+		public Timestamp getTimestamp(String fieldName){
+			if(!isValidation(columnIdx)){
+				return null;
+			}
+			else
+				return (Timestamp)columns.get(columnIdx).get(fieldName);
+		}
+		
+		//
+		
 		
 		@SuppressWarnings("unchecked")
 		public <T> void getValue(int columnIdx, String fieldName, T value){
@@ -296,7 +350,13 @@ public final class DBManager {
 		}
 	}
 	
-	public List<Integer>  insertColumn(String tableName, List<String> columns, List<List<Object>> values){
+	public List<Integer> insertColumn(String tableName, List<String> columns, List<Object> value){
+		List<List<Object>> values = new ArrayList<List<Object>>();
+		values.add(value);
+		return insertColumns(tableName, columns, values);
+	}
+	
+	public List<Integer>  insertColumns(String tableName, List<String> columns, List<List<Object>> values){
 		
 		List<Integer> keys = new ArrayList<Integer>();
 		StringBuilder sql = new StringBuilder("insert into ").append(tableName).append(" (");

@@ -32,7 +32,7 @@ public class GettingSelectedBandMembers{
 	@Autowired(required=false)
 	private AuthorityManager authMng;
 
-	public Map<String, Object> execute(int bandId) throws SQLException {
+	public Map<String, Object> execute(int bandId) throws ControllerException, SQLException {
 				
 		ArrayList<Member> members = new ArrayList<Member>();
 		members = bandMng.getMembersOf(bandId);

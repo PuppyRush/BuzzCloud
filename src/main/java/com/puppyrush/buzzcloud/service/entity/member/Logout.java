@@ -47,14 +47,14 @@ final public class Logout {
 		
 		if(!mCtl.containsEntity(sId))
 			throw (new ControllerException.Builder(enumPage.ENTRY))
-			.errorString("로그인 한 유저가 아닙니다.")
+			.instanceMessage("로그인 한 유저가 아닙니다.")
 			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
 		
 		member = mCtl.getMember(sId);
 		
 		if(member.isLogin()==false)
 			throw (new EntityException.Builder(enumPage.ENTRY))
-			.errorString("로그인 한 유저가 아닙니다.")
+			.instanceMessage("로그인 한 유저가 아닙니다.")
 			.errorCode(enumMemberState.NOT_LOGIN).build(); 
 		
 		member.doLogout();

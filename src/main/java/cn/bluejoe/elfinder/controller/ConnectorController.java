@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +24,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.puppyrush.buzzcloud.bzexception.BZException;
 import com.puppyrush.buzzcloud.entity.ControllerException;
+import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.band.BandController;
+import com.puppyrush.buzzcloud.entity.band.enums.enumBandState;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
+import com.puppyrush.buzzcloud.property.enumSystem;
 
 import cn.bluejoe.elfinder.controller.executor.CommandExecutionContext;
 import cn.bluejoe.elfinder.controller.executor.CommandExecutor;
@@ -53,66 +61,77 @@ public class ConnectorController
 	
 	
 	@RequestMapping("/init")
-	public void init(@RequestParam("bandId") int bandId, HttpServletRequest request){
+	public Map<String, Object> init(@RequestParam("bandId") int bandId, HttpServletRequest request){
 		
+		Map<String, Object> returns = new HashMap<String, Object>();
 		int memberId=-1;
+		
 		try {
 			memberId = memberCtl.getMember(request.getRequestedSessionId()).getId();
 		} catch (ControllerException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			returns.putAll(e.getReturnsForAjax());
 		}
 		BandMember bm = new BandMember(bandId,memberId);
 		
 		if(fsMapping.contains(bm)==false){
 			Logger.getLogger(getClass()).info("init fsService of (" +bandId + "," + memberId+")");
-			fsMapping.addFsServiceFactory(bm);
+			try {
+				fsMapping.addFsServiceFactory(bm);
+			} catch (ControllerException e) {
+				// TODO Auto-generated catch block
+				returns.putAll(e.getReturnsForAjax());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), enumInstanceMessage.ERROR).getMessage());
+			}
 		}
 		
+		return returns;		
 	}
 		
 	@RequestMapping
 	public void connector(@RequestParam("bandId") int bandId, HttpServletRequest request,	final HttpServletResponse response) throws IOException
 	{
 		
+		Map<String, Object> returns = new HashMap<String, Object>();
 		int memberId=-1;
-		try {
-			memberId = memberCtl.getMember(request.getRequestedSessionId()).getId();
-		} catch (ControllerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		BandMember bm = new BandMember(bandId,memberId);
 		
-		try
-		{
-			if(fsMapping.contains(bm)==false){
-				throw new IllegalArgumentException("fsMapping error");
+		try{
+			
+			
+			memberId = memberCtl.getMember(request.getRequestedSessionId()).getId();
+			
+			BandMember bm = new BandMember(bandId,memberId);
+			
+			try
+			{
+				if(fsMapping.contains(bm)==false){
+					throw new IllegalArgumentException("fsMapping error");
+				}
+				
+				request = parseMultipartContent(request);
 			}
-			
-			
-			request = parseMultipartContent(request);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			throw new IOException(e.getMessage());
-		}
-
-		final FsServiceFactory service = fsMapping.getFsServiceFactory(bm);
-		String cmd = request.getParameter("cmd");
-		CommandExecutor ce = commandExecutorFactory.get(cmd,service);
-
-		if (ce == null)
-		{
-			// This shouldn't happen as we should have a fallback command set.
-			throw new FsException(String.format("unknown command: %s", cmd));
-		}
-
-		try
-		{			
-			
-			
+			catch (Exception e)
+			{
+				throw new IOException(e.getMessage());
+			}
+	
+			final FsServiceFactory service = fsMapping.getFsServiceFactory(bm);
+			String cmd = request.getParameter("cmd");
+			CommandExecutor ce = commandExecutorFactory.get(cmd,service);
+	
+			if (ce == null)
+			{
+				// This shouldn't happen as we should have a fallback command set.
+				throw (new FsException.Builder(enumPage.BROWSER))
+				.instanceMessageType(enumInstanceMessage.ERROR)
+				.instanceMessage("시스템 에러입니다. 관리자에게 문의하세요.")
+				.errorMessage(String.format("unknown command: %s", cmd))
+				.errorCode(enumBandState.NOT_EXIST_BAND).build();
+			}
+	
+		
 			final HttpServletRequest finalRequest = request;
 			ce.execute(new CommandExecutionContext()
 			{
@@ -141,10 +160,12 @@ public class ConnectorController
 					return finalRequest.getSession().getServletContext();
 				}
 			});
-		}
-		catch (Exception e)
-		{
-			throw new FsException("unknown error", e);
+			
+		}catch(BZException e){
+			returns.putAll(e.getReturnsForAjax());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			returns.putAll(new InstanceMessage("시스템 에러입니다. 관리자에게 문의하세요", enumInstanceMessage.ERROR).getMessage());
 		}
 	}
 	

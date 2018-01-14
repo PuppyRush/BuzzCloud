@@ -128,13 +128,11 @@ public final class MemberManager {
 		col.add("memberId");
 		col.add("certificationNumber");
 		
-		List<List<Object>> values = new ArrayList<List<Object>>();
 		List<Object> list = new ArrayList<Object>();
 		list.add(member.getId());
 		list.add(certificationNumber);
-		values.add(list);
 		
-		dbMng.insertColumn("joinCertification", col, values);		
+		dbMng.insertColumn("joinCertification", col, list);		
 		return true;
 	}
 	

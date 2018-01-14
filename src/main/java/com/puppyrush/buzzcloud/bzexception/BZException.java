@@ -14,29 +14,45 @@ import com.puppyrush.buzzcloud.page.enums.enumPage;
 
 public abstract class BZException extends Exception{
 	
-	private String errString;
+	private Throwable e;
+	private String errorMessage;
 	private enumPage toPage;
-	private enumInstanceMessage instanceMessage;
+	private enumInstanceMessage instanceMessageType;
+	private String instanceMessage;
 	private Map<enumBZExceptionInterface,Boolean> errCodeMap;
 	private Map<String, Object> stringMap;
 
 	public static abstract class Builder <T extends BZException>{
 		
-		protected String errString;
+		protected Throwable e;
+		protected String errorMessage;
 		protected enumPage toPage;
 		protected Map<enumBZExceptionInterface,Boolean> errCodeMap;
-		protected enumInstanceMessage instanceMessage;
+		protected enumInstanceMessage instanceMessageType;
+		protected String instanceMessage;
 		protected Map<String, Object> stringMap;
 		
 		public Builder(enumPage toPage){
+			e = new Exception();
 			this.toPage = toPage;
-			errString = "System Error";
+			this.errorMessage = "시스템 에러입니다.";
+			instanceMessage = "시스템 에러입니다. 관리자에게 문의하세요.";
 			errCodeMap =  new HashMap<enumBZExceptionInterface,Boolean>();
 			stringMap = new HashMap<String, Object>();
 		}
 		
-		public Builder<T> errorString(String errStr){
-			this.errString = errStr;
+		public Builder<T> throwable(Throwable e){
+			this.e = e;
+			return this;
+		}
+		
+		public Builder<T> errorMessage(String msg){
+			this.errorMessage = msg;
+			return this;
+		}
+		
+		public Builder<T> errorCode(enumBZExceptionInterface error){
+			errCodeMap.put(error, true);
 			return this;
 		}
 		
@@ -47,8 +63,13 @@ public abstract class BZException extends Exception{
 			return this;
 		}
 		
-		public Builder<T> instanceMessage(enumInstanceMessage msg){
-			this.instanceMessage = msg;
+		public Builder<T> instanceMessage(String errStr){
+			this.instanceMessage = errStr;
+			return this;
+		}
+		
+		public Builder<T> instanceMessageType(enumInstanceMessage msgType){
+			this.instanceMessageType = msgType;
 			return this;
 		}
 		
@@ -67,16 +88,19 @@ public abstract class BZException extends Exception{
 		
 	}
 
-	protected BZException(String errString, Map<enumBZExceptionInterface,Boolean> errors, enumPage toPage){
-		this.errString = errString;
-		this.errCodeMap = errors;
-		this.toPage = toPage;
-		instanceMessage = enumInstanceMessage.WARNING;
-		stringMap = new HashMap<String, Object>();
+	protected BZException(Builder bld){
+		this.e = bld.e;
+		this.instanceMessage = bld.instanceMessage;
+		this.errorMessage = bld.errorMessage;
+		this.errCodeMap = bld.errCodeMap;
+		this.toPage = bld.toPage;
+		this.instanceMessageType = bld.instanceMessageType;
+		this.instanceMessage = bld.instanceMessage;
+		this.stringMap = bld.stringMap;		
 	}
 
 	final public String getErrorString(){
-		return errString;
+		return instanceMessage;
 	}
 	
 	final public enumPage getToPage(){
@@ -89,13 +113,13 @@ public abstract class BZException extends Exception{
 	
 	final public Map<String, Object> getInstanceMessage(){
 		
-		return new InstanceMessage( errString, instanceMessage).getMessage();
+		return new InstanceMessage( instanceMessage, instanceMessageType).getMessage();
 	}
 	
 	final public Map<String, Object> getReturns(){
 		Map<String, Object> returns = new HashMap<String, Object>();
 		returns.putAll(stringMap);
-		returns.putAll(new InstanceMessage( errString, instanceMessage).getMessage());
+		returns.putAll(new InstanceMessage( instanceMessage, instanceMessageType).getMessage());
 		returns.put("view", toPage.toString());
 		return returns;
 	}
@@ -103,7 +127,7 @@ public abstract class BZException extends Exception{
 	final public Map<String, Object> getReturnsForAjax(){
 		Map<String, Object> returns = new HashMap<String, Object>();
 		returns.putAll(stringMap);
-		returns.putAll(new InstanceMessage( errString, instanceMessage).getMessage());
+		returns.putAll(new InstanceMessage( instanceMessage, instanceMessageType).getMessage());
 		return returns;
 	}
 }

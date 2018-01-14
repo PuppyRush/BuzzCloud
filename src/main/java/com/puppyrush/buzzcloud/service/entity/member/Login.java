@@ -129,7 +129,7 @@ final public class Login{
 		}
 		else
 			throw new PageException.Builder(enumPage.LOGIN)
-				.errorString("비 정상적인 접근입니다.")
+				.instanceMessage("비 정상적인 접근입니다.")
 				.errorCode(enumPageError.UNKNOWN_PARA_VALUE).build(); 
 					
 		returns.put("view", enumPage.MAIN.toString());		
@@ -144,7 +144,7 @@ final public class Login{
 			
 			if(!member.doLogin())
 				throw (new EntityException.Builder(enumPage.LOGIN))
-				.errorString("비밀번호가 일치하지 않습니다.")
+				.instanceMessage("비밀번호가 일치하지 않습니다.")
 				.errorCode(enumMemberState.NOT_EQUAL_PASSWORD).build();
 			else
 				mCtl.addMember(member, member.getSessionId());
@@ -157,7 +157,7 @@ final public class Login{
 			
 			if(!member.doLogin())
 				throw (new EntityException.Builder(enumPage.LOGIN))
-				.errorString("비밀번호가 일치하지 않습니다.")
+				.instanceMessage("비밀번호가 일치하지 않습니다.")
 				.errorCode(enumMemberState.NOT_EQUAL_PASSWORD).build();
 			else
 				mCtl.addMember(member, member.getSessionId());
@@ -191,14 +191,14 @@ final public class Login{
 		//가입여부 확인.
 		if(!mDB.isJoin(member.getEmail()))
 			throw (new EntityException.Builder(enumPage.JOIN))
-			.errorCode(enumMemberState.NOT_JOIN).errorString("이메일이 존재하지 않습니다. 가입후 사용하세요. ").build();
+			.errorCode(enumMemberState.NOT_JOIN).instanceMessage("이메일이 존재하지 않습니다. 가입후 사용하세요. ").build();
 
 		//로그인 여부 확인.				
 		if(mCtl.containsEntity(member.getSessionId())){
 			member = mCtl.getMember(member.getSessionId());
 			if(member.isLogin())
 				throw (new EntityException.Builder(enumPage.MAIN))
-				.errorCode(enumMemberState.ALREADY_LOGIN).errorString("이메일이 존재하지 않습니다. 가입후 사용하세요. ").build();
+				.errorCode(enumMemberState.ALREADY_LOGIN).instanceMessage("이메일이 존재하지 않습니다. 가입후 사용하세요. ").build();
 		
 		}
 		
@@ -218,14 +218,14 @@ final public class Login{
 			List<MailManager.MailInformation> results = mailMng.getMailDateInformationOf(member.getEmail(), enumMailType.LOST_PASSWORD);
 			if(results.isEmpty()){
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
-				.errorString("비밀번호 분실상태입니다. 임시 비밀번호 발급을 위해 메일을 작성 바랍니다.")
+				.instanceMessage("비밀번호 분실상태입니다. 임시 비밀번호 발급을 위해 메일을 작성 바랍니다.")
 				.putString("status",enumMemberAbnormalState.LOST_PASSWORD.toString())
 				.errorCode(enumMailState.NOT_SENDED_MAIL).build(); 
 			}
 			if(results.size()>1){
 				mailMng.invalidateMailOf(member.getEmail(), enumMailType.LOST_PASSWORD);
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
-				.errorString("인증과정에 문제가 생겼습니다. 임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.instanceMessage("인증과정에 문제가 생겼습니다. 임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
 				.putString("status",enumMemberAbnormalState.LOST_PASSWORD.toString())
 				.errorCode(enumMailState.DUPLICATED_SENED_MAIL).build();
 			}
@@ -234,7 +234,7 @@ final public class Login{
 			if(CommFunc.isPassingDateFromToday(results.get(0).sendedDate, hour, CommFunc.CalendarKind.HOUR)){
 				mailMng.invalidateMailOf(member.getEmail(), enumMailType.LOST_PASSWORD);
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
-				.errorString("인증기한이 초과됐습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.instanceMessage("인증기한이 초과됐습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
 				.putString("status",enumMemberAbnormalState.LOST_PASSWORD.toString())
 				.errorCode(enumMemberState.LOST_PASSWORD).build();
 			}
@@ -258,14 +258,14 @@ final public class Login{
 			if(results.isEmpty()){
 				final int count = Integer.parseInt( enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString()); 
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
-				.errorString("비밀번호 시도 횟수를 "+count+"회 초과 했습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.instanceMessage("비밀번호 시도 횟수를 "+count+"회 초과 했습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
 				.putString("status",enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT.toString())
 				.errorCode(enumMailState.NOT_SENDED_MAIL).build(); 
 				
 			}
 			if(results.size()>1)
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
-				.errorString("인증과정에 문제가 생겼습니다. 임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.instanceMessage("인증과정에 문제가 생겼습니다. 임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
 				.putString("status",enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT.toString())
 				.errorCode(enumMailState.DUPLICATED_SENED_MAIL).build();
 			
@@ -275,14 +275,14 @@ final public class Login{
 				mailMng.invalidateMailOf(member.getEmail(), enumMailType.EXCEEDED_LOGIN_COUNT);
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
 				.putString("status",enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT.toString())
-				.errorString("인증기한이 초과됐습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.instanceMessage("인증기한이 초과됐습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
 				.errorCode(enumMemberState.LOST_PASSWORD).build();
 			}
 			else{
 				
 				if(!member.doLogin())
 					throw (new EntityException.Builder(enumPage.LOGIN))
-					.errorString("")
+					.instanceMessage("")
 					.errorCode(enumMemberState.NOT_EQUAL_PASSWORD).build();
 				else{
 					mCtl.addMember(member, member.getSessionId());
@@ -296,7 +296,7 @@ final public class Login{
 			if(results.isEmpty()){
 				
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
-				.errorString("비밀번호를 변경한지 "+enumMemberStandard.PASSWD_CHANGE_DATE_OF_MONTH.toString()+"개월 지났습니다."
+				.instanceMessage("비밀번호를 변경한지 "+enumMemberStandard.PASSWD_CHANGE_DATE_OF_MONTH.toString()+"개월 지났습니다."
 						+ "\n임시 비밀번호 발급을 위해 메일을 보내주시기 바랍니다.")
 				.putString("status",enumMemberAbnormalState.SLEEP.toString())
 				.errorCode(enumMailState.NOT_SENDED_MAIL).build(); 
@@ -304,7 +304,7 @@ final public class Login{
 			}
 			if(results.size()>1)
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
-				.errorString("인증과정에 문제가 생겼습니다. 임시 비밀번호 발급을 위해 메일을 보내주시기 바랍니다.")
+				.instanceMessage("인증과정에 문제가 생겼습니다. 임시 비밀번호 발급을 위해 메일을 보내주시기 바랍니다.")
 				.putString("status",enumMemberAbnormalState.SLEEP.toString())
 				.errorCode(enumMailState.DUPLICATED_SENED_MAIL).build();
 			
@@ -313,7 +313,7 @@ final public class Login{
 			if(CommFunc.isPassingDateFromToday(results.get(0).sendedDate, hour, CommFunc.CalendarKind.HOUR)){
 				mailMng.invalidateMailOf(member.getEmail(), enumMailType.SLEEP);
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
-				.errorString("인증기한이 초과됐습니다.  휴면계정 해제를 위한 임시 비밀번호 발급을 위해 메일을 보내주시기 바랍니다.")
+				.instanceMessage("인증기한이 초과됐습니다.  휴면계정 해제를 위한 임시 비밀번호 발급을 위해 메일을 보내주시기 바랍니다.")
 				.putString("status",enumMemberAbnormalState.SLEEP.toString())
 				.errorCode(enumMemberState.SLEEP).build();
 			}
@@ -321,7 +321,7 @@ final public class Login{
 				
 				if(!member.doLogin())
 					throw (new EntityException.Builder(enumPage.LOGIN))
-					.errorString("")
+					.instanceMessage("")
 					.errorCode(enumMemberState.NOT_EQUAL_PASSWORD).build();
 				else{
 					mCtl.addMember(member, member.getSessionId());
@@ -336,7 +336,7 @@ final public class Login{
 			if(results.isEmpty()){
 				final int count = Integer.parseInt( enumMemberStandard.POSSIBILLTY_FAILD_LOGIN_NUM.toString()); 
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
-				.errorString("비밀번호 시도 횟수를 "+count+"회 초과 했습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.instanceMessage("비밀번호 시도 횟수를 "+count+"회 초과 했습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
 				.putString("status",enumMemberAbnormalState.OLD_PASSWORD.toString())
 				.errorCode(enumMailState.NOT_SENDED_MAIL).build(); 
 				
@@ -344,7 +344,7 @@ final public class Login{
 			if(results.size()>1)
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
 				.putString("status",enumMemberAbnormalState.OLD_PASSWORD.toString())
-				.errorString("인증과정에 문제가 생겼습니다. 임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.instanceMessage("인증과정에 문제가 생겼습니다. 임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
 				.errorCode(enumMailState.DUPLICATED_SENED_MAIL).build();
 			
 			
@@ -354,14 +354,14 @@ final public class Login{
 				mailMng.invalidateMailOf(member.getEmail(), enumMailType.EXCEEDED_LOGIN_COUNT);
 				throw (new EntityException.Builder(enumPage.INPUT_MAIL))
 				.putString("status",enumMemberAbnormalState.OLD_PASSWORD.toString())
-				.errorString("인증기한이 초과됐습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
+				.instanceMessage("인증기한이 초과됐습니다.  임시 비밀번호 발금을 위해 메일을 보내주시기 바랍니다.")
 				.errorCode(enumMemberState.LOST_PASSWORD).build();
 			}
 			else{
 				
 				if(!member.doLogin())
 					throw (new EntityException.Builder(enumPage.LOGIN))
-					.errorString("")
+					.instanceMessage("")
 					.errorCode(enumMemberState.NOT_EQUAL_PASSWORD).build();
 				else{
 					mCtl.addMember(member, member.getSessionId());
@@ -376,7 +376,7 @@ final public class Login{
 	
 		if(!member.doLogin())
 			throw (new EntityException.Builder(enumPage.LOGIN))
-			.errorString("")
+			.instanceMessage("")
 			.errorCode(enumMemberState.NOT_EQUAL_PASSWORD).build();
 		else
 			mCtl.addMember(member, member.getSessionId());

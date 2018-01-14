@@ -415,7 +415,7 @@ public final class Member implements Entity {
 				
 				default:
 					throw (new PageException.Builder(enumPage.LOGIN))
-					.errorString("로그인 중 시스템 에러가 발생했습니다. 관리자에게 문의하세요.")
+					.instanceMessage("로그인 중 시스템 에러가 발생했습니다. 관리자에게 문의하세요.")
 					.errorCode(enumPageError.UNKNOWN_PARA_VALUE).build(); 	
 			}
 			

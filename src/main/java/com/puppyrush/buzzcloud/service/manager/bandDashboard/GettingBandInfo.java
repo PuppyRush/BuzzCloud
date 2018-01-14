@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.puppyrush.buzzcloud.dbAccess.DBManager;
 import com.puppyrush.buzzcloud.dbAccess.DBManager.ColumnHelper;
+import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.band.Band;
 import com.puppyrush.buzzcloud.entity.band.Band.BundleBand;
@@ -46,7 +47,7 @@ public class GettingBandInfo {
 	private MemberDB memberDB;
 	
 	
-	public Map<String,Object> excute(int bandId) throws EntityException, SQLException{
+	public Map<String,Object> excute(int bandId) throws EntityException, SQLException, ControllerException{
 		
 		Map<String, Object> returns = new HashMap<String, Object>();
 
@@ -58,8 +59,8 @@ public class GettingBandInfo {
 		
 		if(result.columnSize() != 1 )
 			throw (new EntityException.Builder(enumPage.GROUP_DASHBOARD))
-			.instanceMessage(enumInstanceMessage.ERROR)
-			.errorString("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
+			.instanceMessageType(enumInstanceMessage.ERROR)
+			.instanceMessage("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
 			.errorCode(enumBandState.NOT_EXIST_BAND).build();
 		
 		
@@ -72,8 +73,8 @@ public class GettingBandInfo {
 		
 		if(result.columnSize() != 1 )
 			throw (new EntityException.Builder(enumPage.GROUP_DASHBOARD))
-			.instanceMessage(enumInstanceMessage.ERROR)
-			.errorString("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
+			.instanceMessageType(enumInstanceMessage.ERROR)
+			.instanceMessage("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
 			.errorCode(enumBandState.NOT_EXIST_BAND).build();
 		
 		String contents = result.getString(0, "contents");

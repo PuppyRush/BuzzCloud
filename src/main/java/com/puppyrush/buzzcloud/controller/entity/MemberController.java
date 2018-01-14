@@ -75,7 +75,7 @@ public class MemberController {
 			returns.putAll(e.getReturnsForAjax());
 		} catch (Exception e){
 			returns.putAll(new EntityException.Builder(enumPage.ENTRY)
-			.errorString("로그인 한 유저가 아닙니다.")
+			.instanceMessage("로그인 한 유저가 아닙니다.")
 			.errorCode(enumMemberState.NOT_LOGIN).build().getReturnsForAjax()); 
 		
 		}

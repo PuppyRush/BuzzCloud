@@ -54,7 +54,7 @@ public class Join{
 				member = new Member.Builder(form.getEmail()).registrationKind(type).planePassword(form.getPassword()).nickname(form.getNickname()).build();
 				if(form.getPassword()==null || form.getPassword().length()<7)
 					throw (new PageException.Builder(enumPage.JOIN))
-					.errorString("비 정상적인 접근입니다.")
+					.instanceMessage("비 정상적인 접근입니다.")
 					.errorCode(enumPageError.NO_PARAMATER).build(); 
 			
 				
@@ -62,7 +62,7 @@ public class Join{
 	
 			default:
 				throw (new PageException.Builder(enumPage.JOIN))
-				.errorString("비 정상적인 접근입니다.")
+				.instanceMessage("비 정상적인 접근입니다.")
 				.errorCode(enumPageError.UNKNOWN_PARA_VALUE).build(); 									
 		}	
 		
@@ -86,11 +86,11 @@ public class Join{
 			
 		if(mDB.isJoin(member.getEmail()) )
 			throw (new PageException.Builder(enumPage.LOGIN))
-			.errorString("이미 가입한 유저입니다.")
+			.instanceMessage("이미 가입한 유저입니다.")
 			.errorCode(enumPageError.WRONG_PARAMATER).build(); 
 		else if(mDB.isExistNickname(member.getNickname(),member.getId()))
 			throw (new PageException.Builder(enumPage.JOIN))
-			.errorString("닉네임이 중복됩니다.")
+			.instanceMessage("닉네임이 중복됩니다.")
 			.errorCode(enumPageError.WRONG_PARAMATER).build(); 
 		
 		return true;

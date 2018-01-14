@@ -1,18 +1,31 @@
 package cn.bluejoe.elfinder.controller;
 
 import java.io.IOException;
+import java.util.Map;
 
-public class FsException extends IOException
+import com.puppyrush.buzzcloud.bzexception.BZException;
+import com.puppyrush.buzzcloud.bzexception.enumBZExceptionInterface;
+import com.puppyrush.buzzcloud.entity.EntityException;
+import com.puppyrush.buzzcloud.page.enums.enumPage;
+
+public class FsException extends BZException
 {
 
-	public FsException(String message)
-	{
-		super(message);
+	private FsException(Builder bld){
+		super(bld);
 	}
+	public static class Builder extends BZException.Builder<FsException>{
+	
+		public Builder(enumPage toPage) {
+			super(toPage);
+			// TODO Auto-generated constructor stub
+		}
 
-	public FsException(String message, Throwable e)
-	{
-		super(message, e);
+
+		@Override		
+		public FsException build(){
+			return new FsException(this);
+		}
 	}
 
 }

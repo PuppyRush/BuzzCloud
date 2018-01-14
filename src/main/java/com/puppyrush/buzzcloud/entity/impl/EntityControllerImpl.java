@@ -46,7 +46,7 @@ public abstract class EntityControllerImpl<T extends Entity> implements EntityCo
 			return (T) entityMap.get(id);
 		
 		throw (new ControllerException.Builder(enumPage.LOGIN))
-		.errorString("비 정상적인 접근입니다.")
+		.instanceMessage("비 정상적인 접근입니다.")
 		.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
 		
 		
@@ -68,7 +68,7 @@ public abstract class EntityControllerImpl<T extends Entity> implements EntityCo
 		
 		if(!entityMap.containsKey(id))
 			throw (new ControllerException.Builder(enumPage.LOGIN))
-			.errorString("비 정상적인 접근입니다.")
+			.instanceMessage("비 정상적인 접근입니다.")
 			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
 		
 		entityMap.remove(id);

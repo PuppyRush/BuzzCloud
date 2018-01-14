@@ -7,11 +7,13 @@ import com.puppyrush.buzzcloud.bzexception.enumBZExceptionInterface;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 
+import cn.bluejoe.elfinder.controller.FsException.Builder;
+
 public class ControllerException extends BZException {
 	
 
-	private ControllerException(String errString, Map<enumBZExceptionInterface,Boolean> errors, enumPage toPage){
-		super(errString,errors,toPage);
+	private ControllerException(Builder bld){
+		super(bld);
 	}
 	public static class Builder extends BZException.Builder<ControllerException>{
 		
@@ -23,7 +25,7 @@ public class ControllerException extends BZException {
 
 		@Override		
 		public ControllerException build(){
-			return new ControllerException(errString,errCodeMap,toPage);
+			return new ControllerException(this);
 		}
 	}
 

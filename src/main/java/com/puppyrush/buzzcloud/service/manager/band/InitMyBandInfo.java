@@ -52,7 +52,7 @@ final public class InitMyBandInfo {
 
 	}
 
-	private Map<String, Integer> getBandMembers() {
+	private Map<String, Integer> getBandMembers() throws EntityException, SQLException {
 
 		Map<String, Integer> memberMap = new HashMap<String, Integer>();
 

@@ -36,72 +36,60 @@ public class BandDB {
 	@Autowired(required = false)
 	private BandManager bMng;
 	
-	public int makeBand(String name, int owner, int admin){
+	public int makeBand(String name, int owner, int admin) throws SQLException{
 		
 	
 		int key = -1;
 		
-		try{
-			conn.setAutoCommit(false);
-			
-			PreparedStatement ps = conn.prepareStatement("insert into band ( name, owner, administrator) values(?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
-			ps.setString(1, name);
-			ps.setInt(2,owner);
-			ps.setInt(3,admin);
-			
-			ps.executeUpdate();
-			ResultSet rs = ps.getGeneratedKeys();
-			rs.next();
-			
-			key = rs.getInt(1);
-			
-			conn.commit();
-			ps.close();
-			rs.close();
-		}catch(SQLException e){
-			e.printStackTrace();
-		}
+
+		conn.setAutoCommit(false);
+		
+		PreparedStatement ps = conn.prepareStatement("insert into band ( name, owner, administrator) values(?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+		ps.setString(1, name);
+		ps.setInt(2,owner);
+		ps.setInt(3,admin);
+		
+		ps.executeUpdate();
+		ResultSet rs = ps.getGeneratedKeys();
+		rs.next();
+		
+		key = rs.getInt(1);
+		
+		conn.commit();
+		ps.close();
+		rs.close();
+
 		
 		return key;
 	}
 	
 
 	public void makeBandDetail(int newBandId, int maxCapacity,String driverPath, String contents) throws SQLException, IOException{
-								
-		try {
-			conn.setAutoCommit(false);
-			
-			String sql = "insert into bandDetail (bandId, maxCapacity, driverPath, contents) values(?,?,?,?)";
-			PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-			ps.setInt(1, newBandId );
-			ps.setInt(2, maxCapacity);
-			ps.setString(3, driverPath);
-			ps.setString(4, contents);
-			ps.executeUpdate();
-			
-			ps.close();
-			conn.commit();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
+		conn.setAutoCommit(false);
 		
+		String sql = "insert into bandDetail (bandId, maxCapacity, driverPath, contents) values(?,?,?,?)";
+		PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+		ps.setInt(1, newBandId );
+		ps.setInt(2, maxCapacity);
+		ps.setString(3, driverPath);
+		ps.setString(4, contents);
+		ps.executeUpdate();
+		
+		ps.close();
+		conn.commit();		
 	}
 
- 	public void makeBandRelation(int fromId, int toId){
-		
-		try {
-			conn.setAutoCommit(false);
-			PreparedStatement ps = conn.prepareStatement("insert into bandRelation (fromBand, toBand) values(?,?)");
-		
-			ps.setInt(1, fromId);
-			ps.setInt(2, toId);
-			ps.executeUpdate();
-			conn.commit();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+ 	public void makeBandRelation(int fromId, int toId) throws SQLException{
+	
+		conn.setAutoCommit(false);
+		PreparedStatement ps = conn.prepareStatement("insert into bandRelation (fromBand, toBand) values(?,?)");
+	
+		ps.setInt(1, fromId);
+		ps.setInt(2, toId);
+		ps.executeUpdate();
+		conn.commit();
+
 		
 	}
 
@@ -146,44 +134,38 @@ public class BandDB {
 		return returns;
 	}
 
-	public void makeBandMember(int bandId, int memberId){
+	public void makeBandMember(int bandId, int memberId) throws SQLException{
 		
-		try{		
-			conn.setAutoCommit(false);
-			String sql = "insert into bandMember (bandId, memberId) values (?,?)";
+		
+		conn.setAutoCommit(false);
+		String sql = "insert into bandMember (bandId, memberId) values (?,?)";
+		
 			
-				
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setInt(1, bandId);
-			ps.setInt(2, memberId);
-			ps.executeUpdate();
-			ps.close();
-		
-			conn.commit();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setInt(1, bandId);
+		ps.setInt(2, memberId);
+		ps.executeUpdate();
+		ps.close();
+	
+		conn.commit();
+	
 	}
 
-	public void makeBandMember(int bandId, List<Integer> memberIds){
+	public void makeBandMember(int bandId, List<Integer> memberIds) throws SQLException{
 		
-		try{		
-			conn.setAutoCommit(false);
-			String sql = "insert into bandMember (bandId, memberId) values (?,?)";
-			for(int i=0 ; i < memberIds.size() ; i++){
-				
-				PreparedStatement ps = conn.prepareStatement(sql);
-				ps.setInt(1, bandId);
-				ps.setInt(2, memberIds.get(i));
-				ps.executeUpdate();
-				ps.close();
-			}
-			conn.commit();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+		conn.setAutoCommit(false);
+		String sql = "insert into bandMember (bandId, memberId) values (?,?)";
+		for(int i=0 ; i < memberIds.size() ; i++){
+			
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, bandId);
+			ps.setInt(2, memberIds.get(i));
+			ps.executeUpdate();
+			ps.close();
 		}
+		conn.commit();
+
 	}
 
 	public List<Integer> getBandMembers(int bandId) throws SQLException{
@@ -233,69 +215,55 @@ public class BandDB {
 		return rs.getInt(1);
 	}
 	
-	public String getBandNameOf(int bandId){
+	public String getBandNameOf(int bandId) throws SQLException{
 		
 		String name=null;
+	
+		PreparedStatement ps = conn.prepareStatement("select name from band where bandId = ?");
+		ps.setInt(1, bandId);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
 		
-		try {
-			PreparedStatement ps = conn.prepareStatement("select name from band where bandId = ?");
-			ps.setInt(1, bandId);
-			ResultSet rs = ps.executeQuery();
-			rs.next();
-			
-			name = rs.getString(1);
-			
-			ps.close();
-			rs.close();
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		name = rs.getString(1);
+		
+		ps.close();
+		rs.close();
+	
 		return name;
 	}
 	
-	public int getIdOfName(String bandName, int upperBandId){
+	public int getIdOfName(String bandName, int upperBandId) throws SQLException{
 		
 		int bandId=-1;
-	
-		try {
-			
-			String sql = "select fromBand from bandRelation where to = ?";
-			PreparedStatement ps = conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
-			ps.setInt(1, upperBandId);
-			ResultSet rs = ps.executeQuery();
-			
-			ArrayList<Integer> ids = new ArrayList<Integer>();
-			while(rs.next()){
-				int id = rs.getInt(1);
-				ids.add(id);
-			}
-			ps.close();
-			rs.close();			
-			
-			if(ids.size()==0)
-				throw new IllegalArgumentException("잘못된 bandId 매개변수입니다 :" + upperBandId);
-			
-			for(int id : ids){
-				ps = conn.prepareStatement("select name,bandId from band where bandId = ?");
-				ps.setLong(1, id);
-				rs = ps.executeQuery();
-				rs.next();
-				
-				if(bandName.equals(rs.getString("bandName"))){
-					bandId = rs.getInt("bandId");
-					break;
-				}	
-			}
-			
-			throw new IllegalArgumentException("잘못된 bandName 매개변수입니다 : " + bandName);
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		String sql = "select fromBand from bandRelation where to = ?";
+		PreparedStatement ps = conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
+		ps.setInt(1, upperBandId);
+		ResultSet rs = ps.executeQuery();
 		
+		ArrayList<Integer> ids = new ArrayList<Integer>();
+		while(rs.next()){
+			int id = rs.getInt(1);
+			ids.add(id);
+		}
+		ps.close();
+		rs.close();			
+		
+		if(ids.size()==0)
+			throw new IllegalArgumentException("잘못된 bandId 매개변수입니다 :" + upperBandId);
+		
+		for(int id : ids){
+			ps = conn.prepareStatement("select name,bandId from band where bandId = ?");
+			ps.setLong(1, id);
+			rs = ps.executeQuery();
+			rs.next();
+			
+			if(bandName.equals(rs.getString("bandName"))){
+				bandId = rs.getInt("bandId");
+				break;
+			}	
+		}
+			
 		return bandId;
 		
 	}

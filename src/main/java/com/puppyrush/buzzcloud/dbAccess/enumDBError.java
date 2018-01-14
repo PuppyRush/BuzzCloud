@@ -1,24 +1,21 @@
-package com.puppyrush.buzzcloud.entity.band.enums;
+package com.puppyrush.buzzcloud.dbAccess;
 
+import com.puppyrush.buzzcloud.bzexception.enumBZExceptionInterface;
 import com.puppyrush.buzzcloud.entity.enumEntityState;
 import com.puppyrush.buzzcloud.entity.member.enumMember;
 
-public enum enumBandStandard implements enumMember
+public enum enumDBError implements enumBZExceptionInterface
 {
-	MAX_CAPACITY(1024), //MB
-	NAME_MIN_LENGTH(5),
-	NAME_MAX_LENGTH(15),
-	MAX_MEMBER_SIZE(100),
-	NOT_EXIST_BAND(-9999);
+	NOT_CORRESPOND_WHERE("조건절에 부합하는 값이 없습니다");
 
 	private int value;
 	private String enumStr;
 	 
-	enumBandStandard(String str){
+	enumDBError(String str){
 		enumStr = str;
 	}
 	
-	enumBandStandard(int i){
+	enumDBError(int i){
 		value = i;
 	}
 	

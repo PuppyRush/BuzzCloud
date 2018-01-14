@@ -1,19 +1,12 @@
 package com.puppyrush.buzzcloud.entity;
 
-import java.util.Map;
-
 import com.puppyrush.buzzcloud.bzexception.BZException;
-import com.puppyrush.buzzcloud.bzexception.enumBZExceptionInterface;
-import com.puppyrush.buzzcloud.entity.interfaces.EnumEntity;
-import com.puppyrush.buzzcloud.entity.member.enumMember;
-import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 
 public final class EntityException extends BZException {
 	
-
-	private EntityException(String errString, Map<enumBZExceptionInterface,Boolean> errors, enumPage toPage){
-		super(errString,errors,toPage);
+	private EntityException(Builder bld){
+		super(bld);
 	}
 	public static class Builder extends BZException.Builder<EntityException>{
 		
@@ -25,7 +18,7 @@ public final class EntityException extends BZException {
 
 		@Override		
 		public EntityException build(){
-			return new EntityException(errString,errCodeMap,toPage);
+			return new EntityException(this);
 		}
 	}
 

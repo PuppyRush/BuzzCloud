@@ -87,7 +87,7 @@ public final class AuthorityManager {
 		return fAuth;
 	}
 
-	public BandAuthority getBandAuthority(int bandId) throws SQLException {
+	public BandAuthority getBandAuthority(int bandId) throws SQLException, ControllerException {
 
 		BandAuthority gAuth = null;
 	
@@ -143,13 +143,15 @@ public final class AuthorityManager {
 		ResultSet rs=null;
 		try {
 
-			ps = conn.prepareStatement("select * from memberAuthority where bandId = ? and memberId = ?");
-			ps.setInt(1, bandId);
-			ps.setInt(2, ownerId);
-			rs = ps.executeQuery();
-			rs.next();
+			Map<String, Object> where = new HashMap<String, Object>();
+			where.put("bandId", bandId);
+			where.put("ownerId", ownerId);
 			
-			int memberTypeValue= rs.getInt("memberType");
+			ColumnHelper ch = dbMng.getColumnsOfAll("memberAuthority", where);
+			if(!ch.isUnique())
+				throw new SQLException();
+			
+			int memberTypeValue= ch.getInteger(0, "memberType");
 			enumMemberAuthority memberType = enumMemberAuthority.VIEWER;
 			
 			boolean isExist = false;
@@ -161,7 +163,7 @@ public final class AuthorityManager {
 				}
 			if(!isExist)
 				throw (new EntityException.Builder(enumPage.ERROR404))
-				.errorString("비 정상적인 접근입니다.")
+				.instanceMessage("비 정상적인 접근입니다.")
 				.errorCode(enumAuthorityState.NOT_EXIST_AUTHORITY).build(); 
 			
 			int authId = rs.getInt("authorityId");
@@ -173,12 +175,6 @@ public final class AuthorityManager {
 			mAuth = new MemberAuthority(-1, new Timestamp(System.currentTimeMillis()),
 					enumMemberAuthority.VIEWER);
 		}
-		finally{
-			if(ps!=null)
-				ps.close();
-			if(rs!=null)
-				rs.close();
-		}
 
 		return mAuth;
 	}
@@ -186,34 +182,29 @@ public final class AuthorityManager {
 	public MemberAuthority makeMemberAuthority(int memberId, int bandId, enumMemberAuthority auth) throws SQLException{
 		
 		MemberAuthority mAuth = null;
-		PreparedStatement ps=null;
-		ResultSet rs=null;
 		try {
 			
-			ps = conn.prepareStatement("insert into memberAuthority (memberId, bandId, memberType) values(?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
-			ps.setInt(1, memberId);
-			ps.setInt(2, bandId);
-			ps.setInt(3, auth.toInteger());
-			ps.executeUpdate();
+			List<String> col = new ArrayList<String>();
+			col.add("memberId");
+			col.add("bandId");
+			col.add("memberType");
+
+			List<Object> val = new ArrayList<Object>();
+			val.add(memberId);
+			val.add(bandId);
+			val.add(auth.toInteger());
 			
-			rs =  ps.getGeneratedKeys();
-			rs.next();
-			int authKey = rs.getInt(1);
+			List<Integer> keys = dbMng.insertColumn("memberAuthority", col, val);
+			if(keys.size()!=1)
+				throw new SQLException();
+			
+			int authKey = keys.get(0);
 			
 			mAuth = new MemberAuthority(authKey, new Timestamp(System.currentTimeMillis()), auth);
-			
-			ps.close();
-			rs.close();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			mAuth = new MemberAuthority(-1,  new Timestamp(System.currentTimeMillis()), enumMemberAuthority.VIEWER);
-		}
-		finally{
-			if(ps!=null)
-				ps.close();
-			if(rs!=null)
-				rs.close();
 		}
 
 		return mAuth;
@@ -226,23 +217,21 @@ public final class AuthorityManager {
 			
 			List<String> col = new ArrayList<String>();
 			
-			List<List<Object>> values = new ArrayList<List<Object>>();
-			List<Object> _col = new ArrayList<Object>();
+			List<Object> values = new ArrayList<Object>();
 			
 			col.add("bandId");
-			_col.add(bandId);
+			values.add(bandId);
 			
 			for(enumBandAuthority bAuth : enumBandAuthority.values()){
 				col.add(bAuth.getString());
 				
 				if( auths.containsKey(bAuth) )
-					_col.add(auths.get(bAuth) ? 1 : 0);
+					values.add(auths.get(bAuth) ? 1 : 0);
 				else
-					_col.add(0);				
+					values.add(0);				
 			}
-			values.add(_col);
 			
-			List<Integer> keys = dbMng.insertColumn("bandAuthority", col, values);
+			List<Integer> keys = dbMng.insertColumn("bandAuthority", col,values );
 			if(keys.size() != 1)
 				throw new SQLException();
 			
@@ -278,23 +267,21 @@ public final class AuthorityManager {
 			
 			List<String> col = new ArrayList<String>();
 			
-			List<List<Object>> values = new ArrayList<List<Object>>();
-			List<Object> _col = new ArrayList<Object>();
+			List<Object> values = new ArrayList<Object>();
 			
 			col.add("bandId");
 			col.add("memberId");
-			_col.add(bandId);
-			_col.add(memberId);
+			values.add(bandId);
+			values.add(memberId);
 			
 			for(enumFileAuthority fileAuth : enumFileAuthority.values()){
 				col.add(fileAuth.getString());
 				
 				if( auths.containsKey(fileAuth) )
-					_col.add(auths.get(fileAuth) ? 1 : 0);
+					values.add(auths.get(fileAuth) ? 1 : 0);
 				else
-					_col.add(0);				
+					values.add(0);				
 			}
-			values.add(_col);
 			
 			List<Integer> keys = dbMng.insertColumn("fileAuthority", col, values);
 			if(keys.size() != 1)

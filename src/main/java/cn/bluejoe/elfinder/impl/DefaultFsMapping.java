@@ -81,7 +81,7 @@ public class DefaultFsMapping implements FsMapping {
 	private Map<BandMember, FsServiceFactory> serviceMap = new HashMap<BandMember, FsServiceFactory>();
 	
 	@Override
-	public void addFsServiceFactory(BandMember bm) {
+	public void addFsServiceFactory(BandMember bm) throws ControllerException, SQLException {
 		// TODO Auto-generated method stub
 
 		if(contains(bm)){
@@ -89,16 +89,9 @@ public class DefaultFsMapping implements FsMapping {
 		}
 
 		FsServiceFactory fsService = null;
-		try {
-			fsService = new StaticFsServiceFactory(bm,authMng,bandCtl);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ControllerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 
+		
+		fsService = new StaticFsServiceFactory(bm,authMng,bandCtl);
+
 		serviceMap.put(bm, fsService);
 	
 	}

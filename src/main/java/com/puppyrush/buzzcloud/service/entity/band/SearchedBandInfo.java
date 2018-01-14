@@ -1,5 +1,6 @@
 package com.puppyrush.buzzcloud.service.entity.band;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ public class SearchedBandInfo{
 	
 
 	
-	public Map<String, Object> execute(int bandId) throws EntityException{
+	public Map<String, Object> execute(int bandId) throws EntityException, SQLException{
 		
 		Map<String, Object> returns = new HashMap<String, Object>();
 		
@@ -48,8 +49,8 @@ public class SearchedBandInfo{
 
 		if(result.isEmpty() )
 			throw (new EntityException.Builder(enumPage.GROUP_MANAGER))
-			.instanceMessage(enumInstanceMessage.ERROR)
-			.errorString("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
+			.instanceMessageType(enumInstanceMessage.ERROR)
+			.instanceMessage("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
 			.errorCode(enumBandState.NOT_EXIST_BAND).build();
 		
 		
@@ -66,8 +67,8 @@ public class SearchedBandInfo{
 
 		if(result.isEmpty() )
 			throw (new EntityException.Builder(enumPage.GROUP_MANAGER))
-			.instanceMessage(enumInstanceMessage.ERROR)
-			.errorString("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
+			.instanceMessageType(enumInstanceMessage.ERROR)
+			.instanceMessage("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
 			.errorCode(enumBandState.NOT_EXIST_BAND).build();
 		
 		

@@ -41,8 +41,8 @@ public class GettingMyAccountInfo{
 		 
 		if(memberDetail.isEmpty() )
 			throw (new EntityException.Builder(enumPage.GROUP_MANAGER))
-			.instanceMessage(enumInstanceMessage.ERROR)
-			.errorString("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
+			.instanceMessageType(enumInstanceMessage.ERROR)
+			.instanceMessage("그룹 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
 			.errorCode(enumBandState.NOT_EXIST_BAND).build();
 		
 		

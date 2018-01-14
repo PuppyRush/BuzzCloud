@@ -19,23 +19,18 @@ public final class BandController extends EntityControllerImpl<Band>{
 	private BandManager bandMng;
 
 	
-	public Band newBand(int bandId) throws SQLException{
+	public Band newBand(int bandId) throws SQLException, ControllerException, EntityException{
 		Band band = null;
-		try{
-			if(containsEntity(bandId))
-				band = getEntity(bandId);
 		
-			else{
-				band = bandMng.getBand(bandId);						
-				addEntity(bandId,band);
-				 
-			}
-		}catch(ControllerException e){
-			e.printStackTrace();
-		} catch (EntityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(containsEntity(bandId))
+			band = getEntity(bandId);
+	
+		else{
+			band = bandMng.getBand(bandId);						
+			addEntity(bandId,band);
+			 
 		}
+
 		
 		if(band==null)
 			throw new NullPointerException();

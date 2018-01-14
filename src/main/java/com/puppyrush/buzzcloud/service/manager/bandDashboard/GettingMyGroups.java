@@ -77,8 +77,8 @@ public class GettingMyGroups{
 		
 		if(ch.columnSize() != 1 )
 			throw (new EntityException.Builder(enumPage.GROUP_MANAGER))
-			.instanceMessage(enumInstanceMessage.ERROR)
-			.errorString("사용자 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
+			.instanceMessageType(enumInstanceMessage.ERROR)
+			.instanceMessage("사용자 정보를 찾지 못하였습니다. 관리자에게 문의하세요.")
 			.errorCode(enumMemberState.NOT_EXIST_MEMBER).build();
 				
 		

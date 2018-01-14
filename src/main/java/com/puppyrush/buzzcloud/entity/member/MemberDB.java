@@ -24,6 +24,7 @@ import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.enumController;
 import com.puppyrush.buzzcloud.entity.enumEntityState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberAbnormalState;
+import com.puppyrush.buzzcloud.entity.member.enums.enumMemberStandard;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberState;
 import com.puppyrush.buzzcloud.entity.member.enums.enumMemberType;
 import com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage;
@@ -53,18 +54,17 @@ public class MemberDB {
 	
 	public  EnumMap<enumMemberAbnormalState, Boolean> getMemberAbnormalStates(int memberId) throws SQLException{
 
-		PreparedStatement ps = null;
-		ResultSet rs = null;
 		EnumMap<enumMemberAbnormalState, Boolean> stateMap = new EnumMap<>(enumMemberAbnormalState.class);
 
-		ps = conn.prepareStatement("select * from memberState where memberId = ?");
-		ps.setInt(1, memberId);			
-		rs = ps.executeQuery();
-		rs.next();
+		Map<String, Object> where = new HashMap<String, Object>();
+		where.put("memberState", memberId);
+		ColumnHelper ch = dbMng.getColumnsOfAll("memberState", where);
+		if(!ch.isUnique())
+			throw new SQLException();
 		
 		for(enumMemberAbnormalState e : enumMemberAbnormalState.values()){												
 			String _attributeName = e.toString();
-			if(rs.getInt(_attributeName)==1)
+			if(ch.getInteger(0, _attributeName)==1)
 				stateMap.put(e, true);
 			else
 				stateMap.put(e, false);
@@ -75,49 +75,27 @@ public class MemberDB {
 	}
 
 	
-	public  Member getMember(int memberId){
+	public  Member getMember(int memberId) throws SQLException, EntityException, ControllerException{
 		
-		PreparedStatement ps = null;
-		ResultSet rs= null;
 		Member member = null;
+
+		Map<String, Object> where = new HashMap<String, Object>();
+		where.put("memberId", memberId);
+		ColumnHelper ch = dbMng.getColumnsOfAll("member", where);
 		
-		try{
-			
-			ps = conn.prepareStatement("select * from member where memberId = ?");
-			ps.setInt(1, memberId);
-			rs = ps.executeQuery();
-			if(!rs.next())
-				throw (new EntityException.Builder(enumPage.LOGIN_MANAGER))
-				.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build();
-				
-			
-			String email = rs.getString("email");
-			EnumMap<enumMemberAbnormalState, Boolean> state = getMemberAbnormalStates(memberId);
-			enumMemberType idType = enumMemberType.valueOf(rs.getString("registrationKind"));
-			String nickname = rs.getString("nickname");
-			
-			member = new Member.Builder(memberId,email).abnormalState(state).registrationKind(idType).nickname(nickname).build();
-			
-			if(mCtl.containsEntity(memberId) == false)
-				mCtl.addEntity(memberId, member);
-			
-		}catch(SQLException e){
-			e.printStackTrace();
-			
-		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally{
-			
-			try {
-				ps.close();
-				rs.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
+		if(!ch.isUnique())
+			throw (new EntityException.Builder(enumPage.LOGIN_MANAGER))
+			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build();
+		
+		String email = ch.getString(0,"email");
+		EnumMap<enumMemberAbnormalState, Boolean> state = getMemberAbnormalStates(memberId);
+		enumMemberType idType = enumMemberType.valueOf(ch.getString(0,"registrationKind"));
+		String nickname = ch.getString(0,"nickname");
+		
+		member = new Member.Builder(memberId,email).abnormalState(state).registrationKind(idType).nickname(nickname).build();
+		
+		if(mCtl.containsEntity(memberId) == false)
+			mCtl.addEntity(memberId, member);
 		
 		return member;
 	}
@@ -133,8 +111,8 @@ public class MemberDB {
 				
 		if(ch.isEmpty())
 			throw (new EntityException.Builder(enumPage.JOIN))
-			.errorString("가입 후 로그인 바랍니다")
-			.instanceMessage(enumInstanceMessage.ERROR)
+			.instanceMessage("가입 후 로그인 바랍니다")
+			.instanceMessageType(enumInstanceMessage.ERROR)
 			.errorCode(enumMemberState.NOT_JOIN).build();
 		else if(ch.columnSize()>1)
 			throw new SQLException();
@@ -149,310 +127,191 @@ public class MemberDB {
 		return member;
 	}
 		
-	public boolean isExistNickname(String nickname, int memberId){
+	public boolean isExistNickname(String nickname, int memberId) throws SQLException{
 		
+		List<String> sel = new ArrayList<String>();
+		sel.add("memberId");
+		Map<String, Object> where = new HashMap<String, Object>();
+		where.put("nickname", nickname);
+		where.put("memberId", memberId);
+
+		ColumnHelper ch = dbMng.getColumnsOfPart("member", sel, where);
 		
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		boolean result = false;
-		try{
-			ps = conn.prepareStatement("select memberId from member where nickname = ? AND memberId <> ?");
-			ps.setString(1, nickname);
-			ps.setInt(2, memberId);
-			rs = ps.executeQuery();
-			
-			if(rs.next())			
-				result = true;	
-			else
-				result =false;
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
-		} finally {
-			try {
-				ps.close();
-				rs.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				result = false;
-			}
-		}
-		
-		return result;
-		
+		if(ch.isEmpty())
+			return false;
+		else
+			return true;
 	}
 	
-	public  boolean isJoin(int uId) throws SQLException{
+	public  boolean isJoin(int memberId) throws SQLException{
 		
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		boolean result = false;
-		try{
-			ps = conn.prepareStatement("select * from member where memberId = ?");
-			ps.setInt(1, uId);
-			rs = ps.executeQuery();
-			
-			if(rs.next())			
-				result = true;	
-			else
-				result =false;
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
-		} finally {
-			try {
-				ps.close();
-				rs.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				result = false;
-			}
-		}
+		List<String> sel = new ArrayList<String>();
+		sel.add("memberId");
+		Map<String, Object> where = new HashMap<String, Object>();
+		where.put("memberId", memberId);
+
+		ColumnHelper ch = dbMng.getColumnsOfPart("member", sel, where);
 		
-		return result;
-		
+		if(ch.isEmpty())
+			return false;
+		else
+			return true;
 	}
 	
 	public  boolean isJoin(String email) throws SQLException{
 		
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		boolean result = false;
-		try{
-			ps = conn.prepareStatement("select * from member where email = ?");
-			ps.setString(1, email);
-			rs = ps.executeQuery();
-			
-			if(rs.next())			
-				result = true;
-				
-			else
-				result =false;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
-		} finally {
-			try {
-				ps.close();
-				rs.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				result = false;
-			}
-		}
+		List<String> sel = new ArrayList<String>();
+		sel.add("email");
+		Map<String, Object> where = new HashMap<String, Object>();
+		where.put("email", email);
 
-		return result;
+		ColumnHelper ch = dbMng.getColumnsOfPart("member", sel, where);
+		
+		if(ch.isEmpty())
+			return false;
+		else
+			return true;
 	}
 	
 	public int getIdOfNickname(String nickname) throws SQLException{
+
+		List<String> sel = new ArrayList<String>();
+		Map<String, Object> where = new HashMap<String, Object>();
+		sel.add("memberid");
 		
-		int id= -1;
-		PreparedStatement ps;
-		try {
-			ps = conn.prepareStatement(" select memberId from member where nickname = ? ");
-			ps.setString(1,nickname);
-			ResultSet rs = ps.executeQuery();
-			rs.next();
-			id = rs.getInt("memberId");		
-			
-			ps.close();
-			rs.close();
-					
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
-		return id;
+		where.put("nickname", nickname);
+		ColumnHelper ch = dbMng.getColumnsOfPart("member", sel, where);
+		
+		if(ch.isUnique())
+			return ch.getInteger(0, "memberId");
+		else
+			return enumMemberStandard.NOT_JOIN_MEMBER.toInt();
 		
 	}
 
-	public int getIdOfEmail(String email){
+	public int getIdOfEmail(String email) throws SQLException{
 		
-		int id= -1;
-		PreparedStatement ps;
-		try {
-			ps = conn.prepareStatement(" select memberId from member where email = ? ");
-			ps.setString(1,email);
-			ResultSet rs = ps.executeQuery();
-			rs.next();
-			id = rs.getInt("memberId");		
-			
-			ps.close();
-			rs.close();
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
-		return id;
+		List<String> sel = new ArrayList<String>();
+		Map<String, Object> where = new HashMap<String, Object>();
+		
+		sel.add("memberId");
+		where.put("email", email);
+
+		ColumnHelper ch = dbMng.getColumnsOfPart("member", sel, where);
+		if(ch.isUnique())
+			return ch.getInteger(0, sel.get(0));
+		else
+			return enumMemberStandard.NOT_JOIN_MEMBER.toInt();
 	}
 
-	public String getNicknameOfId(int id){
+	public String getNicknameOfId(int id) throws SQLException{
 		
-		String nickname = "";
-		PreparedStatement ps;
-		try {
-			ps = conn.prepareStatement(" select nickname from member where memberId = ? ");
-			ps.setInt(1,id);
-			ResultSet rs = ps.executeQuery();
-			rs.next();
-			nickname = rs.getString("nickname");		
-			
-			rs.close();
-			ps.close();
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		List<String> sel = new ArrayList<String>();
+		Map<String, Object> where = new HashMap<String, Object>();
+		
+		sel.add("nickname");
+		where.put("memberId", id);
 
-		return nickname;
-		
+		ColumnHelper ch = dbMng.getColumnsOfPart("member", sel, where);
+		if(ch.isUnique())
+			return ch.getString(0, sel.get(0));
+		else
+			throw new SQLException();
 	}
 	
-
+/*
 	
-	public  ArrayList<Member> getAllMember(){
+	public  ArrayList<Member> getAllMember() throws SQLException{
 		
 		ArrayList<Member> _members = new ArrayList<Member>();
-		PreparedStatement _ps=null, __ps=null;
-		ResultSet _rs=null, __rs=null;
+
 		
-		try{
-			
-			 _ps = conn.prepareStatement("select * from member");
-			 _rs = _ps.executeQuery();
-			
-			while(_rs.next()){
-											
-			
-							
-				__ps = conn.prepareStatement("select * from memberState where memberId = ?");
-				__ps.setInt(1, _rs.getInt("memberId"));
-				__rs = __ps.executeQuery();
-				__rs.next();
-				
-				EnumMap<enumMemberAbnormalState, Boolean> state = new EnumMap<>(enumMemberAbnormalState.class);
-				
-				
-				if(__rs.getInt("isAbnormal")==1){
 		
-					
-					if(__rs.getInt(enumMemberAbnormalState.LOST_PASSWORD.toString())==1)
-						state.put(enumMemberAbnormalState.LOST_PASSWORD, true);
-					else
-						state.put(enumMemberAbnormalState.LOST_PASSWORD, false);
-					
-					if(__rs.getInt(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT.toString())==1)
-						state.put(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT, true);
-					else
-						state.put(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT, false);
-					
-					if(__rs.getInt(enumMemberAbnormalState.SLEEP.toString())==1)
-						state.put(enumMemberAbnormalState.SLEEP, true);
-					else
-						state.put(enumMemberAbnormalState.SLEEP, false);
-					
-					if(__rs.getInt(enumMemberAbnormalState.OLD_PASSWORD.toString())==1)
-						state.put(enumMemberAbnormalState.OLD_PASSWORD, true);
-					else
-						state.put(enumMemberAbnormalState.OLD_PASSWORD, false);
-					
-					if(__rs.getInt(enumMemberAbnormalState.JOIN_CERTIFICATION.toString())==1)
-						state.put(enumMemberAbnormalState.JOIN_CERTIFICATION, true);
-					else
-						state.put(enumMemberAbnormalState.JOIN_CERTIFICATION, false);
-				}
+		 _ps = conn.prepareStatement("select * from member");
+		 _rs = _ps.executeQuery();
 		
-				Member member = (new Member.Builder(_rs.getInt("memberId"), _rs.getString("email"))).registrationKind(enumMemberType.valueOf(_rs.getString("idType"))  )
-						.nickname(_rs.getString("nickname")).abnormalState(state).build();
+		while(_rs.next()){
+										
+		
+						
+			__ps = conn.prepareStatement("select * from memberState where memberId = ?");
+			__ps.setInt(1, _rs.getInt("memberId"));
+			__rs = __ps.executeQuery();
+			__rs.next();
+			
+			EnumMap<enumMemberAbnormalState, Boolean> state = new EnumMap<>(enumMemberAbnormalState.class);
+			
+			
+			if(__rs.getInt("isAbnormal")==1){
+	
 				
-				_members.add(member);
+				if(__rs.getInt(enumMemberAbnormalState.LOST_PASSWORD.toString())==1)
+					state.put(enumMemberAbnormalState.LOST_PASSWORD, true);
+				else
+					state.put(enumMemberAbnormalState.LOST_PASSWORD, false);
 				
+				if(__rs.getInt(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT.toString())==1)
+					state.put(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT, true);
+				else
+					state.put(enumMemberAbnormalState.EXCEEDED_LOGIN_COUNT, false);
+				
+				if(__rs.getInt(enumMemberAbnormalState.SLEEP.toString())==1)
+					state.put(enumMemberAbnormalState.SLEEP, true);
+				else
+					state.put(enumMemberAbnormalState.SLEEP, false);
+				
+				if(__rs.getInt(enumMemberAbnormalState.OLD_PASSWORD.toString())==1)
+					state.put(enumMemberAbnormalState.OLD_PASSWORD, true);
+				else
+					state.put(enumMemberAbnormalState.OLD_PASSWORD, false);
+				
+				if(__rs.getInt(enumMemberAbnormalState.JOIN_CERTIFICATION.toString())==1)
+					state.put(enumMemberAbnormalState.JOIN_CERTIFICATION, true);
+				else
+					state.put(enumMemberAbnormalState.JOIN_CERTIFICATION, false);
 			}
+	
+			Member member = (new Member.Builder(_rs.getInt("memberId"), _rs.getString("email"))).registrationKind(enumMemberType.valueOf(_rs.getString("idType"))  )
+					.nickname(_rs.getString("nickname")).abnormalState(state).build();
 			
-		
-		}catch(Throwable e){
+			_members.add(member);
 			
-		}finally{
-			if (_ps != null)
-				try {
-					_ps.close();
-				} catch (SQLException ex) {
-				}
-			if (_rs != null)
-				try {
-					_rs.close();
-				} catch (SQLException ex) {
-				}
-			if (__ps != null)
-				try {
-					__ps.close();
-				} catch (SQLException ex) {
-				}
-			if (__rs != null)
-				try {
-					__rs.close();
-				} catch (SQLException ex) {
-				}
 		}
-		return _members;
-	}
 		
-	public boolean isCertificatingJoin(int uId) throws EntityException{
+		return _members;
+	}*/
+		
+	public boolean isCertificatingJoin(int uId) throws EntityException, SQLException{
 		
 		boolean isDoing = false;
+			
+		Map<String, Object> where = new HashMap<String, Object>();
+		where.put("memberId", uId);
 		
-		try{
-				
-			PreparedStatement ps = conn.prepareStatement(" select * from memberState where memberId = ? ");
-			ps.setInt(1, uId);
-			ResultSet rs = ps.executeQuery();
+		ColumnHelper ch = dbMng.getColumnsOfAll("memberId", where);
+		if(!ch.isUnique())
+			return false;
 			
-			if(!rs.next())
-				throw (new EntityException.Builder(enumPage.JOIN))
-				.errorCode(enumMemberState.NOT_JOIN).build();
-						
-			if(rs.getInt("joinCertification")==1){
-				
-				ps.close();
-				rs.close();
-				
-				ps = conn.prepareStatement("select * from joinCertification where memberId = ?");
-				ps.setInt(1, uId);
-				rs = ps.executeQuery();
-				
-				if(rs.next())					
-					isDoing = true;
-				else
-					isDoing = false;
-				
-			}else
-				throw (new EntityException.Builder(enumPage.LOGIN))
-				.instanceMessage(enumInstanceMessage.ERROR)
-				.errorString("가입 인증 메일을 보낸 상태입니다. 인증메일을 다시 요청하고 싶으시면 같은 메일로 다시 가입 하세요.")
-				.errorCode(enumMemberState.ALREADY_CERTIFICATION).build();
+		if(ch.getInteger(0, "joinCertification")==1){
 
+			ch = dbMng.getColumnsOfAll("joinCertification", where);
 
+			if(ch.isUnique())
+				isDoing = true;
+			else
+				isDoing = false;
 			
-		}catch(SQLException e){
-			
-			e.printStackTrace();
-			
-		}
+		}else
+			throw (new EntityException.Builder(enumPage.LOGIN))
+			.instanceMessageType(enumInstanceMessage.ERROR)
+			.instanceMessage("가입 인증 메일을 보낸 상태입니다. 인증메일을 다시 요청하고 싶으시면 같은 메일로 다시 가입 하세요.")
+			.errorCode(enumMemberState.ALREADY_CERTIFICATION).build();
 		
 		return isDoing;
 	}
 
 
-	public boolean isOnSiteAccount(String email){
+	public boolean isOnSiteAccount(String email) throws SQLException{
 		
 		Map<String, Object> where = new HashMap<String, Object>();
 		List<String> sel = new ArrayList<String>();
@@ -461,12 +320,15 @@ public class MemberDB {
 		sel.add("registrationKind");
 		ColumnHelper ch = dbMng.getColumnsOfPart("member", sel, where);
 		
-		if(ch.isEmpty())
+		if(!ch.isUnique())
 			return false;
-		else if(enumMemberType.valueOf(ch.getString(0, "registrationKind")).equals(enumMemberType.NOTHING)){
-			return true;
+		else{
+			if(enumMemberType.valueOf(ch.getString(0, "registrationKind")).equals(enumMemberType.NOTHING))
+				return true;
+			else 
+				return false;
+				
 		}
-		return false;
 		
 	}
 	

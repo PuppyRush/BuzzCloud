@@ -45,19 +45,19 @@ final public class ChangePassword {
 		
 		if(!mCtl.containsEntity(sId))
 			throw (new ControllerException.Builder(enumPage.ENTRY))
-			.errorString("로그인 한 유저가 아닙니다.")
+			.instanceMessage("로그인 한 유저가 아닙니다.")
 			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
 		
 		Member member = mCtl.getMember(sId);
 		
 		if(member.isLogin()==false)
 			throw (new EntityException.Builder(enumPage.ENTRY))
-			.errorString("로그인 한 유저가 아닙니다.")
+			.instanceMessage("로그인 한 유저가 아닙니다.")
 			.errorCode(enumMemberState.NOT_LOGIN).build(); 
 		
 		if(!member.getPlanePassword().equals(oldPassword))
 			throw (new PageException.Builder(enumPage.MY_ACCOUNT))
-			.errorString("입력하신 현재 비밀번호가 일치하지 않습니다.")
+			.instanceMessage("입력하신 현재 비밀번호가 일치하지 않습니다.")
 			.errorCode(enumPageError.WRONG_PARAMATER).build(); 
 			
 		mMng.updatePassword(member.getId(), newPassword);

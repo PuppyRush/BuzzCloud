@@ -79,7 +79,7 @@ public class PageForwadingController {
 			default:
 				try {
 					throw (new PageException.Builder(enumPage.ERROR404))
-					.errorString("비 정상적인 접근입니다.")
+					.instanceMessage("비 정상적인 접근입니다.")
 					.errorCode(enumPageError.UNKNOWN_PARA_VALUE).build(); 
 				} catch (PageException e) {
 					returns.putAll(e.getReturns());

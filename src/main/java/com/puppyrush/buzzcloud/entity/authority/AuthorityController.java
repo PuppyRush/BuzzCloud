@@ -41,17 +41,13 @@ final public class AuthorityController extends EntityControllerImpl<Authority>{
 		
 	}
 	
-	public <E extends Authority> E getEntity(Class<E> entityKind, int authId){
+	public <E extends Authority> E getEntity(Class<E> entityKind, int authId) throws ControllerException{
 				
 		E auth = null;
 		
 		final int entityId = authorityMap.get(entityKind).get(authId); 
-		try {
-			auth = (E) getEntity(entityId);
-		} catch (ControllerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		auth = (E) getEntity(entityId);
 		
 		return auth;	
 	}
@@ -67,7 +63,7 @@ final public class AuthorityController extends EntityControllerImpl<Authority>{
 			return (Authority) entityMap.get(id);
 		else
 			throw (new ControllerException.Builder(enumPage.ERROR404))
-			.errorString("비 정상적인 접근입니다..")
+			.instanceMessage("비 정상적인 접근입니다..")
 			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 		
 	}
 	
@@ -114,7 +110,7 @@ final public class AuthorityController extends EntityControllerImpl<Authority>{
 		
 		if(entityMap.containsKey(obj))
 			throw (new ControllerException.Builder(enumPage.ERROR404))
-			.errorString("비 정상적인 접근입니다.")
+			.instanceMessage("비 정상적인 접근입니다.")
 			.errorCode(enumController.ALREAY_EXIST_MEMBER_FROM_MAP).build(); 
 			
 		
@@ -126,7 +122,7 @@ final public class AuthorityController extends EntityControllerImpl<Authority>{
 		
 		if(containsEntity((Class<E>) authority.getClass(), authority.getAuthorityId())==false){
 			throw (new ControllerException.Builder(enumPage.ERROR404))
-			.errorString("비 정상적인 접근입니다.")
+			.instanceMessage("비 정상적인 접근입니다.")
 			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build(); 
 		}
 		
@@ -144,7 +140,7 @@ final public class AuthorityController extends EntityControllerImpl<Authority>{
 		
 		if(!entityMap.containsKey(id))
 			throw (new ControllerException.Builder(enumPage.ERROR404))
-			.errorString("비 정상적인 접근입니다.")
+			.instanceMessage("비 정상적인 접근입니다.")
 			.errorCode(enumController.NOT_EXIST_MEMBER_FROM_MAP).build();		
 		
 		entityMap.remove(id);

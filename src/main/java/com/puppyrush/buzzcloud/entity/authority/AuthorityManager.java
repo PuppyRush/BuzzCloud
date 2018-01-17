@@ -139,13 +139,11 @@ public final class AuthorityManager {
 	public MemberAuthority getMemberAuthority(int ownerId, int bandId) throws EntityException, SQLException {
 
 		MemberAuthority mAuth = null;
-		PreparedStatement ps=null;
-		ResultSet rs=null;
 		try {
 
 			Map<String, Object> where = new HashMap<String, Object>();
 			where.put("bandId", bandId);
-			where.put("ownerId", ownerId);
+			where.put("memberId", ownerId);
 			
 			ColumnHelper ch = dbMng.getColumnsOfAll("memberAuthority", where);
 			if(!ch.isUnique())
@@ -165,12 +163,12 @@ public final class AuthorityManager {
 				throw (new EntityException.Builder(enumPage.ERROR404))
 				.instanceMessage("비 정상적인 접근입니다.")
 				.errorCode(enumAuthorityState.NOT_EXIST_AUTHORITY).build(); 
-			
-			int authId = rs.getInt("authorityId");
-			Timestamp grantedDate = rs.getTimestamp("grantedDate");
-			
-			mAuth = new MemberAuthority( authId, grantedDate , memberType);
-
+				if(ch.next()){
+					int authId = ch.getInteger("authorityId");
+					Timestamp grantedDate = ch.getTimestamp("grantedDate");
+					
+					mAuth = new MemberAuthority( authId, grantedDate , memberType);
+				}
 		} catch (SQLException e) {
 			mAuth = new MemberAuthority(-1, new Timestamp(System.currentTimeMillis()),
 					enumMemberAuthority.VIEWER);
@@ -216,7 +214,6 @@ public final class AuthorityManager {
 		try {
 			
 			List<String> col = new ArrayList<String>();
-			
 			List<Object> values = new ArrayList<Object>();
 			
 			col.add("bandId");

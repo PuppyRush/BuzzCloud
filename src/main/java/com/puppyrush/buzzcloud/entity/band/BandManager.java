@@ -182,7 +182,7 @@ public final class BandManager {
 		for (int bandId : bandsAry) {
 
 			where.put("bandId", bandId);
-			ColumnHelper ch = dbMng.getColumnsOfPart("bandAuhority", sel, where);
+			ColumnHelper ch = dbMng.getColumnsOfPart("bandAuthority", sel, where);
 			if(ch.next())
 				if(ch.getInteger(sel.get(0))==1)
 					rootBands.add(bandId);
@@ -202,7 +202,7 @@ public final class BandManager {
 		where.put("fromBand", bandId);
 		sel.add("Root");
 		
-		ColumnHelper ch = dbMng.getColumnsOfPart("bandAuhority", sel,where);
+		ColumnHelper ch = dbMng.getColumnsOfPart("bandAuthority", sel,where);
 
 		if(ch.next()) {
 			if(ch.getInteger("Root")==1)
@@ -414,7 +414,7 @@ public final class BandManager {
 		String driverNickname = ch.getString(0,"driverNickname");
 		String contents = ch.getString(0,"contents");
 		
-		band = new Band.Builder(bandId, ownerId, bandName).bandAuhority(bandAuthority).members(members).upperBandId(upperBandId).maxCapacity(maxCapacity)
+		band = new Band.Builder(bandId, ownerId, bandName).bandAuthority(bandAuthority).members(members).upperBandId(upperBandId).maxCapacity(maxCapacity)
 				.usingCapacity(usingCapacity).driverPath(driverPath).adminId(adminId).driverNickname(driverNickname).contents(contents).build();
 
 		if (bCtl.containsEntity(bandId) == false)
@@ -477,7 +477,7 @@ public final class BandManager {
 		bld.usingCapacity(0);
 		bld.adminId(adminId);
 		bld.members(authoritedMap);
-		bld.bandAuhority(bandAuth);
+		bld.bandAuthority(bandAuth);
 		bld.driverPath(driverPath);
 		bld.driverNickname(driverPath);
 		

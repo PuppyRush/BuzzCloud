@@ -188,7 +188,7 @@ public final class Band implements Entity{
 		}
 		
 		
-		public Builder bandAuhority(BandAuthority bandAuthority){
+		public Builder bandAuthority(BandAuthority bandAuthority){
 			this.bandAuthority = bandAuthority;
 			return this;
 		}

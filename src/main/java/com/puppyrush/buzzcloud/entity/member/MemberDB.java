@@ -57,7 +57,7 @@ public class MemberDB {
 		EnumMap<enumMemberAbnormalState, Boolean> stateMap = new EnumMap<>(enumMemberAbnormalState.class);
 
 		Map<String, Object> where = new HashMap<String, Object>();
-		where.put("memberState", memberId);
+		where.put("memberId", memberId);
 		ColumnHelper ch = dbMng.getColumnsOfAll("memberState", where);
 		if(!ch.isUnique())
 			throw new SQLException();

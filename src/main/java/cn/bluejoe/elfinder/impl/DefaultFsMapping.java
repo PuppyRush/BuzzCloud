@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.puppyrush.buzzcloud.dbAccess.DBException;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.authority.AuthorityManager;
 import com.puppyrush.buzzcloud.entity.band.BandController;
@@ -81,7 +82,7 @@ public class DefaultFsMapping implements FsMapping {
 	private Map<BandMember, FsServiceFactory> serviceMap = new HashMap<BandMember, FsServiceFactory>();
 	
 	@Override
-	public void addFsServiceFactory(BandMember bm) throws ControllerException, SQLException {
+	public void addFsServiceFactory(BandMember bm) throws ControllerException, DBException {
 		// TODO Auto-generated method stub
 
 		if(contains(bm)){
@@ -119,7 +120,7 @@ public class DefaultFsMapping implements FsMapping {
 	}
 	
 	@Override
-	public FsServiceFactory getFsServiceFactory(BandMember bm) {
+	public FsServiceFactory getFsServiceFactory(BandMember bm) throws DBException, ControllerException {
 		// TODO Auto-generated method stub
 		
 		if(serviceMap.containsKey(bm) == false){
@@ -133,6 +134,13 @@ public class DefaultFsMapping implements FsMapping {
 		
 	}
 
+	@Override
+	public FsServiceFactory getFsServiceFactory(int bandId, int memberId) throws DBException, ControllerException {
+		// TODO Auto-generated method stub
+		return getFsServiceFactory(new BandMember(bandId, memberId));
+	}
+
+	
 	@Override
 	public boolean contains(BandMember bm) {
 		// TODO Auto-generated method stub

@@ -37,6 +37,7 @@ public abstract class BZException extends Exception{
 			this.toPage = toPage;
 			this.errorMessage = "시스템 에러입니다.";
 			instanceMessage = "시스템 에러입니다. 관리자에게 문의하세요.";
+			instanceMessageType = enumInstanceMessage.WARNING;
 			errCodeMap =  new HashMap<enumBZExceptionInterface,Boolean>();
 			stringMap = new HashMap<String, Object>();
 		}
@@ -99,7 +100,11 @@ public abstract class BZException extends Exception{
 		this.stringMap = bld.stringMap;		
 	}
 
-	final public String getErrorString(){
+	final public String getErrorMessage(){
+		return errorMessage;
+	}
+	
+	final public String getInstanceString(){
 		return instanceMessage;
 	}
 	

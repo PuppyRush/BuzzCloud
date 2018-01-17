@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.puppyrush.buzzcloud.bzexception.BZException;
+import com.puppyrush.buzzcloud.dbAccess.DBException;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.EntityException;
 import com.puppyrush.buzzcloud.entity.band.BandController;
@@ -68,23 +69,19 @@ public class ConnectorController
 		
 		try {
 			memberId = memberCtl.getMember(request.getRequestedSessionId()).getId();
-		} catch (ControllerException e) {
+			BandMember bm = new BandMember(bandId,memberId);
+			
+			if(fsMapping.contains(bm)==false){
+				Logger.getLogger(getClass()).info("init fsService of (" +bandId + "," + memberId+")");
+				fsMapping.addFsServiceFactory(bm);
+			}
+		}
+		catch (ControllerException e) {
 			// TODO Auto-generated catch block
 			returns.putAll(e.getReturnsForAjax());
-		}
-		BandMember bm = new BandMember(bandId,memberId);
-		
-		if(fsMapping.contains(bm)==false){
-			Logger.getLogger(getClass()).info("init fsService of (" +bandId + "," + memberId+")");
-			try {
-				fsMapping.addFsServiceFactory(bm);
-			} catch (ControllerException e) {
-				// TODO Auto-generated catch block
-				returns.putAll(e.getReturnsForAjax());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				returns.putAll(new InstanceMessage(enumSystem.INTERNAL_ERROR.toString(), enumInstanceMessage.ERROR).getMessage());
-			}
+		}catch (DBException e) {
+			// TODO Auto-generated catch block
+			returns.putAll(e.getReturnsForAjax());
 		}
 		
 		return returns;		
@@ -98,10 +95,7 @@ public class ConnectorController
 		int memberId=-1;
 		
 		try{
-			
-			
 			memberId = memberCtl.getMember(request.getRequestedSessionId()).getId();
-			
 			BandMember bm = new BandMember(bandId,memberId);
 			
 			try
@@ -130,7 +124,6 @@ public class ConnectorController
 				.errorMessage(String.format("unknown command: %s", cmd))
 				.errorCode(enumBandState.NOT_EXIST_BAND).build();
 			}
-	
 		
 			final HttpServletRequest finalRequest = request;
 			ce.execute(new CommandExecutionContext()
@@ -168,7 +161,6 @@ public class ConnectorController
 			returns.putAll(new InstanceMessage("시스템 에러입니다. 관리자에게 문의하세요", enumInstanceMessage.ERROR).getMessage());
 		}
 	}
-	
 	
 	public CommandExecutorFactory getCommandExecutorFactory()
 	{

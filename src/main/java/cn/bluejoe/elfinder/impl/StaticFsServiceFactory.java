@@ -9,14 +9,18 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import com.puppyrush.buzzcloud.dbAccess.DBException;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.enumController;
 import com.puppyrush.buzzcloud.entity.authority.AuthorityManager;
 import com.puppyrush.buzzcloud.entity.authority.file.enumFileAuthority;
 import com.puppyrush.buzzcloud.entity.band.Band;
 import com.puppyrush.buzzcloud.entity.band.BandController;
+import com.puppyrush.buzzcloud.entity.band.enums.enumBandState;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 
+import cn.bluejoe.elfinder.controller.FsException;
 import cn.bluejoe.elfinder.impl.DefaultFsMapping.BandMember;
 import cn.bluejoe.elfinder.localfs.LocalFsVolume;
 import cn.bluejoe.elfinder.service.FsService;
@@ -40,7 +44,7 @@ final public class StaticFsServiceFactory implements FsServiceFactory
 	BandMember bandMember;
 	FsService _fsService;
 
-	public StaticFsServiceFactory(BandMember bm, AuthorityManager authMng, BandController bandCtl ) throws SQLException, ControllerException {
+	public StaticFsServiceFactory(BandMember bm, AuthorityManager authMng, BandController bandCtl ) throws ControllerException, DBException {
 		// TODO Auto-generated constructor stub
 				
 		this.bandCtl = bandCtl;
@@ -51,7 +55,7 @@ final public class StaticFsServiceFactory implements FsServiceFactory
 		
 	}
 	
-	private void init() throws ControllerException{
+	private void init() throws ControllerException, DBException{
 		
 		_fsService.initVolume();
 		
@@ -63,12 +67,12 @@ final public class StaticFsServiceFactory implements FsServiceFactory
 			_fsService.setSecurityChecker(getFsCheckChain(bandMember));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ControllerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw (new DBException.Builder(enumPage.BROWSER))
+			.instanceMessageType(enumInstanceMessage.ERROR)
+			.instanceMessage("시스템 에러입니다. 관리자에게 문의하세요.")
+			.errorMessage(e.getMessage())
+			.errorCode(enumBandState.NOT_EXIST_BAND).build();
 		}
-		
 	}
 	
 	private List<LocalFsVolume> getVolums(int bandId) throws ControllerException{
@@ -117,26 +121,44 @@ final public class StaticFsServiceFactory implements FsServiceFactory
 	
 	private FsSecurityCheckForAll getFsSecurityCheck(BandMember bm) throws SQLException, ControllerException{
 		
+		boolean isLock = true;
 		FsSecurityCheckForAll all = new FsSecurityCheckForAll();
 		Map<enumFileAuthority,Boolean> map = authMng.getFileAuthoirty(bm.getMemberId(), bm.getBandId()).getAuthorityType();
 		
-		if(map.get(enumFileAuthority.DOWNLOAD) && 
-			!(map.get(enumFileAuthority.CREATES) && map.get(enumFileAuthority.REMOVE) && map.get(enumFileAuthority.UPLOAD)) ){
-			all.setReadable(true);
+		if(map.get(enumFileAuthority.DOWNLOAD)){
+			isLock = false;
+			all.setDownloadable(true);
 		}
-		
-		if(map.get(enumFileAuthority.CREATES)&& map.get(enumFileAuthority.DOWNLOAD) && map.get(enumFileAuthority.REMOVE) && map.get(enumFileAuthority.UPLOAD)){
-			all.setWritable(true);
-			all.setReadable(true);
+		else
+			all.setDownloadable(false);
+			
+		if(map.get(enumFileAuthority.UPLOAD)){
+			isLock = false;
+			all.setUploadable(true);
 		}
+		else
+			all.setUploadable(false);
 		
-		if(!(map.get(enumFileAuthority.CREATES) || map.get(enumFileAuthority.DOWNLOAD) || map.get(enumFileAuthority.REMOVE) || map.get(enumFileAuthority.UPLOAD)))
+		if(map.get(enumFileAuthority.CREATES)){
+			isLock = false;
+			all.setCreatable(true);
+		}
+		else
+			all.setCreatable(false);
+		
+		if(map.get(enumFileAuthority.REMOVE)){
+			isLock = false;
+			all.setRemovable(true);
+		}
+		else
+			all.setRemovable(false);
+		
+		if(isLock)
 			all.setLocked(true);
-		
-		
+		else
+			all.setLocked(false);
 		
 		return all;
-		
 	}
 	
 	@Override
@@ -158,15 +180,9 @@ final public class StaticFsServiceFactory implements FsServiceFactory
 	}
 
 	@Override
-	public void invalidate() {
-		// TODO Auto-generated method stub
-		
-		try {
-			init();
-		} catch (ControllerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void invalidate() throws DBException, ControllerException {
+	
+		init();
 		
 	}
 }

@@ -3,6 +3,9 @@ package cn.bluejoe.elfinder.service;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import com.puppyrush.buzzcloud.dbAccess.DBException;
+import com.puppyrush.buzzcloud.entity.ControllerException;
+
 import cn.bluejoe.elfinder.impl.DefaultFsMapping.BandMember;
 
 /**
@@ -31,6 +34,6 @@ public interface FsServiceFactory
 
 	FsService getFileService();
 	
-	void invalidate();
+	void invalidate() throws DBException, ControllerException;
 	
 }

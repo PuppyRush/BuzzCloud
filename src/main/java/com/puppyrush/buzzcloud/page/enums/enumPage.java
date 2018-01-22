@@ -10,7 +10,6 @@ public enum enumPage {
 	ERROR403("/error/403error"),
 	
 	ENTRY("entryPage/EntryPage"),
-	ENTRYTOMAIN("entryPage/EntryToMain"),
 	MAIN("mainPage/MainPage"),
 	
 	CERTIFICATE("verifyRegistration.do"),

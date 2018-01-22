@@ -34,7 +34,7 @@
 	<bean id="logout" class="com.puppyrush.buzzcloud.service.config.member.ChangePassword" scope="singleton"/>
 	
 	
-	
+	<bean id="verifyPage" class="com.puppyrush.buzzcloud.page.VerifyPage" scope="singleton"/>
 	
 		
 </beans>

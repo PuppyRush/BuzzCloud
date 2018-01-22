@@ -15,6 +15,7 @@
 	<bean id="entryPageBean" class="com.puppyrush.buzzcloud.controller.MainPageController" scope="singleton"/>
 	<bean id="elfinderController" class="cn.bluejoe.elfinder.controller.ConnectorController" scope="singleton"/>
 	<bean id="autoCompleteController" class="com.puppyrush.buzzcloud.controller.AutoCompleteController" scope="singleton"/>
+	<bean id="pageValidation" class="com.puppyrush.buzzcloud.controller.PageValidation" scope="singleton"/>
 	
 </beans>
 

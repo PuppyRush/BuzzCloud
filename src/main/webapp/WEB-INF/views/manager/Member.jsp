@@ -2,7 +2,7 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+<%@page import="com.puppyrush.buzzcloud.page.enums.enumPage"%>
 <%
 
 	request.setCharacterEncoding("UTF-8");

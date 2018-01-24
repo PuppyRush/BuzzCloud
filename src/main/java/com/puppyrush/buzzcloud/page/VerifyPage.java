@@ -80,16 +80,16 @@ public class VerifyPage {
 				if(!member.isJoin())
 					if(member.getEmail().equals(enumSystem.ADMIN.toString()))
 						throw (new EntityException.Builder(enumPage.JOIN))
-						.instanceMessage("로그인 후 사용하세요")
+						.instanceMessage("가입 후 사용하세요")
 						.instanceMessageType(enumInstanceMessage.ERROR)
 						.errorCode(enumMemberState.NOT_JOIN).build(); 	
-				else if(!member.isLogin())
+				if(!member.isLogin())
 					if(member.getEmail().equals(enumSystem.ADMIN.toString()))
 						throw (new EntityException.Builder(enumPage.LOGIN))
 						.instanceMessage("로그인 후 사용하세요")
 						.instanceMessageType(enumInstanceMessage.ERROR)
 						.errorCode(enumMemberState.NOT_LOGIN).build(); 	
-				else if(member.isLogout())
+				if(member.isLogout())
 					if(member.getEmail().equals(enumSystem.ADMIN.toString()))
 						throw (new EntityException.Builder(enumPage.LOGIN))
 						.instanceMessage("로그인 후 사용하세요")
@@ -98,7 +98,10 @@ public class VerifyPage {
 				break;
 				
 			default:
-				break;
+				throw (new PageException.Builder(enumPage.ERROR404))
+				.instanceMessage("페이지 인증 에러입니다.  관리자에게 문의하세요.")
+				.instanceMessageType(enumInstanceMessage.ERROR)
+				.errorCode(enumPageError.WRONG_PARAMATER).build();
 		}//switch
 	
 		returns.put("isSuccessVerify", true);

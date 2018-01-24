@@ -103,3 +103,15 @@ Map = function(){
 	};
 	
 
+	function verifyPage(page) {
+		var comAjax = new ComAjax();
+		comAjax.setUrl("/pageValidation/verifyPage.ajax");
+		comAjax.setCallback("callback_verify");
+		comAjax.setType("get");
+		comAjax.addParam("fromPage",page);
+		comAjax.ajax();
+	}
+	
+	function callback_verify(data){
+	}
+	

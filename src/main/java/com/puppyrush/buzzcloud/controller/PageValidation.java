@@ -19,7 +19,7 @@ import com.puppyrush.buzzcloud.page.PageException;
 import com.puppyrush.buzzcloud.page.VerifyPage;
 
 @Controller("pageValidation")
-@RequestMapping("/pageValidation.do")
+@RequestMapping("/pageValidation")
 public class PageValidation {
 
 	@Autowired

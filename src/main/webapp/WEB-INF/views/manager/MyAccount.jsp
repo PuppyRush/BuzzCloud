@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+<%@page import="com.puppyrush.buzzcloud.page.enums.enumPage"%>
 <%
 	request.setCharacterEncoding("UTF-8");	
 %>
@@ -210,17 +210,16 @@
 	
 	<div id="ohsnap">	</div>
 	
-	
-	<script>
-	
-	window.onload=function(){
-		if("${message}"=="")
-			return;
-		ohSnap("${message}",{'color': "${messageKind}" });
+<script>
+	var bandId = ${bandId};
+
+	window.onload=function(){		
+		if(!"${message}"=="")
+			ohSnap("${message}",{'color': "${messageKind}" });
+		verifyPage("<%=(String)enumPage.MAIN.name()%>");
 	}
-	
-	
-	</script>
+</script>
+
 
 		<script type="text/javascript" src="/resources/bower_components/jquery/jquery.js"></script>    
 		</script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

@@ -4,11 +4,7 @@ com.puppyrush.buzzcloud.page.enums.enumPage, java.util.ArrayList, java.util.Hash
 com.puppyrush.buzzcloud.entity.member.Member , 
 com.puppyrush.buzzcloud.entity.band.Band, 
 com.puppyrush.buzzcloud.entity.band.BandManager" %>
-<%@page import="com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage",
-com.puppyrush.buzzcloud.entity.band.Band.BundleBand,  
-com.puppyrush.buzzcloud.property.tree.Tree, 
-com.puppyrush.buzzcloud.property.tree.Node"%>
-
+<%@page import="com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage"%>s
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 

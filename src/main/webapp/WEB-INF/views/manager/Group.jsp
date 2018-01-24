@@ -1,7 +1,7 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+<%@page import="com.puppyrush.buzzcloud.page.enums.enumPage"%>
 <%
 {
 	request.setCharacterEncoding("UTF-8");
@@ -230,18 +230,6 @@
 		<input type="hidden" name="forwardPageName" id="forwardPageName">
 	</form>
 
-<script>
-
-
-window.onload=function(){
-	if("${message}"=="")
-		return;
-		ohSnap("${message}",{'color': "${messageKind}" });
-      
-}
-
-</script>
-
 
 	<!-- jQuery and jQuery UI (REQUIRED) -->
 	
@@ -275,6 +263,15 @@ window.onload=function(){
 		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
 		<script type="text/javascript" src="/resources/views/manager/js/group/network.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 		
+<script>
+	var bandId = ${bandId};
+
+	window.onload=function(){		
+		if(!"${message}"=="")
+			ohSnap("${message}",{'color': "${messageKind}" });
+		verifyPage("<%=(String)enumPage.MAIN.name()%>");
+	}
+</script>
 		
 
 </body>

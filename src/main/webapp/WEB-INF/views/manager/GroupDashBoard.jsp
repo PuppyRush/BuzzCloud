@@ -1,7 +1,7 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+<%@page import="com.puppyrush.buzzcloud.page.enums.enumPage"%>
 <%
 
 	request.setCharacterEncoding("UTF-8");
@@ -617,16 +617,15 @@
 		<script type="text/javascript" src="/resources/views/manager/js/groupDashboard/form.js?<?=filemtime(\'./css/readizgen.css\')?"></script>
 
 <script>
+	var bandId = ${bandId};
 
-	window.onload=function(){
-	
-		ohSnap("${message}",{'color': "${messageKind}" });
-		
+	window.onload=function(){		
+		if(!"${message}"=="")
+			ohSnap("${message}",{'color': "${messageKind}" });
+		verifyPage("<%=(String)enumPage.MAIN.name()%>");
 	}
-	
 </script>
-	
-          
+
 </body>
 
 

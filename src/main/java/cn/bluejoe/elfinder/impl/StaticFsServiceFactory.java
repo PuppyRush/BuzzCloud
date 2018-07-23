@@ -98,7 +98,6 @@ final public class StaticFsServiceFactory implements FsServiceFactory
 		
 		return volums;
 	}
-	
 
 	private FsSecurityCheckerChain getFsCheckChain(BandMember bm) throws SQLException, ControllerException{
 		

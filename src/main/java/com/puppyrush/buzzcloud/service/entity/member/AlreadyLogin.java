@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import com.puppyrush.buzzcloud.entity.ControllerException;
 import com.puppyrush.buzzcloud.entity.member.Member;
 import com.puppyrush.buzzcloud.entity.member.MemberController;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.InstanceMessage;
+import com.puppyrush.buzzcloud.entity.message.instanceMessage.enumInstanceMessage;
 import com.puppyrush.buzzcloud.page.enums.enumPage;
 
 import java.util.HashMap;
@@ -37,7 +39,7 @@ public class AlreadyLogin{
 				Member member = mCtl.getMember(sessionId);
 				if(member.isLogin()){
 					result.put("alreadyLogin", true);
-					
+					result.putAll(new InstanceMessage("이미 로그인을 하셨습니다.", enumInstanceMessage.SUCCESS).getMessage());
 				}
 				else
 					result.put("alreadyLogin", false);

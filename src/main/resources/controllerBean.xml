@@ -16,6 +16,9 @@
 	<bean id="elfinderController" class="cn.bluejoe.elfinder.controller.ConnectorController" scope="singleton"/>
 	<bean id="autoCompleteController" class="com.puppyrush.buzzcloud.controller.AutoCompleteController" scope="singleton"/>
 	<bean id="pageValidation" class="com.puppyrush.buzzcloud.controller.PageValidation" scope="singleton"/>
+	<bean id="dataTablesController" class="com.puppyrush.buzzcloud.controller.DataTablesController" scope="singleton"/>
+	
 	
 </beans>
+
 

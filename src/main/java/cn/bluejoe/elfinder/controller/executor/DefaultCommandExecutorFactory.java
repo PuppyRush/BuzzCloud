@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import cn.bluejoe.elfinder.controller.executors.GetCommandExecutor;
+import cn.bluejoe.elfinder.controller.executors.MkdirCommandExecutor;
 import cn.bluejoe.elfinder.controller.executors.OpenCommandExecutor;
 import cn.bluejoe.elfinder.impl.FsSecurityCheckForAll;
 import cn.bluejoe.elfinder.service.FsService;
@@ -50,15 +51,15 @@ public class DefaultCommandExecutorFactory implements CommandExecutorFactory
 			else
 				return _fallbackCommand;
 		}
-		
 	}
 
 	private boolean isValidatedCommand(CommandExecutor command, FsService checker ) {
 		
-		if(command instanceof OpenCommandExecutor){
-			
+		/*if(command instanceof MkdirCommandExecutor){
+			checker.getSecurityChecker().
+			if(checker.getSecurityChecker().isCreatable())
 			return true;
-		}
+		}*/
 		
 		return true;
 	}

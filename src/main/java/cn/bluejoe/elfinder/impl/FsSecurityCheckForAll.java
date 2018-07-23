@@ -1,17 +1,41 @@
 package cn.bluejoe.elfinder.impl;
 
+import java.io.IOException;
+
 import cn.bluejoe.elfinder.service.FsItem;
 import cn.bluejoe.elfinder.service.FsSecurityChecker;
 import cn.bluejoe.elfinder.service.FsService;
 
 public class FsSecurityCheckForAll implements FsSecurityChecker
 {
-	boolean _locked = false;
+	boolean _locked = true;
+	boolean _downloadable = false;
+	boolean _uploadable = false;
+	boolean _removable = false;
+	boolean _creatable = false;
 
-	boolean _readable = true;
+	public boolean isRemovable()
+	{
+		return _removable;
+	}
 
-	boolean _writable = true;
+	@Override
+	public boolean isRemovable(FsService fsService, FsItem fsi)
+	{
+		return _removable;
+	}
+	
+	public boolean isUploadable()
+	{
+		return _uploadable;
+	}
 
+	@Override
+	public boolean isUploadable(FsService fsService, FsItem fsi)
+	{
+		return _uploadable;
+	}
+	
 	public boolean isLocked()
 	{
 		return _locked;
@@ -23,41 +47,51 @@ public class FsSecurityCheckForAll implements FsSecurityChecker
 		return _locked;
 	}
 
-	public boolean isReadable()
+	public boolean isDownloadable()
 	{
-		return _readable;
+		return _downloadable;
 	}
 
 	@Override
-	public boolean isReadable(FsService fsService, FsItem fsi)
+	public boolean isDownloable(FsService fsService, FsItem fsi)
 	{
-		return _readable;
+		return _downloadable;
 	}
 
-	public boolean isWritable()
+	public boolean isCreatable()
 	{
-		return _writable;
+		return _creatable;
 	}
-
+	
 	@Override
-	public boolean isWritable(FsService fsService, FsItem fsi)
+	public boolean isCreatable(FsService fsService, FsItem fsi)
 	{
-		return _writable;
+		return _creatable;
 	}
 
+	
+	public void setRemovable(boolean locked)
+	{
+		_removable = locked;
+	}
+	
+	public void setUploadable(boolean locked)
+	{
+		_uploadable = locked;
+	}
+	
 	public void setLocked(boolean locked)
 	{
 		_locked = locked;
 	}
 
-	public void setReadable(boolean readable)
+	public void setDownloadable(boolean writable)
 	{
-		_readable = readable;
+		_downloadable = writable;
 	}
 
-	public void setWritable(boolean writable)
+	public void setCreatable(boolean writable)
 	{
-		_writable = writable;
+		_creatable = writable;
 	}
-
 }

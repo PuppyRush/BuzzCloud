@@ -40,19 +40,28 @@ public class FsSecurityCheckerChain implements FsSecurityChecker
 	}
 
 	@Override
-	public boolean isReadable(FsService fsService, FsItem fsi)
+	public boolean isDownloable(FsService fsService, FsItem fsi)
 			throws IOException
 	{
-		return getChecker(fsService, fsi).isReadable(fsService, fsi);
+		return getChecker(fsService, fsi).isDownloable(fsService, fsi);
 	}
 
 	@Override
-	public boolean isWritable(FsService fsService, FsItem fsi)
-			throws IOException
-	{
-		return getChecker(fsService, fsi).isWritable(fsService, fsi);
+	public boolean isUploadable(FsService fsService, FsItem fsi) throws IOException {
+		// TODO Auto-generated method stub
+		return getChecker(fsService, fsi).isUploadable(fsService, fsi);
 	}
 
+	@Override
+	public boolean isRemovable(FsService fsService, FsItem fsi) throws IOException {
+		return getChecker(fsService, fsi).isRemovable(fsService, fsi);
+	}
+
+	@Override
+	public boolean isCreatable(FsService fsService, FsItem fsi) throws IOException {
+		return getChecker(fsService, fsi).isCreatable(fsService, fsi);
+	}
+	
 	public void setFilterMappings(
 			List<FsSecurityCheckFilterMapping> filterMappings)
 	{

@@ -154,9 +154,11 @@ public abstract class AbstractCommandExecutor implements CommandExecutor
 		info.put("mime", fsi.getMimeType());
 		info.put("ts", fsi.getLastModified());
 		info.put("size", fsi.getSize());
-		info.put("read", fsi.isReadable(fsi) ? 1 : 0);
-		info.put("write", fsi.isWritable(fsi) ? 1 : 0);
+		info.put("remove", fsi.isRemovable(fsi) ? 1 : 0);
+		info.put("download", fsi.isDownloable(fsi) ? 1 : 0);
 		info.put("locked", fsi.isLocked(fsi) ? 1 : 0);
+		info.put("upload", fsi.isUploadable(fsi) ? 1 : 0);
+		info.put("create", fsi.isCreatable(fsi) ? 1 : 0);
 
 		if (fsi.getMimeType().startsWith("image"))
 		{

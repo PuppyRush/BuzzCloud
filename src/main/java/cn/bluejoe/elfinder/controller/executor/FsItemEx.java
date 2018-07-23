@@ -152,26 +152,38 @@ public class FsItemEx
 		return _v.isFolder(_f);
 	}
 
-	public boolean isLocked(FsItemEx fsi) throws IOException
-	{
-		return _s.getSecurityChecker().isLocked(_s, _f);
-	}
-
-	public boolean isReadable(FsItemEx fsi) throws IOException
-	{
-		return _s.getSecurityChecker().isReadable(_s, _f);
-	}
+	
 
 	public boolean isRoot()
 	{
 		return _v.isRoot(_f);
 	}
 
-	public boolean isWritable(FsItemEx fsi) throws IOException
+	public boolean isDownloable(FsItemEx fsi) throws IOException
 	{
-		return _s.getSecurityChecker().isWritable(_s, _f);
+		return _s.getSecurityChecker().isDownloable(_s, _f);
 	}
 
+	public boolean isCreatable(FsItemEx fsi) throws IOException
+	{
+		return _s.getSecurityChecker().isCreatable(_s, _f);
+	}
+	
+	public boolean isUploadable(FsItemEx fsi) throws IOException
+	{
+		return _s.getSecurityChecker().isUploadable(_s, _f);
+	}
+	
+	public boolean isRemovable(FsItemEx fsi) throws IOException
+	{
+		return _s.getSecurityChecker().isRemovable(_s, _f);
+	}
+	
+	public boolean isLocked(FsItemEx fsi) throws IOException
+	{
+		return _s.getSecurityChecker().isLocked(_s, _f);
+	}
+	
 	public List<FsItemEx> listChildren()
 	{
 		List<FsItemEx> list = new ArrayList<FsItemEx>();

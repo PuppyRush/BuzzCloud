@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
  <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page import="com.puppyrush.buzzcloud.page.enums.enumPage"%>
 
 <!DOCTYPE html>
 <html class="full" lang="ko">
@@ -22,8 +23,6 @@
 		<link	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
 			rel="stylesheet"	integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"	crossorigin="anonymous">
 
-
-		
 <!-- Section CSS -->
 
 		<!-- custom CSS -->
@@ -40,6 +39,10 @@
 		<link rel="stylesheet" type="text/css"	href="/resources/lib/include/elFinder-2.1.16/css/elfinder.min.css">		
 			<!-- <link rel="stylesheet" type="text/css" href="css/theme.css"> -->
 		<link rel="stylesheet" type="text/css" media="screen"			href="/resources/lib/include/elFinder-2.1.16/theme_win10/css/theme.css">
+		
+		<link rel="stylesheet" type="text/css" media="screen"			href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+		
+		
 		
 		<!-- Section JavaScript -->
 		<!-- <link rel="stylesheet" type="text/css"			href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/smoothness/jquery-ui.css"> -->
@@ -70,17 +73,20 @@
 
 </head>
 
-<body>
+<body style="margin:0; padding:0;">
 
-		  
+  <ul id="menu">
+    <li data-menuanchor="firstPage" class="active"><a href="#firstPage">First section</a></li>
+    <li data-menuanchor="secondPage"><a href="#secondPage">Second section</a></li>
+</ul>
 
 	<div id="fullpage">
 		<div class="section active" id="section0">
-				<div id="elfinder"></div>
+				<div id="elfinder" style="height:100%; border:none;"></div>
 			</div>	
    	 
 	 		 <div class="section" id="section1">
-	 		 		
+	 		 		<table id="issueTable" class="display" cellspacing="0" width="100%"></div>
 	 		 </div>
 	   
 	</div>
@@ -91,7 +97,7 @@
 		<div class="row">
 	    <div class="col-md-11"></div>
 					<div id="context-menu-icon" class="col-md-1">
-						<img src="/image/icon/option.jpg"	class="img-fluid context-menu-one btn btn-neutral">
+						<img src="/resources/image/icon/option_blue.jpg"	class="img-fluid context-menu-one btn btn-neutral">
 					</div>
 		</div>
 	</div>
@@ -120,15 +126,14 @@
 		<script	 src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
 		<script type="text/javascript" charset="utf-8"			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js"></script>
 
+			<!-- This following line is optional. Only necessary if you use the option css3:false and you want to use other easing effects rather than "linear", "swing" or "easeInOutCubic". -->
+		<!-- fullPage -->
+		<script type="text/javascript" src="/resources/lib/include/fullPage/vendors/jquery.easings.min.js"></script>
+		<script type="text/javascript" src="/resources/lib/include/fullPage/vendors/scrolloverflow.min.js"></script>
+		<script type="text/javascript" src="/resources/lib/include/fullPage/jquery.fullPage.js"></script>
 
-
-		<!-- elFinder JS (REQUIRED) -->
-		<script src="/resources/lib/include/elFinder-2.1.16/js/elfinder.full.js"></script>
-			<script type="text/javascript" src="/resources/views/fileBrowser/js/fileBrowser.js"></script>
-		
-
-		<!-- custom JS  -->
-			<script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+	
 
 		<!-- context menu js  -->
 		<script type="text/javascript" charset="utf-8"		src="/resources/lib/commanJs/commonAjax.js"></script>
@@ -137,21 +142,24 @@
     <script src="https://swisnl.github.io/jQuery-contextMenu/js/main.js" type="text/javascript"></script>
     <script type="text/javascript" src="/resources/views/fileBrowser/js/contextmenu.js"></script>
 		
-
-			<!-- This following line is optional. Only necessary if you use the option css3:false and you want to use other easing effects rather than "linear", "swing" or "easeInOutCubic". -->
-		<!-- fullPage -->
-		<script type="text/javascript" src="/resources/lib/include/fullPage/vendors/jquery.easings.min.js"></script>
-		<script type="text/javascript" src="/resources/lib/include/fullPage/vendors/scrolloverflow.min.js"></script>
-		<script type="text/javascript" src="/resources/lib/include/fullPage/jquery.fullPage.js"></script>
+		<!-- elFinder JS (REQUIRED) -->
+		<script src="/resources/lib/include/elFinder-2.1.16/js/elfinder.full.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
 		
-
-
+		<!-- custom JS  -->
+		<script type="text/javascript" src="/resources/lib/commanJs/clientSideLibrary.js"></script>
+		<script type="text/javascript" src="/resources/views/fileBrowser/js/fileBrowser.js"></script>
+		
 <script>
-
 	var bandId = ${bandId};
 
-
-
+	window.onload=function(){		
+		if(!"${message}"=="")
+			ohSnap("${message}",{'color': "${messageKind}" });
+		verifyPage("<%=(String)enumPage.MAIN.name()%>");
+	};
+	
+	   
 </script>
 
 
